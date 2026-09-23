@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0..1,0&display=block">
+<script src="sshovel-theme.js"></script>
+<style>body{margin:0;background:#E4E5EA;font-family:Roboto,system-ui,sans-serif;color:#191C20}a{color:#3A608F}a:hover{color:#1F4876}</style>
+</helmet>
+<div style="padding:64px;display:flex;flex-direction:column;gap:56px">
+<header style="display:flex;flex-direction:column;gap:8px;max-width:900px">
+  <span style="font:500 12px/16px Roboto;letter-spacing:1px;text-transform:uppercase;color:#43474E">sshovel · design handoff · 1 of 6</span>
+  <h1 style="margin:0;font:400 45px/52px Roboto">Home</h1>
+  <p style="margin:0;font:400 16px/24px Roboto;color:#43474E;text-wrap:pretty">§5.1. 412 × 915 dp, brand fallback scheme (seed #005EA8); dynamic color replaces the roles at runtime. Each screen id (H0–H7) is referenced by the storyboards and the handoff. Other files: <a href="sshovel 2 Onboarding.dc.html">Onboarding</a> · <a href="sshovel 3 Profile and security.dc.html">Profile &amp; security</a> · <a href="sshovel 4 Keys apps subnets.dc.html">Keys, apps, subnets</a> · <a href="sshovel 5 Diagnostics and settings.dc.html">Diagnostics &amp; settings</a> · <a href="sshovel 6 System and storyboards.dc.html">System surfaces &amp; storyboards</a></p>
+</header>
+
+<section style="display:flex;flex-wrap:wrap;gap:64px 72px">
+
+<!-- H0 -->
+<div id="H0" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">H0</span><span style="font:500 18px/24px Roboto">No profiles (empty)</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="H0 Empty" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 4px 0 16px">
+      <svg width="24" height="24" viewBox="0 0 24 24" style="color:var(--primary);flex:none"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg>
+      <span style="flex:1;font:400 22px/28px Roboto;margin-left:12px">sshovel</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">key</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">settings</span>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:0 40px 96px;text-align:center">
+      <div style="width:96px;height:96px;border-radius:50%;background:var(--secondaryContainer);color:var(--onSecondaryContainer);display:grid;place-items:center">
+        <svg width="48" height="48" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg>
+      </div>
+      <span style="font:400 24px/32px Roboto">No profiles yet</span>
+      <span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">sshovel reaches your intranet through an SSH server you can already log in to with a key. Setup takes about two minutes.</span>
+      <span style="height:40px;display:inline-flex;align-items:center;gap:8px;padding:0 24px 0 16px;border-radius:20px;background:var(--primary);color:var(--onPrimary);font:500 14px/20px Roboto;margin-top:8px"><span class="material-symbols-outlined" style="font-size:18px">arrow_forward</span>Set up sshovel</span>
+    </div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Diagnostics action hidden until a profile exists. “Set up sshovel” starts onboarding at step 1 (<a href="sshovel 2 Onboarding.dc.html#O1">O1</a>). Tile subtitle: “Set up”.</p>
+</div>
+
+<!-- H1 -->
+<div id="H1" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">H1</span><span style="font:500 18px/24px Roboto">Off</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="H1 Off" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 4px 0 16px">
+      <svg width="24" height="24" viewBox="0 0 24 24" style="color:var(--primary);flex:none"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg>
+      <span style="flex:1;font:400 22px/28px Roboto;margin-left:12px">sshovel</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">key</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">troubleshoot</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">settings</span>
+    </div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+      <div style="margin:8px 16px 0;padding:20px;border-radius:16px;background:var(--surfaceContainer);display:flex;flex-direction:column;gap:16px">
+        <span style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px 0 12px;border-radius:8px;background:var(--surfaceContainerHighest);color:var(--onSurfaceVariant);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:20px">vpn_key_off</span>Off</span>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font:400 28px/36px Roboto">Office</span>
+          <span style="font:400 14px/20px 'Roboto Mono',monospace;color:var(--onSurfaceVariant)">alex@jump.corp.example:22</span>
+        </div>
+        <span style="height:40px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:20px;background:var(--primary);color:var(--onPrimary);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">power_settings_new</span>Connect</span>
+      </div>
+      <div style="padding:24px 16px 8px;font:500 14px/20px Roboto;color:var(--primary)">Profiles</div>
+      <div style="height:72px;display:flex;align-items:center;padding:0 16px 0 4px;gap:4px">
+        <span style="width:48px;height:48px;display:grid;place-items:center;flex:none"><span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--primary);box-sizing:border-box;display:grid;place-items:center"><span style="width:10px;height:10px;border-radius:50%;background:var(--primary)"></span></span></span>
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="display:flex;align-items:center;gap:8px;font:400 16px/24px Roboto">Office<span style="font:500 11px/16px Roboto;letter-spacing:.5px;padding:0 6px;border-radius:4px;border:1px solid var(--outline);color:var(--onSurfaceVariant)">Default</span></span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span style="font-family:'Roboto Mono',monospace;font-size:13px">alex@jump.corp.example</span> · 3 subnets</span></div>
+        <span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">chevron_right</span>
+      </div>
+      <div style="height:72px;display:flex;align-items:center;padding:0 16px 0 4px;gap:4px">
+        <span style="width:48px;height:48px;display:grid;place-items:center;flex:none"><span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--onSurfaceVariant);box-sizing:border-box"></span></span>
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Lab</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span style="font-family:'Roboto Mono',monospace;font-size:13px">alex@lab.example.net</span> · 2 subnets</span></div>
+        <span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">chevron_right</span>
+      </div>
+      <div style="height:72px;display:flex;align-items:center;padding:0 16px 0 4px;gap:4px">
+        <span style="width:48px;height:48px;display:grid;place-items:center;flex:none"><span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--onSurfaceVariant);box-sizing:border-box"></span></span>
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Home lab</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span style="font-family:'Roboto Mono',monospace;font-size:13px">pi@home.example.org</span> · 1 subnet</span></div>
+        <span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">chevron_right</span>
+      </div>
+    </div>
+    <span style="position:absolute;right:16px;bottom:40px;height:56px;display:flex;align-items:center;gap:12px;padding:0 20px 0 16px;border-radius:16px;background:var(--primaryContainer);color:var(--onPrimaryContainer);font:500 14px/20px Roboto;box-shadow:0 3px 6px rgba(0,0,0,.16)"><span class="material-symbols-outlined">add</span>Add profile</span>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Radio selects the active profile; the rest of the row opens the profile editor. The “Default” label marks the profile the tile uses.</p>
+</div>
+
+<!-- H2 -->
+<div id="H2" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">H2</span><span style="font:500 18px/24px Roboto">Connecting</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="H2 Connecting" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 4px 0 16px">
+      <svg width="24" height="24" viewBox="0 0 24 24" style="color:var(--primary);flex:none"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg>
+      <span style="flex:1;font:400 22px/28px Roboto;margin-left:12px">sshovel</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">key</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">troubleshoot</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">settings</span>
+    </div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+      <div style="margin:8px 16px 0;padding:20px;border-radius:16px;background:var(--surfaceContainer);display:flex;flex-direction:column;gap:16px">
+        <span style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px 0 12px;border-radius:8px;background:var(--primaryContainer);color:var(--onPrimaryContainer);font:500 14px/20px Roboto"><span style="width:18px;height:18px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;box-sizing:border-box;transform:rotate(-30deg)"></span>Connecting…</span>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font:400 28px/36px Roboto">Office</span>
+          <span style="font:400 14px/20px 'Roboto Mono',monospace;color:var(--onSurfaceVariant)">alex@jump.corp.example:22</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="height:4px;border-radius:2px;background:var(--secondaryContainer);position:relative;overflow:hidden"><div style="position:absolute;left:22%;width:38%;top:0;bottom:0;border-radius:2px;background:var(--primary)"></div></div>
+          <span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">Authenticating with key “Pixel StrongBox”</span>
+        </div>
+        <span style="height:40px;display:flex;align-items:center;justify-content:center;border-radius:20px;border:1px solid var(--outline);color:var(--primary);font:500 14px/20px Roboto">Cancel</span>
+      </div>
+      <div style="padding:24px 16px 8px;font:500 14px/20px Roboto;color:var(--primary)">Profiles</div>
+      <div style="height:72px;display:flex;align-items:center;padding:0 16px 0 4px;gap:4px">
+        <span style="width:48px;height:48px;display:grid;place-items:center;flex:none"><span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--primary);box-sizing:border-box;display:grid;place-items:center"><span style="width:10px;height:10px;border-radius:50%;background:var(--primary)"></span></span></span>
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="display:flex;align-items:center;gap:8px;font:400 16px/24px Roboto">Office<span style="font:500 11px/16px Roboto;letter-spacing:.5px;padding:0 6px;border-radius:4px;border:1px solid var(--outline);color:var(--onSurfaceVariant)">Default</span></span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span style="font-family:'Roboto Mono',monospace;font-size:13px">alex@jump.corp.example</span> · 3 subnets</span></div>
+        <span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">chevron_right</span>
+      </div>
+      <div style="height:72px;display:flex;align-items:center;padding:0 16px 0 4px;gap:4px">
+        <span style="width:48px;height:48px;display:grid;place-items:center;flex:none"><span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--onSurfaceVariant);box-sizing:border-box"></span></span>
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Lab</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)"><span style="font-family:'Roboto Mono',monospace;font-size:13px">alex@lab.example.net</span> · 2 subnets</span></div>
+        <span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">chevron_right</span>
+      </div>
+    </div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Progress line cycles: “Resolving jump.corp.example” → “Checking server identity” → “Authenticating with key …” → “Starting tunnel”. FAB hidden while not Off.</p>
+</div>
+
+<!-- H3 -->
+<div id="H3" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">H3</span><span style="font:500 18px/24px Roboto">On · Always-on + Lockdown</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="H3 On" style="{{ t.frame }}">
+    <dc-import name="StatusBar" vpn="{{ true }}" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 4px 0 16px">
+      <svg width="24" height="24" viewBox="0 0 24 24" style="color:var(--primary);flex:none"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg>
+      <span style="flex:1;font:400 22px/28px Roboto;margin-left:12px">sshovel</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">key</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">troubleshoot</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">settings</span>
+    </div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+      <div style="margin:8px 16px 0;padding:20px;border-radius:16px;background:var(--surfaceContainer);display:flex;flex-direction:column;gap:16px">
+        <span style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px 0 12px;border-radius:8px;background:var(--stateOnContainer);color:var(--onStateOnContainer);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1">vpn_lock</span>On · 1 h 24 min</span>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font:400 28px/36px Roboto">Office</span>
+          <span style="font:400 14px/20px 'Roboto Mono',monospace;color:var(--onSurfaceVariant)">alex@jump.corp.example:22</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;border-radius:12px;overflow:hidden;background:var(--outlineVariant)">
+          <div style="background:var(--surfaceContainerLow);padding:12px;display:flex;flex-direction:column;gap:2px"><span style="font:500 12px/16px Roboto;color:var(--onSurfaceVariant)">Connections</span><span style="font:500 16px/24px Roboto">12 active</span></div>
+          <div style="background:var(--surfaceContainerLow);padding:12px;display:flex;flex-direction:column;gap:2px"><span style="font:500 12px/16px Roboto;color:var(--onSurfaceVariant)">Uptime</span><span style="font:500 16px/24px Roboto">1 h 24 min</span></div>
+          <div style="background:var(--surfaceContainerLow);padding:12px;display:flex;flex-direction:column;gap:2px"><span style="font:500 12px/16px Roboto;color:var(--onSurfaceVariant)">Data in / out</span><span style="font:500 16px/24px Roboto;display:flex;align-items:center;gap:2px;white-space:nowrap"><span class="material-symbols-outlined" style="font-size:16px">arrow_downward</span><span>48.2 MB</span><span class="material-symbols-outlined" style="font-size:16px;margin-left:6px">arrow_upward</span><span>3.1 MB</span></span></div>
+          <div style="background:var(--surfaceContainerLow);padding:12px;display:flex;flex-direction:column;gap:2px"><span style="font:500 12px/16px Roboto;color:var(--onSurfaceVariant)">DNS tunneled / direct</span><span style="font:500 16px/24px Roboto">214 / 1,902</span></div>
+        </div>
+        <span style="height:40px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:20px;background:var(--secondaryContainer);color:var(--onSecondaryContainer);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">power_settings_new</span>Disconnect</span>
+      </div>
+      <div style="margin:12px 16px 0;min-height:56px;display:flex;align-items:center;gap:16px;padding:8px 16px;border-radius:12px;border:1px solid var(--outlineVariant)">
+        <span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">shield_lock</span>
+        <div style="flex:1;display:flex;flex-direction:column"><span style="font:500 14px/20px Roboto">Always-on VPN · Lockdown</span><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Set in system settings. Apps have no network while sshovel is off.</span></div>
+      </div>
+      <div style="padding:20px 16px 8px;font:500 14px/20px Roboto;color:var(--primary)">Profiles</div>
+      <div style="height:72px;display:flex;align-items:center;padding:0 16px 0 4px;gap:4px">
+        <span style="width:48px;height:48px;display:grid;place-items:center;flex:none"><span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--primary);box-sizing:border-box;display:grid;place-items:center"><span style="width:10px;height:10px;border-radius:50%;background:var(--primary)"></span></span></span>
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="display:flex;align-items:center;gap:8px;font:400 16px/24px Roboto">Office<span style="font:500 11px/16px Roboto;letter-spacing:.5px;padding:0 6px;border-radius:4px;border:1px solid var(--outline);color:var(--onSurfaceVariant)">Default</span></span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span style="font-family:'Roboto Mono',monospace;font-size:13px">alex@jump.corp.example</span> · 3 subnets</span></div>
+        <span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">chevron_right</span>
+      </div>
+      <div style="height:72px;display:flex;align-items:center;padding:0 16px 0 4px;gap:4px">
+        <span style="width:48px;height:48px;display:grid;place-items:center;flex:none"><span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--onSurfaceVariant);box-sizing:border-box"></span></span>
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Lab</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)"><span style="font-family:'Roboto Mono',monospace;font-size:13px">alex@lab.example.net</span> · 2 subnets</span></div>
+        <span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">chevron_right</span>
+      </div>
+    </div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Stats refresh every 1 s (uptime every 60 s). The Always-on row only appears when the system reports sshovel as the always-on VPN; “· Lockdown” is appended when lockdown is enabled, otherwise the row reads “Always-on VPN” with “Set in system settings.”. Row is informational (not clickable).</p>
+</div>
+
+<!-- H4 -->
+<div id="H4" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">H4</span><span style="font:500 18px/24px Roboto">Reconnecting</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="H4 Reconnecting" style="{{ t.frame }}">
+    <dc-import name="StatusBar" mobile="{{ true }}" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 4px 0 16px">
+      <svg width="24" height="24" viewBox="0 0 24 24" style="color:var(--primary);flex:none"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg>
+      <span style="flex:1;font:400 22px/28px Roboto;margin-left:12px">sshovel</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">key</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">troubleshoot</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">settings</span>
+    </div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+      <div style="margin:8px 16px 0;padding:20px;border-radius:16px;background:var(--surfaceContainer);display:flex;flex-direction:column;gap:16px">
+        <span style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px 0 12px;border-radius:8px;background:var(--stateReconnectingContainer);color:var(--onStateReconnectingContainer);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:20px">sync_problem</span>Reconnecting…</span>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font:400 28px/36px Roboto">Office</span>
+          <span style="font:400 14px/20px 'Roboto Mono',monospace;color:var(--onSurfaceVariant)">alex@jump.corp.example:22</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <span style="font:500 16px/24px Roboto">Next retry in 8 s</span>
+          <span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">The network changed from Wi‑Fi to mobile data. Attempt 2 of ∞. Intranet traffic is held until the tunnel is back.</span>
+        </div>
+        <div style="display:flex;gap:8px">
+          <span style="flex:1;height:40px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:20px;background:var(--primary);color:var(--onPrimary);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">refresh</span>Retry now</span>
+          <span style="flex:1;height:40px;display:flex;align-items:center;justify-content:center;border-radius:20px;border:1px solid var(--outline);color:var(--primary);font:500 14px/20px Roboto">Disconnect</span>
+        </div>
+      </div>
+      <div style="padding:24px 16px 8px;font:500 14px/20px Roboto;color:var(--primary)">Profiles</div>
+      <div style="height:72px;display:flex;align-items:center;padding:0 16px 0 4px;gap:4px">
+        <span style="width:48px;height:48px;display:grid;place-items:center;flex:none"><span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--primary);box-sizing:border-box;display:grid;place-items:center"><span style="width:10px;height:10px;border-radius:50%;background:var(--primary)"></span></span></span>
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="display:flex;align-items:center;gap:8px;font:400 16px/24px Roboto">Office<span style="font:500 11px/16px Roboto;letter-spacing:.5px;padding:0 6px;border-radius:4px;border:1px solid var(--outline);color:var(--onSurfaceVariant)">Default</span></span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span style="font-family:'Roboto Mono',monospace;font-size:13px">alex@jump.corp.example</span> · 3 subnets</span></div>
+        <span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">chevron_right</span>
+      </div>
+      <div style="height:72px;display:flex;align-items:center;padding:0 16px 0 4px;gap:4px">
+        <span style="width:48px;height:48px;display:grid;place-items:center;flex:none"><span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--onSurfaceVariant);box-sizing:border-box"></span></span>
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Lab</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)"><span style="font-family:'Roboto Mono',monospace;font-size:13px">alex@lab.example.net</span> · 2 subnets</span></div>
+        <span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">chevron_right</span>
+      </div>
+    </div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Backoff 2 s → 4 → 8 → 16 → 30 s cap. When offline the detail line reads the <code>NETWORK_LOST</code> copy (“No network. sshovel will reconnect when you’re back online.”) and “Retry now” is disabled.</p>
+</div>
+
+<!-- H5 -->
+<div id="H5" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">H5</span><span style="font:500 18px/24px Roboto">Needs attention · <code>AUTH_FAILED</code></span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="H5 Auth failed" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 4px 0 16px">
+      <svg width="24" height="24" viewBox="0 0 24 24" style="color:var(--primary);flex:none"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg>
+      <span style="flex:1;font:400 22px/28px Roboto;margin-left:12px">sshovel</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">key</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">troubleshoot</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">settings</span>
+    </div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+      <div style="margin:8px 16px 0;padding:20px;border-radius:16px;background:var(--errorContainer);color:var(--onErrorContainer);display:flex;flex-direction:column;gap:16px">
+        <span style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px 0 12px;border-radius:8px;background:var(--error);color:var(--onError);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1">error</span>Needs attention</span>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font:400 28px/36px Roboto">Office</span>
+          <span style="font:400 14px/20px 'Roboto Mono',monospace">alex@jump.corp.example:22</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font:500 16px/24px Roboto">Key not accepted</span>
+          <span style="font:400 14px/20px Roboto;text-wrap:pretty"><span style="font-family:'Roboto Mono',monospace;font-size:13px">alex@jump.corp.example</span> rejected the key “Pixel StrongBox”. Add its public key to <span style="font-family:'Roboto Mono',monospace;font-size:13px">~/.ssh/authorized_keys</span> on the server.</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="height:40px;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 24px 0 16px;border-radius:20px;background:var(--error);color:var(--onError);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">key</span>Show public key</span>
+          <span style="height:40px;display:flex;align-items:center;padding:0 12px;border-radius:20px;color:var(--onErrorContainer);font:500 14px/20px Roboto">Retry</span>
+        </div>
+      </div>
+      <div style="padding:24px 16px 8px;font:500 14px/20px Roboto;color:var(--primary)">Profiles</div>
+      <div style="height:72px;display:flex;align-items:center;padding:0 16px 0 4px;gap:4px">
+        <span style="width:48px;height:48px;display:grid;place-items:center;flex:none"><span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--primary);box-sizing:border-box;display:grid;place-items:center"><span style="width:10px;height:10px;border-radius:50%;background:var(--primary)"></span></span></span>
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="display:flex;align-items:center;gap:8px;font:400 16px/24px Roboto">Office<span style="font:500 11px/16px Roboto;letter-spacing:.5px;padding:0 6px;border-radius:4px;border:1px solid var(--outline);color:var(--onSurfaceVariant)">Default</span></span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span style="font-family:'Roboto Mono',monospace;font-size:13px">alex@jump.corp.example</span> · 3 subnets</span></div>
+        <span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">chevron_right</span>
+      </div>
+      <div style="height:72px;display:flex;align-items:center;padding:0 16px 0 4px;gap:4px">
+        <span style="width:48px;height:48px;display:grid;place-items:center;flex:none"><span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--onSurfaceVariant);box-sizing:border-box"></span></span>
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Lab</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)"><span style="font-family:'Roboto Mono',monospace;font-size:13px">alex@lab.example.net</span> · 2 subnets</span></div>
+        <span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">chevron_right</span>
+      </div>
+    </div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Every §8 stopping error uses this hero: error title + body + one primary fix action (error-filled) + “Retry” text button. “Show public key” opens Key detail (<a href="sshovel 4 Keys apps subnets.dc.html#K2">K2</a>).</p>
+</div>
+
+<!-- H6 -->
+<div id="H6" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">H6</span><span style="font:500 18px/24px Roboto">Needs attention · <code>HOST_KEY_MISMATCH</code></span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="H6 Host key changed" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 4px 0 16px">
+      <svg width="24" height="24" viewBox="0 0 24 24" style="color:var(--primary);flex:none"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg>
+      <span style="flex:1;font:400 22px/28px Roboto;margin-left:12px">sshovel</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">key</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">troubleshoot</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">settings</span>
+    </div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+      <div style="margin:8px 16px 0;padding:20px;border-radius:16px;background:var(--errorContainer);color:var(--onErrorContainer);display:flex;flex-direction:column;gap:16px">
+        <span style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px 0 12px;border-radius:8px;background:var(--error);color:var(--onError);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1">gpp_bad</span>Needs attention</span>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font:400 28px/36px Roboto">Office</span>
+          <span style="font:400 14px/20px 'Roboto Mono',monospace">alex@jump.corp.example:22</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span style="font:500 16px/24px Roboto">Server identity changed</span>
+          <span style="font:400 14px/20px Roboto;text-wrap:pretty">The host key for <span style="font-family:'Roboto Mono',monospace;font-size:13px">jump.corp.example</span> doesn’t match the one you trusted. The connection was blocked.</span>
+        </div>
+        <span style="align-self:flex-start;height:40px;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 24px 0 16px;border-radius:20px;background:var(--error);color:var(--onError);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">policy</span>Review server identity</span>
+      </div>
+      <div style="padding:24px 16px 8px;font:500 14px/20px Roboto;color:var(--primary)">Profiles</div>
+      <div style="height:72px;display:flex;align-items:center;padding:0 16px 0 4px;gap:4px">
+        <span style="width:48px;height:48px;display:grid;place-items:center;flex:none"><span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--primary);box-sizing:border-box;display:grid;place-items:center"><span style="width:10px;height:10px;border-radius:50%;background:var(--primary)"></span></span></span>
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="display:flex;align-items:center;gap:8px;font:400 16px/24px Roboto">Office<span style="font:500 11px/16px Roboto;letter-spacing:.5px;padding:0 6px;border-radius:4px;border:1px solid var(--outline);color:var(--onSurfaceVariant)">Default</span></span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span style="font-family:'Roboto Mono',monospace;font-size:13px">alex@jump.corp.example</span> · 3 subnets</span></div>
+        <span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">chevron_right</span>
+      </div>
+      <div style="height:72px;display:flex;align-items:center;padding:0 16px 0 4px;gap:4px">
+        <span style="width:48px;height:48px;display:grid;place-items:center;flex:none"><span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--onSurfaceVariant);box-sizing:border-box"></span></span>
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Lab</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)"><span style="font-family:'Roboto Mono',monospace;font-size:13px">alex@lab.example.net</span> · 2 subnets</span></div>
+        <span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">chevron_right</span>
+      </div>
+    </div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">No “Retry” here — retrying cannot fix a mismatch. The mismatch screen (<a href="sshovel 3 Profile and security.dc.html#S4">S4</a>) opens automatically the first time; this hero is how the user returns to it after backing out.</p>
+</div>
+
+<!-- H7 -->
+<div id="H7" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">H7</span><span style="font:500 18px/24px Roboto">Switch profile while connected</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="H7 Switch dialog" style="{{ t.frame }}">
+    <dc-import name="StatusBar" vpn="{{ true }}" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 4px 0 16px">
+      <svg width="24" height="24" viewBox="0 0 24 24" style="color:var(--primary);flex:none"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg>
+      <span style="flex:1;font:400 22px/28px Roboto;margin-left:12px">sshovel</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">key</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">troubleshoot</span>
+      <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">settings</span>
+    </div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+      <div style="margin:8px 16px 0;padding:20px;border-radius:16px;background:var(--surfaceContainer);display:flex;flex-direction:column;gap:16px">
+        <span style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px 0 12px;border-radius:8px;background:var(--stateOnContainer);color:var(--onStateOnContainer);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1">vpn_lock</span>On · 1 h 24 min</span>
+        <div style="display:flex;flex-direction:column;gap:4px"><span style="font:400 28px/36px Roboto">Office</span><span style="font:400 14px/20px 'Roboto Mono',monospace;color:var(--onSurfaceVariant)">alex@jump.corp.example:22</span></div>
+        <span style="height:40px;display:flex;align-items:center;justify-content:center;border-radius:20px;background:var(--secondaryContainer);color:var(--onSecondaryContainer);font:500 14px/20px Roboto">Disconnect</span>
+      </div>
+      <div style="padding:24px 16px 8px;font:500 14px/20px Roboto;color:var(--primary)">Profiles</div>
+      <div style="height:72px;display:flex;align-items:center;padding:0 16px 0 4px;gap:4px">
+        <span style="width:48px;height:48px;display:grid;place-items:center;flex:none"><span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--primary);box-sizing:border-box;display:grid;place-items:center"><span style="width:10px;height:10px;border-radius:50%;background:var(--primary)"></span></span></span>
+        <div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Office</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">· 3 subnets</span></div>
+      </div>
+      <div style="height:72px;display:flex;align-items:center;padding:0 16px 0 4px;gap:4px">
+        <span style="width:48px;height:48px;display:grid;place-items:center;flex:none"><span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--onSurfaceVariant);box-sizing:border-box"></span></span>
+        <div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Lab</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">· 2 subnets</span></div>
+      </div>
+    </div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.32);display:flex;align-items:center;justify-content:center;z-index:4">
+      <div style="width:312px;padding:24px;border-radius:28px;background:var(--surfaceContainerHigh);display:flex;flex-direction:column;gap:16px">
+        <span class="material-symbols-outlined" style="align-self:center;color:var(--secondary)">swap_horiz</span>
+        <span style="font:400 24px/32px Roboto;text-align:center;color:var(--onSurface)">Switch to Lab?</span>
+        <span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">This disconnects Office. Lab connects through <span style="font-family:'Roboto Mono',monospace;font-size:13px">alex@lab.example.net</span>.</span>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px"><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Cancel</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Switch</span></div>
+      </div>
+    </div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E"><code>AlertDialog</code> with icon. Triggered by tapping the Lab radio while Office is not Off. “Switch” disconnects, selects Lab, connects. Back gesture = Cancel.</p>
+</div>
+
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { t: null };
+  componentDidMount() {
+    const chk = () => { if (window.SSHOVEL) this.setState({ t: window.SSHOVEL.themes }); else this._h = setTimeout(chk, 50); };
+    chk();
+  }
+  componentWillUnmount() { clearTimeout(this._h); }
+  renderVals() { return { themes: this.state.t || [] }; }
+}
+</script>
+</body>
+</html>

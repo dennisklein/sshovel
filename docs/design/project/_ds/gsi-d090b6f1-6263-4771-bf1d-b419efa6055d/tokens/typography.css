@@ -1,0 +1,46 @@
+/* GSI Design System — Typography tokens
+ * Set in HELVETICA (Arial fallback) — the brand-sanctioned font for screen / PPT /
+ * Word / web use where the licensed corporate face Linotype Syntax isn't
+ * installed (guidelines §2.2). The brand has NO monospaced font; --font-mono
+ * exists only for literal code.
+ */
+:root {
+  /* ---- Families ---- */
+  --font-sans:    'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-display: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  /* Utilitarian only — for code/tabular data. Not a brand font. */
+  --font-mono:    ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* ---- Weights (Helvetica/Arial: Regular 400 · Bold 700; heavier maps up where available) ---- */
+  --fw-regular:  400; /* @kind other */
+  --fw-medium:   500; /* @kind other */
+  --fw-bold:     700; /* @kind other */
+  --fw-black:    800; /* @kind other */
+  --fw-ultra:    900; /* @kind other */
+
+  /* ---- Type scale (modular, base 16px) ---- */
+  --text-xs:    0.75rem;   /* 12 */
+  --text-sm:    0.875rem;  /* 14 */
+  --text-base:  1rem;      /* 16 */
+  --text-md:    1.125rem;  /* 18 */
+  --text-lg:    1.375rem;  /* 22 */
+  --text-xl:    1.75rem;   /* 28 */
+  --text-2xl:   2.25rem;   /* 36 */
+  --text-3xl:   3rem;      /* 48 */
+  --text-4xl:   3.75rem;   /* 60 */
+  --text-5xl:   4.75rem;   /* 76 */
+
+  /* ---- Line heights ---- */
+  --lh-none:    1;    /* @kind other */
+  --lh-tight:   1.08; /* @kind other */
+  --lh-snug:    1.22; /* @kind other */
+  --lh-normal:  1.5;  /* @kind other */
+  --lh-relaxed: 1.65; /* @kind other */
+
+  /* ---- Letter spacing ---- */
+  --ls-tighter: -0.025em; /* @kind other */
+  --ls-tight:   -0.012em; /* @kind other */
+  --ls-normal:  0;        /* @kind other */
+  --ls-wide:    0.04em;   /* @kind other */
+  --ls-wider:   0.13em;   /* @kind other */
+}

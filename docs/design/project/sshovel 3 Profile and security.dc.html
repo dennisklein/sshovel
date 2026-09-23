@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0..1,0&display=block">
+<script src="sshovel-theme.js"></script>
+<style>body{margin:0;background:#E4E5EA;font-family:Roboto,system-ui,sans-serif;color:#191C20}a{color:#3A608F}a:hover{color:#1F4876}</style>
+</helmet>
+<div style="padding:64px;display:flex;flex-direction:column;gap:56px">
+<header style="display:flex;flex-direction:column;gap:8px;max-width:900px">
+  <span style="font:500 12px/16px Roboto;letter-spacing:1px;text-transform:uppercase;color:#43474E">sshovel · design handoff · 3 of 6</span>
+  <h1 style="margin:0;font:400 45px/52px Roboto">Profile editor, VPN permission, host keys</h1>
+  <p style="margin:0;font:400 16px/24px Roboto;color:#43474E;text-wrap:pretty">§5.3 (P1–P8), §5.4 (V1–V2), §5.5 (S3–S4). The editor is one scrolling <code>LazyColumn</code> of sections with <code>titleSmall</code> headers; Excluded subnets and Advanced collapse. <a href="sshovel 1 Home.dc.html">← Home</a></p>
+</header>
+<section style="display:flex;flex-wrap:wrap;gap:64px 72px">
+
+<!-- P1 -->
+<div id="P1" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">P1</span><span style="font:500 18px/24px Roboto">New profile · Server, Authentication</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="P1 New profile" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 12px 0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">close</span><span style="flex:1;font:400 22px/28px Roboto;padding-left:4px">New profile</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--onSurface);opacity:.38;font:500 14px/20px Roboto">Save</span></div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:16px;padding:8px 16px 0">
+      <span style="font:500 14px/20px Roboto;color:var(--primary)">Server</span>
+      <div style="position:relative;height:56px;border:1px solid var(--outline);border-radius:4px;display:flex;align-items:center;padding:0 16px;font:400 16px/24px Roboto"><span style="position:absolute;top:-9px;left:12px;padding:0 4px;background:var(--surface);font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Profile name</span>Lab</div>
+      <div style="position:relative;height:56px;border:1px solid var(--outline);border-radius:4px;display:flex;align-items:center;padding:0 16px;font:400 16px/24px Roboto;color:var(--onSurfaceVariant)">Host</div>
+      <div style="display:grid;grid-template-columns:96px 1fr;gap:12px">
+        <div style="position:relative;height:56px;border:1px solid var(--outline);border-radius:4px;display:flex;align-items:center;padding:0 16px;font:400 16px/24px 'Roboto Mono',monospace"><span style="position:absolute;top:-9px;left:12px;padding:0 4px;background:var(--surface);font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Port</span>22</div>
+        <div style="position:relative;height:56px;border:1px solid var(--outline);border-radius:4px;display:flex;align-items:center;padding:0 16px;font:400 16px/24px Roboto;color:var(--onSurfaceVariant)">Username</div>
+      </div>
+      <div style="height:1px;background:var(--outlineVariant);margin:8px 0 0"></div>
+      <span style="font:500 14px/20px Roboto;color:var(--primary)">Authentication</span>
+      <div style="display:flex;flex-direction:column;margin:-8px -16px 0">
+        <div style="min-height:72px;display:flex;align-items:center;gap:4px;padding:0 16px 0 4px"><span style="width:48px;height:48px;display:grid;place-items:center;flex:none"><span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--primary);box-sizing:border-box;display:grid;place-items:center"><span style="width:10px;height:10px;border-radius:50%;background:var(--primary)"></span></span></span><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:400 16px/24px Roboto">Pixel StrongBox</span><span style="display:flex;gap:6px;align-items:center;font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">ECDSA P-256 ·<span style="display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px 0 6px;border-radius:6px;background:var(--secondaryContainer);color:var(--onSecondaryContainer);font:500 12px/16px Roboto"><span class="material-symbols-outlined" style="font-size:16px">memory</span>StrongBox</span></span></div></div>
+        <div style="min-height:72px;display:flex;align-items:center;gap:4px;padding:0 16px 0 4px"><span style="width:48px;height:48px;display:grid;place-items:center;flex:none"><span style="width:20px;height:20px;border-radius:50%;border:2px solid var(--onSurfaceVariant);box-sizing:border-box"></span></span><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:400 16px/24px Roboto">laptop-import</span><span style="display:flex;gap:6px;align-items:center;font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">Ed25519, imported ·<span style="display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px 0 6px;border-radius:6px;border:1px solid var(--outlineVariant);font:500 12px/16px Roboto"><span class="material-symbols-outlined" style="font-size:16px">lock</span>Encrypted on device</span></span></div></div>
+      </div>
+      <div style="display:flex;gap:8px"><span style="height:32px;display:inline-flex;align-items:center;gap:8px;padding:0 16px 0 8px;border-radius:8px;border:1px solid var(--outlineVariant);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px;color:var(--primary)">add</span>Create key</span><span style="height:32px;display:inline-flex;align-items:center;gap:8px;padding:0 16px 0 8px;border-radius:8px;border:1px solid var(--outlineVariant);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px;color:var(--primary)">file_open</span>Import key</span></div>
+      <div style="height:1px;background:var(--outlineVariant);margin:8px 0 0"></div>
+      <span style="font:500 14px/20px Roboto;color:var(--primary)">Server identity</span>
+      <div style="display:flex;gap:16px;align-items:flex-start"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">help</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">Not verified yet. sshovel shows the host key on the first connection so you can compare it.</span></div>
+    </div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">New: close icon, “Save” disabled until required fields are valid. Existing: back arrow, title = profile name. Port pre-filled with 22.</p>
+</div>
+
+<!-- P2 -->
+<div id="P2" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">P2</span><span style="font:500 18px/24px Roboto">Existing · Server identity, Subnets</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="P2 Existing profile" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 12px 0 4px;background:var(--surfaceContainer)"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:400 22px/28px Roboto;padding-left:4px">Office</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Save</span></div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:16px;padding:16px 16px 0">
+      <span style="font:500 14px/20px Roboto;color:var(--primary)">Server identity</span>
+      <div style="border-radius:12px;background:var(--surfaceContainerHighest);padding:16px;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;gap:8px"><span class="material-symbols-outlined" style="font-size:20px;color:var(--onSurfaceVariant)">fingerprint</span><span style="flex:1;font:500 14px/20px Roboto">ECDSA · SHA-256</span><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Pinned 12 Mar 2026</span></div>
+        <div style="display:grid;grid-template-columns:repeat(4,auto);justify-content:start;gap:2px 12px;font:500 15px/22px 'Roboto Mono',monospace"><span>nThb</span><span>Rk2m</span><span>XJvF</span><span>3e8p</span><span>Qz1L</span><span>Yw7c</span><span>Dh0K</span><span>sVa4</span><span>Tq9N</span><span>oM6u</span><span>Gf5B</span><span>wE+i</span><span>2rY</span></div>
+        <div style="display:flex;gap:8px;margin-top:4px"><span style="height:40px;display:flex;align-items:center;gap:8px;padding:0 16px;border-radius:20px;border:1px solid var(--outline);color:var(--primary);font:500 14px/20px Roboto">Verify now</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--error);font:500 14px/20px Roboto">Forget pinned key</span></div>
+      </div>
+      <div style="height:1px;background:var(--outlineVariant);margin-top:8px"></div>
+      <div style="display:flex;align-items:center"><span style="flex:1;font:500 14px/20px Roboto;color:var(--primary)">Subnets</span><span style="height:32px;display:inline-flex;align-items:center;gap:8px;padding:0 16px 0 8px;border-radius:8px;border:1px solid var(--outlineVariant);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px;color:var(--primary)">travel_explore</span>Discover from server</span></div>
+      <div style="display:flex;flex-direction:column;margin:-8px -16px 0">
+        <div style="height:56px;display:flex;align-items:center;gap:16px;padding:0 4px 0 16px"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">lan</span><span style="flex:1;font:400 16px/24px 'Roboto Mono',monospace">10.20.0.0/16</span><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">remove_circle_outline</span></div>
+        <div style="height:56px;display:flex;align-items:center;gap:16px;padding:0 4px 0 16px"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">lan</span><span style="flex:1;font:400 16px/24px 'Roboto Mono',monospace">10.30.4.0/24</span><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">remove_circle_outline</span></div>
+        <div style="height:56px;display:flex;align-items:center;gap:16px;padding:0 4px 0 16px"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">lan</span><span style="flex:1;font:400 16px/24px 'Roboto Mono',monospace">172.16.8.0/22</span><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">remove_circle_outline</span></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div style="flex:1;position:relative;height:56px;border:1px solid var(--outline);border-radius:4px;display:flex;align-items:center;padding:0 16px;font:400 16px/24px 'Roboto Mono',monospace;color:var(--onSurfaceVariant)">Add subnet, e.g. 10.0.0.0/8</div>
+        <span class="material-symbols-outlined" style="width:48px;height:48px;border-radius:24px;display:grid;place-items:center;background:var(--secondaryContainer);color:var(--onSecondaryContainer)">add</span>
+      </div>
+      <div style="height:56px;display:flex;align-items:center;gap:16px;margin:0 -16px;padding:0 16px"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">block</span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Excluded subnets</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">1 subnet always uses the normal connection</span></div><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">expand_more</span></div>
+    </div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">App bar is scrolled (container color <code>surfaceContainer</code>). Remove icon content description: “Remove 10.20.0.0/16”. Removing shows snackbar “Subnet removed” with “Undo”. “Discover from server” opens <a href="sshovel 4 Keys apps subnets.dc.html#D1">D1</a>; disabled with helper “Verify the server first” if no host key is pinned.</p>
+</div>
+
+<!-- P3 -->
+<div id="P3" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">P3</span><span style="font:500 18px/24px Roboto">Validation · bad CIDR, overlap, missing DNS</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="P3 Validation" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 12px 0 4px;background:var(--surfaceContainer)"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:400 22px/28px Roboto;padding-left:4px">Office</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--onSurface);opacity:.38;font:500 14px/20px Roboto">Save</span></div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:16px;padding:16px 16px 0">
+      <span style="font:500 14px/20px Roboto;color:var(--primary)">Subnets</span>
+      <div style="display:flex;flex-direction:column;margin:-8px -16px 0">
+        <div style="height:56px;display:flex;align-items:center;gap:16px;padding:0 4px 0 16px"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">lan</span><span style="flex:1;font:400 16px/24px 'Roboto Mono',monospace">10.20.0.0/16</span><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">remove_circle_outline</span></div>
+        <div style="min-height:72px;display:flex;align-items:center;gap:16px;padding:0 4px 0 16px"><span class="material-symbols-outlined" style="color:var(--error)">error</span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px 'Roboto Mono',monospace">10.20.4.0/24</span><span style="font:400 14px/20px Roboto;color:var(--error)">Already covered by <span style="font-family:'Roboto Mono',monospace;font-size:13px">10.20.0.0/16</span></span></div><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">remove_circle_outline</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="display:flex;gap:8px;align-items:center">
+          <div style="flex:1;position:relative;height:56px;border:2px solid var(--error);border-radius:4px;display:flex;align-items:center;padding:0 11px 0 15px;font:400 16px/24px 'Roboto Mono',monospace"><span style="position:absolute;top:-9px;left:11px;padding:0 4px;background:var(--surface);font:400 12px/16px Roboto;color:var(--error)">Add subnet</span><span style="flex:1">10.40.0.0/33</span><span class="material-symbols-outlined" style="color:var(--error);font-variation-settings:'FILL' 1">error</span></div>
+          <span class="material-symbols-outlined" style="width:48px;height:48px;border-radius:24px;display:grid;place-items:center;background:var(--onSurface);opacity:.12;color:var(--surface)">add</span>
+        </div>
+        <span style="padding:0 16px;font:400 12px/16px Roboto;color:var(--error)">Not a valid CIDR. Prefix length must be 0–32, e.g. <span style="font-family:'Roboto Mono',monospace">10.40.0.0/16</span></span>
+      </div>
+      <div style="height:1px;background:var(--outlineVariant);margin-top:8px"></div>
+      <span style="font:500 14px/20px Roboto;color:var(--primary)">DNS</span>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="position:relative;height:56px;border:2px solid var(--error);border-radius:4px;display:flex;align-items:center;padding:0 11px 0 15px;font:400 16px/24px Roboto;color:var(--onSurfaceVariant)"><span style="position:absolute;top:-9px;left:11px;padding:0 4px;background:var(--surface);font:400 12px/16px Roboto;color:var(--error)">Intranet DNS server</span><span style="flex:1"></span><span class="material-symbols-outlined" style="color:var(--error);font-variation-settings:'FILL' 1">error</span></div>
+        <span style="padding:0 16px;font:400 12px/16px Roboto;color:var(--error)">Required when domain suffixes are set</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">Domain suffixes routed to this server</span>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <span style="height:32px;display:inline-flex;align-items:center;gap:4px;padding:0 4px 0 12px;border-radius:8px;border:1px solid var(--outlineVariant);font:500 13px/20px 'Roboto Mono',monospace">corp.example<span class="material-symbols-outlined" style="font-size:18px;color:var(--onSurfaceVariant)">close</span></span>
+          <span style="height:32px;display:inline-flex;align-items:center;gap:4px;padding:0 4px 0 12px;border-radius:8px;border:1px solid var(--outlineVariant);font:500 13px/20px 'Roboto Mono',monospace">internal<span class="material-symbols-outlined" style="font-size:18px;color:var(--onSurfaceVariant)">close</span></span>
+          <span style="height:32px;display:inline-flex;align-items:center;gap:6px;padding:0 12px 0 8px;border-radius:8px;border:1px solid var(--outlineVariant);color:var(--primary);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">add</span>Add suffix</span>
+        </div>
+      </div>
+    </div>
+    <div style="margin:0 16px 8px;min-height:48px;display:flex;align-items:center;gap:8px;padding:0 8px 0 16px;border-radius:4px;background:var(--inverseSurface);color:var(--inverseOnSurface);font:400 14px/20px Roboto;box-shadow:0 3px 6px rgba(0,0,0,.2)"><span style="flex:1">Fix 3 problems to save</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--inversePrimary);font:500 14px/20px Roboto">Show first</span></div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Inline validation fires on blur and on add; icon + text, never color alone. <code>isError</code> + <code>supportingText</code> on <code>OutlinedTextField</code>. Tapping disabled Save shows the snackbar; “Show first” scrolls to and focuses the first error. Other messages: “Must be an IPv4 address, e.g. 10.20.0.53”, “Overlaps 10.20.0.0/16 partially. Use one or the other.”</p>
+</div>
+
+<!-- P4 -->
+<div id="P4" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">P4</span><span style="font:500 18px/24px Roboto">DNS toggles, Apps, Advanced · tunnel subnet overlap</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="P4 DNS apps advanced" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 12px 0 4px;background:var(--surfaceContainer)"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:400 22px/28px Roboto;padding-left:4px">Office</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--onSurface);opacity:.38;font:500 14px/20px Roboto">Save</span></div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:12px;padding:12px 16px 0">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">Search domains</span>
+        <div style="display:flex;flex-wrap:wrap;gap:8px"><span style="height:32px;display:inline-flex;align-items:center;gap:4px;padding:0 4px 0 12px;border-radius:8px;border:1px solid var(--outlineVariant);font:500 13px/20px 'Roboto Mono',monospace">corp.example<span class="material-symbols-outlined" style="font-size:18px;color:var(--onSurfaceVariant)">close</span></span><span style="height:32px;display:inline-flex;align-items:center;gap:6px;padding:0 12px 0 8px;border-radius:8px;border:1px solid var(--outlineVariant);color:var(--primary);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">add</span>Add domain</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;min-height:56px"><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Also resolve reverse lookups for routed subnets</span></div><span style="width:52px;height:32px;border-radius:16px;background:var(--primary);position:relative;flex:none"><span style="position:absolute;right:4px;top:4px;width:24px;height:24px;border-radius:12px;background:var(--onPrimary);display:grid;place-items:center"><span class="material-symbols-outlined" style="font-size:16px;color:var(--onPrimaryContainer)">check</span></span></span></div>
+      <div style="display:flex;align-items:center;gap:16px;min-height:72px"><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Hide IPv6 answers for intranet names</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">Avoids delays when the tunnel is IPv4-only</span></div><span style="width:52px;height:32px;border-radius:16px;background:var(--primary);position:relative;flex:none"><span style="position:absolute;right:4px;top:4px;width:24px;height:24px;border-radius:12px;background:var(--onPrimary);display:grid;place-items:center"><span class="material-symbols-outlined" style="font-size:16px;color:var(--onPrimaryContainer)">check</span></span></span></div>
+      <div style="height:1px;background:var(--outlineVariant)"></div>
+      <span style="font:500 14px/20px Roboto;color:var(--primary)">Apps</span>
+      <div style="display:grid;grid-template-columns:1fr 1.2fr 1.2fr;height:40px;border:1px solid var(--outline);border-radius:20px;overflow:hidden;font:500 13px/16px Roboto">
+        <span style="display:flex;align-items:center;justify-content:center;border-right:1px solid var(--outline)">All apps</span>
+        <span style="display:flex;align-items:center;justify-content:center;gap:4px;background:var(--secondaryContainer);color:var(--onSecondaryContainer);border-right:1px solid var(--outline)"><span class="material-symbols-outlined" style="font-size:18px">check</span>Only selected</span>
+        <span style="display:flex;align-items:center;justify-content:center;text-align:center">All except</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;min-height:56px;margin:0 -16px;padding:0 16px"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">apps</span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">3 apps</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">Chrome, Slack, Termux</span></div><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">chevron_right</span></div>
+      <div style="height:1px;background:var(--outlineVariant)"></div>
+      <div style="display:flex;align-items:center"><span style="flex:1;font:500 14px/20px Roboto;color:var(--primary)">Advanced</span><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;margin:-12px -12px -12px 0;color:var(--onSurfaceVariant)">expand_less</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div style="position:relative;height:56px;border:1px solid var(--outline);border-radius:4px;display:flex;align-items:center;padding:0 16px;font:400 16px/24px Roboto"><span style="position:absolute;top:-9px;left:12px;padding:0 4px;background:var(--surface);font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Keepalive</span><span style="flex:1">30</span><span style="color:var(--onSurfaceVariant)">s</span></div>
+        <div style="position:relative;height:56px;border:1px solid var(--outline);border-radius:4px;display:flex;align-items:center;padding:0 16px;font:400 16px/24px Roboto"><span style="position:absolute;top:-9px;left:12px;padding:0 4px;background:var(--surface);font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Connect timeout</span><span style="flex:1">15</span><span style="color:var(--onSurfaceVariant)">s</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="position:relative;height:56px;border:2px solid var(--error);border-radius:4px;display:flex;align-items:center;padding:0 11px 0 15px;font:400 16px/24px 'Roboto Mono',monospace"><span style="position:absolute;top:-9px;left:11px;padding:0 4px;background:var(--surface);font:400 12px/16px Roboto;color:var(--error)">Tunnel interface subnet</span><span style="flex:1">10.20.99.0/24</span><span class="material-symbols-outlined" style="color:var(--error);font-variation-settings:'FILL' 1">error</span></div>
+        <span style="padding:0 16px;font:400 12px/16px Roboto;color:var(--error)">Overlaps routed subnet <span style="font-family:'Roboto Mono',monospace">10.20.0.0/16</span>. Default is <span style="font-family:'Roboto Mono',monospace">10.99.0.0/24</span></span>
+      </div>
+      <div style="position:relative;height:56px;border:1px solid var(--outline);border-radius:4px;display:flex;align-items:center;padding:0 16px;font:400 16px/24px Roboto"><span style="position:absolute;top:-9px;left:12px;padding:0 4px;background:var(--surface);font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">MTU</span>1400</div>
+    </div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Below the fold: “Set as default profile” switch (supporting “Used by the tile and Always-on VPN”), then a full-width outlined error-colored “Delete profile” button (→ P8). <code>SingleChoiceSegmentedButtonRow</code> for app mode; the summary row is hidden in “All apps” mode. At 200 % font the segment labels wrap to two lines (row height grows, min 48 dp).</p>
+</div>
+
+<!-- P5 -->
+<div id="P5" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">P5</span><span style="font:500 18px/24px Roboto">Unsaved changes on back</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="P5 Unsaved changes" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 12px 0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:400 22px/28px Roboto;padding-left:4px">Office</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Save</span></div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:16px;padding:8px 16px 0">
+      <span style="font:500 14px/20px Roboto;color:var(--primary)">Server</span>
+      <div style="position:relative;height:56px;border:1px solid var(--outline);border-radius:4px;display:flex;align-items:center;padding:0 16px;font:400 16px/24px Roboto"><span style="position:absolute;top:-9px;left:12px;padding:0 4px;background:var(--surface);font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Profile name</span>Office</div>
+      <div style="position:relative;height:56px;border:1px solid var(--outline);border-radius:4px;display:flex;align-items:center;padding:0 16px;font:400 16px/24px 'Roboto Mono',monospace"><span style="position:absolute;top:-9px;left:12px;padding:0 4px;background:var(--surface);font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Host</span>jump2.corp.example</div>
+    </div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.32);display:flex;align-items:center;justify-content:center;z-index:4">
+      <div style="width:312px;padding:24px;border-radius:28px;background:var(--surfaceContainerHigh);display:flex;flex-direction:column;gap:16px">
+        <span style="font:400 24px/32px Roboto;color:var(--onSurface)">Discard changes?</span>
+        <span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">You changed the host and 1 subnet in Office. They haven’t been saved.</span>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px"><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Keep editing</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Discard</span></div>
+      </div>
+    </div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Predictive back: the editor’s back preview is intercepted (<code>BackHandler</code> enabled only when dirty) so the gesture shows this dialog rather than a preview of Home. Back again = Keep editing.</p>
+</div>
+
+<!-- P6 -->
+<div id="P6" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">P6</span><span style="font:500 18px/24px Roboto">Read-only while connected</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="P6 Read-only" style="{{ t.frame }}">
+    <dc-import name="StatusBar" vpn="{{ true }}" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 12px 0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:400 22px/28px Roboto;padding-left:4px">Office</span></div>
+    <div style="margin:0 16px;padding:16px;border-radius:12px;background:var(--secondaryContainer);color:var(--onSecondaryContainer);display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:16px;align-items:flex-start"><span class="material-symbols-outlined">lock</span><div style="display:flex;flex-direction:column;gap:2px"><span style="font:500 16px/24px Roboto">Connected. Disconnect to edit.</span><span style="font:400 14px/20px Roboto">Changes to a running tunnel would drop open connections.</span></div></div>
+      <span style="align-self:flex-end;height:40px;display:flex;align-items:center;padding:0 12px;color:var(--onSecondaryContainer);font:500 14px/20px Roboto">Disconnect</span>
+    </div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:16px;padding:20px 16px 0">
+      <span style="font:500 14px/20px Roboto;color:var(--primary)">Server</span>
+      <div style="position:relative;height:56px;border:1px solid var(--onSurface);border-radius:4px;display:flex;align-items:center;padding:0 16px;font:400 16px/24px Roboto;opacity:.38"><span style="position:absolute;top:-9px;left:12px;padding:0 4px;background:var(--surface);font:400 12px/16px Roboto">Profile name</span>Office</div>
+      <div style="position:relative;height:56px;border:1px solid var(--onSurface);border-radius:4px;display:flex;align-items:center;padding:0 16px;font:400 16px/24px 'Roboto Mono',monospace;opacity:.38"><span style="position:absolute;top:-9px;left:12px;padding:0 4px;background:var(--surface);font:400 12px/16px Roboto">Host</span>jump.corp.example</div>
+      <div style="display:grid;grid-template-columns:96px 1fr;gap:12px;opacity:.38">
+        <div style="position:relative;height:56px;border:1px solid var(--onSurface);border-radius:4px;display:flex;align-items:center;padding:0 16px;font:400 16px/24px 'Roboto Mono',monospace"><span style="position:absolute;top:-9px;left:12px;padding:0 4px;background:var(--surface);font:400 12px/16px Roboto">Port</span>22</div>
+        <div style="position:relative;height:56px;border:1px solid var(--onSurface);border-radius:4px;display:flex;align-items:center;padding:0 16px;font:400 16px/24px 'Roboto Mono',monospace"><span style="position:absolute;top:-9px;left:12px;padding:0 4px;background:var(--surface);font:400 12px/16px Roboto">Username</span>alex</div>
+      </div>
+      <div style="height:1px;background:var(--outlineVariant);margin-top:8px"></div>
+      <span style="font:500 14px/20px Roboto;color:var(--primary)">Subnets</span>
+      <div style="display:flex;flex-direction:column;margin:-8px -16px 0">
+        <div style="height:56px;display:flex;align-items:center;gap:16px;padding:0 16px"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">lan</span><span style="flex:1;font:400 16px/24px 'Roboto Mono',monospace">10.20.0.0/16</span></div>
+        <div style="height:56px;display:flex;align-items:center;gap:16px;padding:0 16px"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">lan</span><span style="flex:1;font:400 16px/24px 'Roboto Mono',monospace">10.30.4.0/24</span></div>
+      </div>
+    </div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Fields disabled (<code>enabled = false</code>) but values remain selectable/copyable; remove buttons and Save hidden. Banner is a <code>Card</code> in <code>secondaryContainer</code>. When the tunnel stops, the banner animates out and fields enable without leaving the screen.</p>
+</div>
+
+<!-- P7 -->
+<div id="P7" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">P7</span><span style="font:500 18px/24px Roboto">Forget pinned key</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="P7 Forget key" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 12px 0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:400 22px/28px Roboto;padding-left:4px">Office</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Save</span></div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:16px;padding:8px 16px 0">
+      <span style="font:500 14px/20px Roboto;color:var(--primary)">Server identity</span>
+      <div style="border-radius:12px;background:var(--surfaceContainerHighest);height:168px"></div>
+    </div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.32);display:flex;align-items:center;justify-content:center;z-index:4">
+      <div style="width:312px;padding:24px;border-radius:28px;background:var(--surfaceContainerHigh);display:flex;flex-direction:column;gap:16px">
+        <span class="material-symbols-outlined" style="align-self:center;color:var(--error)">warning</span>
+        <span style="font:400 24px/32px Roboto;text-align:center;color:var(--onSurface)">Forget pinned key?</span>
+        <span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">sshovel will stop checking the identity of <span style="font-family:'Roboto Mono',monospace;font-size:13px">jump.corp.example</span> and ask you to verify a key on the next connection. If someone is intercepting the connection, you could end up trusting them. Only do this if you know the server’s key changed.</span>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px"><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Cancel</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--error);font:500 14px/20px Roboto">Forget key</span></div>
+      </div>
+    </div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Confirmation: snackbar “Pinned key forgotten”. The Server identity section then shows the P1 “Not verified yet” state.</p>
+</div>
+
+<!-- P8 -->
+<div id="P8" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">P8</span><span style="font:500 18px/24px Roboto">Delete profile</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="P8 Delete profile" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 12px 0 4px;background:var(--surfaceContainer)"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:400 22px/28px Roboto;padding-left:4px">Office</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Save</span></div>
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:16px;padding:0 16px 24px">
+      <div style="display:flex;align-items:center;gap:16px;min-height:72px"><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Set as default profile</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">Used by the tile and Always-on VPN</span></div><span style="width:52px;height:32px;border-radius:16px;background:var(--primary);position:relative;flex:none"><span style="position:absolute;right:4px;top:4px;width:24px;height:24px;border-radius:12px;background:var(--onPrimary)"></span></span></div>
+      <span style="height:40px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:20px;border:1px solid var(--error);color:var(--error);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">delete</span>Delete profile</span>
+    </div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.32);display:flex;align-items:center;justify-content:center;z-index:4">
+      <div style="width:312px;padding:24px;border-radius:28px;background:var(--surfaceContainerHigh);display:flex;flex-direction:column;gap:16px">
+        <span class="material-symbols-outlined" style="align-self:center;color:var(--secondary)">delete</span>
+        <span style="font:400 24px/32px Roboto;text-align:center;color:var(--onSurface)">Delete Office?</span>
+        <span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">The profile and its pinned host key are removed. Keys stay in Keys. Lab becomes the default profile.</span>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px"><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Cancel</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--error);font:500 14px/20px Roboto">Delete</span></div>
+      </div>
+    </div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Deleting returns to Home with snackbar “Profile deleted” (no undo — pinned key is gone). If it was the only profile, Home shows H0.</p>
+</div>
+
+<!-- V1 -->
+<div id="V1" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">V1</span><span style="font:500 18px/24px Roboto">Pre-permission explainer</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="V1 VPN explainer" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">close</span></div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:24px;padding:16px 24px 0">
+      <span class="material-symbols-outlined" style="width:72px;height:72px;border-radius:20px;background:var(--secondaryContainer);color:var(--onSecondaryContainer);display:grid;place-items:center;font-size:36px">vpn_lock</span>
+      <div style="display:flex;flex-direction:column;gap:8px"><span style="font:400 28px/36px Roboto">Android will ask to set up a VPN</span><span style="font:400 16px/24px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">sshovel uses Android’s VPN feature to route intranet traffic. The next screen is Android asking for that permission. You only grant it once.</span></div>
+      <div style="display:flex;flex-direction:column;border-radius:16px;background:var(--surfaceContainerLow);padding:8px 0">
+        <div style="display:flex;gap:16px;padding:12px 16px;align-items:flex-start"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">lan</span><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:500 14px/20px Roboto">Through the tunnel</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)"><span style="font-family:'Roboto Mono',monospace;font-size:13px">10.20.0.0/16</span>, <span style="font-family:'Roboto Mono',monospace;font-size:13px">10.30.4.0/24</span> and names ending in <span style="font-family:'Roboto Mono',monospace;font-size:13px">corp.example</span>, <span style="font-family:'Roboto Mono',monospace;font-size:13px">internal</span></span></div></div>
+        <div style="display:flex;gap:16px;padding:12px 16px;align-items:flex-start"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">public</span><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:500 14px/20px Roboto">Everything else</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">Uses your normal connection, unchanged</span></div></div>
+        <div style="display:flex;gap:16px;padding:12px 16px;align-items:flex-start"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">shield_lock</span><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:500 14px/20px Roboto">Nothing else leaves your phone</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">sshovel only connects to your SSH server, <span style="font-family:'Roboto Mono',monospace;font-size:13px">jump.corp.example</span>. No other servers, no analytics.</span></div></div>
+      </div>
+    </div>
+    <div style="flex:none;display:flex;justify-content:flex-end;padding:16px 24px"><span style="height:40px;display:flex;align-items:center;padding:0 24px;border-radius:20px;background:var(--primary);color:var(--onPrimary);font:500 14px/20px Roboto">Continue</span></div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Shown once, when <code>VpnService.prepare()</code> returns an intent. “Continue” launches the system dialog. Close / back = cancel; tunnel stays Off. Opened by the tile via <code>startActivityAndCollapse(PendingIntent)</code>.</p>
+</div>
+
+<!-- V2 -->
+<div id="V2" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">V2</span><span style="font:500 18px/24px Roboto">Permission denied · <code>VPN_PERMISSION</code></span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="V2 Permission denied" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">close</span></div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:24px;padding:16px 24px 0">
+      <span class="material-symbols-outlined" style="width:72px;height:72px;border-radius:20px;background:var(--errorContainer);color:var(--onErrorContainer);display:grid;place-items:center;font-size:36px">vpn_key_off</span>
+      <div style="display:flex;flex-direction:column;gap:8px"><span style="font:400 28px/36px Roboto">VPN permission needed</span><span style="font:400 16px/24px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">Android needs your permission before sshovel can route traffic. Nothing was changed on your phone.</span></div>
+      <div style="display:flex;gap:16px;padding:16px;border-radius:16px;background:var(--surfaceContainerHigh);align-items:flex-start"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">info</span><span style="flex:1;font:400 14px/20px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">If the Android dialog didn’t appear, another app may be set as Always-on VPN. Turn it off in Settings → Network → VPN.</span></div>
+      <span style="align-self:flex-start;height:40px;display:flex;align-items:center;gap:8px;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">open_in_new</span>Open VPN settings</span>
+    </div>
+    <div style="flex:none;display:flex;justify-content:space-between;align-items:center;padding:16px 24px"><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Not now</span><span style="height:40px;display:flex;align-items:center;gap:8px;padding:0 24px 0 16px;border-radius:20px;background:var(--primary);color:var(--onPrimary);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">refresh</span>Try again</span></div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+</div>
+
+<!-- S3 -->
+<div id="S3" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">S3</span><span style="font:500 18px/24px Roboto">Host key · first use (dialog)</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="S3 Host key first use" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 4px 0 16px"><span style="flex:1;font:400 22px/28px Roboto;margin-left:36px">sshovel</span></div>
+    <div style="flex:1;padding:8px 16px"><div style="height:260px;border-radius:16px;background:var(--errorContainer)"></div></div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.32);display:flex;align-items:center;justify-content:center;z-index:4">
+      <div style="width:340px;padding:24px;border-radius:28px;background:var(--surfaceContainerHigh);display:flex;flex-direction:column;gap:16px;color:var(--onSurface)">
+        <span class="material-symbols-outlined" style="align-self:center;color:var(--secondary)">fingerprint</span>
+        <span style="font:400 24px/32px Roboto;text-align:center">Verify server</span>
+        <span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant);text-align:center"><span style="font-family:'Roboto Mono',monospace;font-size:13px;color:var(--onSurface)">lab.example.net:22</span> sent this ED25519 key</span>
+        <div style="border-radius:12px;background:var(--surfaceContainerHighest);padding:12px 4px 12px 16px;display:flex;gap:4px;align-items:flex-start">
+          <div style="flex:1;display:grid;grid-template-columns:repeat(4,auto);justify-content:start;gap:2px 12px;font:500 15px/22px 'Roboto Mono',monospace"><span>Jc8W</span><span>q0Tn</span><span>Lp4x</span><span>Hs2F</span><span>aZ7m</span><span>Ev1R</span><span>uK9d</span><span>Ob3Y</span><span>wN6t</span><span>Gi5Q</span><span>fX0e</span><span>Mh8S</span><span>yD4</span></div>
+          <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;margin-top:-10px;color:var(--onSurfaceVariant)">content_copy</span>
+        </div>
+        <span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">Compare this with the output of <span style="font-family:'Roboto Mono',monospace;font-size:12px;color:var(--onSurface)">ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub</span> on the server.</span>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px"><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Cancel</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Trust this server</span></div>
+      </div>
+    </div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Triggered by the <code>HOST_KEY_UNVERIFIED</code> action “Verify server” or “Verify now” in the editor. The <code>ssh-keygen</code> path matches the key algorithm received. “Trust this server” → snackbar “Server trusted” and the connection proceeds. At 200 % font the dialog content scrolls; buttons stay pinned.</p>
+</div>
+
+<!-- S4 -->
+<div id="S4" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">S4</span><span style="font:500 18px/24px Roboto">Host key mismatch · full screen</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="S4 Host key mismatch" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:20px;padding:32px 24px 0">
+      <span class="material-symbols-outlined" style="width:72px;height:72px;border-radius:20px;background:var(--errorContainer);color:var(--onErrorContainer);display:grid;place-items:center;font-size:40px;font-variation-settings:'FILL' 1">gpp_bad</span>
+      <div style="display:flex;flex-direction:column;gap:8px"><span style="font:400 28px/36px Roboto">Server identity changed</span><span style="font:400 16px/24px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">The host key for <span style="font-family:'Roboto Mono',monospace;font-size:14px;color:var(--onSurface)">jump.corp.example:22</span> doesn’t match the one you trusted. The connection was blocked.</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="border-radius:12px;border:1px solid var(--outlineVariant);padding:12px;display:flex;flex-direction:column;gap:8px">
+          <span style="display:flex;align-items:center;gap:6px;font:500 12px/16px Roboto;color:var(--onSurfaceVariant)"><span class="material-symbols-outlined" style="font-size:16px">verified_user</span>Trusted</span>
+          <span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">ECDSA · 12 Mar 2026</span>
+          <div style="display:grid;grid-template-columns:auto auto;justify-content:start;gap:0 10px;font:500 13px/20px 'Roboto Mono',monospace"><span>nThb</span><span>Rk2m</span><span>XJvF</span><span>3e8p</span><span>Qz1L</span><span>Yw7c</span><span>Dh0K</span><span>sVa4</span><span>Tq9N</span><span>oM6u</span><span>Gf5B</span><span>wE+i</span><span>2rY</span></div>
+        </div>
+        <div style="border-radius:12px;border:2px solid var(--error);padding:11px;display:flex;flex-direction:column;gap:8px">
+          <span style="display:flex;align-items:center;gap:6px;font:500 12px/16px Roboto;color:var(--error)"><span class="material-symbols-outlined" style="font-size:16px">gpp_bad</span>Received now</span>
+          <span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">ED25519 · today 09:38</span>
+          <div style="display:grid;grid-template-columns:auto auto;justify-content:start;gap:0 10px;font:500 13px/20px 'Roboto Mono',monospace"><span>p7Vq</span><span>Zc0M</span><span>hR3k</span><span>Wy8n</span><span>Ue2B</span><span>tL6j</span><span>Xa9F</span><span>dK1s</span><span>Gm4H</span><span>rO5w</span><span>Ni7C</span><span>bQ3z</span><span>E0v</span></div>
+        </div>
+      </div>
+      <span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">Someone may be intercepting the connection, or the server was reinstalled and got a new key. Check with the server’s admin. If the change is expected, forget the pinned key in the profile and verify the new one.</span>
+    </div>
+    <div style="flex:none;display:flex;flex-direction:column;gap:8px;padding:16px 24px">
+      <span style="height:48px;display:flex;align-items:center;justify-content:center;border-radius:24px;background:var(--error);color:var(--onError);font:500 16px/24px Roboto">Disconnect</span>
+      <span style="height:48px;display:flex;align-items:center;justify-content:center;color:var(--primary);font:500 14px/20px Roboto">Review in profile</span>
+    </div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Full-screen route, no app bar, no close icon, no scrim to tap. Back gesture = “Disconnect” (predictive back previews Home H6). “Review in profile” opens P2 scrolled to Server identity. There is no accept action anywhere on this screen. Differing groups are not highlighted — every group differs; users compare whole fingerprints.</p>
+</div>
+
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { t: null };
+  componentDidMount() {
+    const chk = () => { if (window.SSHOVEL) this.setState({ t: window.SSHOVEL.themes }); else this._h = setTimeout(chk, 50); };
+    chk();
+  }
+  componentWillUnmount() { clearTimeout(this._h); }
+  renderVals() { return { themes: this.state.t || [] }; }
+}
+</script>
+</body>
+</html>

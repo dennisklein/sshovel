@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- sshovel — final copy. Sentence case, no exclamation marks. Machine values are passed as args and rendered in monospace. -->
+<resources>
+    <string name="app_name" translatable="false">sshovel</string>
+
+    <!-- State labels (indicator, tile subtitle) -->
+    <string name="state_off">Off</string>
+    <string name="state_connecting">Connecting…</string>
+    <string name="state_on">On</string>
+    <string name="state_on_uptime">On · %1$s</string>
+    <string name="state_reconnecting">Reconnecting…</string>
+    <string name="state_needs_attention">Needs attention</string>
+
+    <!-- Tile -->
+    <string name="tile_label" translatable="false">sshovel</string>
+    <string name="tile_sub_off">Off</string>
+    <string name="tile_sub_connecting">Connecting…</string>
+    <!-- On: subtitle is the profile name -->
+    <string name="tile_sub_reconnecting">Reconnecting…</string>
+    <string name="tile_sub_attention">Tap to fix</string>
+    <string name="tile_sub_setup">Set up</string>
+
+    <!-- Home -->
+    <string name="home_empty_title">No profiles yet</string>
+    <string name="home_empty_body">sshovel reaches your intranet through an SSH server you can already log in to with a key. Setup takes about two minutes.</string>
+    <string name="home_empty_action">Set up sshovel</string>
+    <string name="action_connect">Connect</string>
+    <string name="action_disconnect">Disconnect</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_retry_now">Retry now</string>
+    <string name="action_retry">Retry</string>
+    <string name="connecting_resolving">Resolving %1$s</string>
+    <string name="connecting_identity">Checking server identity</string>
+    <string name="connecting_auth">Authenticating with key “%1$s”</string>
+    <string name="connecting_tunnel">Starting tunnel</string>
+    <string name="stat_connections">Connections</string>
+    <string name="stat_connections_value">%1$d active</string>
+    <string name="stat_uptime">Uptime</string>
+    <string name="stat_data">Data in / out</string>
+    <string name="stat_dns">DNS tunneled / direct</string>
+    <string name="reconnect_next">Next retry in %1$d s</string>
+    <string name="reconnect_detail_network_changed">The network changed from %1$s to %2$s. Attempt %3$d. Intranet traffic is held until the tunnel is back.</string>
+    <string name="reconnect_detail_timeout">The server stopped answering. Attempt %1$d. Intranet traffic is held until the tunnel is back.</string>
+    <string name="always_on_title">Always-on VPN</string>
+    <string name="always_on_lockdown_title">Always-on VPN · Lockdown</string>
+    <string name="always_on_body">Set in system settings.</string>
+    <string name="always_on_lockdown_body">Set in system settings. Apps have no network while sshovel is off.</string>
+    <string name="profiles_header">Profiles</string>
+    <string name="profile_default_label">Default</string>
+    <plurals name="profile_subnets"><item quantity="one">%d subnet</item><item quantity="other">%d subnets</item></plurals>
+    <string name="add_profile">Add profile</string>
+    <string name="switch_title">Switch to %1$s?</string>
+    <string name="switch_body">This disconnects %1$s. %2$s connects through %3$s.</string>
+    <string name="switch_confirm">Switch</string>
+    <string name="review_server_identity">Review server identity</string>
+
+    <!-- Onboarding -->
+    <string name="onb_step">Step %1$d of %2$d</string>
+    <string name="onb_skip">Skip</string>
+    <string name="onb_next">Next</string>
+    <string name="onb_welcome_title">Reach your intranet from any app</string>
+    <string name="onb_welcome_body">sshovel opens one SSH connection to a jump host and sends only intranet traffic through it. Everything else keeps using your normal connection.</string>
+    <string name="onb_welcome_need">You need</string>
+    <string name="onb_welcome_need_server">An SSH server you can log in to with a key</string>
+    <string name="onb_welcome_need_subnets">The intranet subnets you want to reach</string>
+    <string name="onb_get_started">Get started</string>
+    <string name="onb_key_title">Create a key</string>
+    <string name="onb_key_body">sshovel generates a key pair on this phone. The private key is created inside secure hardware and can never leave it.</string>
+    <string name="key_name">Key name</string>
+    <string name="key_name_helper">Shown in the comment of the public key</string>
+    <string name="onb_key_create">Create key</string>
+    <string name="onb_key_created">Key created</string>
+    <string name="onb_key_strongbox_note">Stored in StrongBox, a separate security chip. Unlocking the phone is not required to use it, so the tunnel can reconnect in your pocket.</string>
+    <string name="onb_key_tee_note">Stored in secure hardware on this phone. Unlocking the phone is not required to use it.</string>
+    <string name="onb_key_import_instead">Import a key instead</string>
+    <string name="onb_install_title">Install the public key</string>
+    <string name="onb_install_body">Add this line to %1$s for your user on the server.</string>
+    <string name="onb_install_line_label">Suggested authorized_keys line</string>
+    <string name="onb_install_restrict_help">restrict turns off shell, agent and X11 access for this key; port-forwarding allows only what sshovel needs.</string>
+    <string name="onb_install_command_label">Or run this on the server</string>
+    <string name="onb_install_done">I’ve added it</string>
+    <string name="action_copy">Copy</string>
+    <string name="action_share">Share</string>
+    <string name="action_show_qr">Show QR code</string>
+    <string name="copied">Copied</string>
+    <string name="onb_server_title">Add your server</string>
+    <string name="onb_verify_title">Verify the server</string>
+    <string name="onb_verify_body">This is the first connection to %1$s. Confirm it is really your server before trusting it.</string>
+    <string name="verify_compare">Compare this with the output of %1$s on the server.</string>
+    <string name="action_trust_server">Trust this server</string>
+    <string name="server_trusted">Server trusted</string>
+    <string name="test_running">Testing connection…</string>
+    <string name="test_ok_title">Connection works</string>
+    <string name="test_ok_body">sshovel logged in and reached your intranet DNS.</string>
+    <string name="test_fail_title">Connection failed</string>
+    <string name="test_check_reachable">Server reachable</string>
+    <string name="test_check_identity">Server identity trusted</string>
+    <string name="test_check_key">Key accepted</string>
+    <string name="test_check_forwarding">Forwarding allowed</string>
+    <string name="test_check_dns">Intranet DNS answering</string>
+    <string name="test_not_tested">%1$s · not tested</string>
+    <string name="test_again">Test again</string>
+    <string name="test_continue_anyway">Continue anyway</string>
+    <string name="onb_tile_title">Add the Quick Settings tile</string>
+    <string name="onb_tile_body">The tile is the fastest way to connect. Tap it to turn the tunnel on or off with your default profile, %1$s. Long-press it to open sshovel.</string>
+    <string name="onb_tile_add">Add tile</string>
+    <string name="onb_not_now">Not now</string>
+    <string name="onb_tile_added_title">Tile added</string>
+    <string name="onb_tile_added_body">Swipe down twice from the top of the screen to find sshovel in Quick Settings.</string>
+    <string name="onb_tile_declined_title">Tile not added</string>
+    <string name="onb_tile_declined_body">You can add it any time: swipe down twice, tap Edit, and drag sshovel into your tiles.</string>
+    <string name="onb_tile_declined_note">You can still connect from the app or the notification.</string>
+    <string name="action_try_again">Try again</string>
+    <string name="onb_done_title">Setup complete</string>
+    <string name="onb_done_body">The tunnel is ready. Android will ask once for permission to set up a VPN connection.</string>
+    <string name="onb_connect_now">Connect now</string>
+    <string name="onb_go_home">Go to home</string>
+
+    <!-- Profile editor -->
+    <string name="profile_new">New profile</string>
+    <string name="action_save">Save</string>
+    <string name="section_server">Server</string>
+    <string name="section_auth">Authentication</string>
+    <string name="section_identity">Server identity</string>
+    <string name="section_subnets">Subnets</string>
+    <string name="section_dns">DNS</string>
+    <string name="section_apps">Apps</string>
+    <string name="section_advanced">Advanced</string>
+    <string name="field_profile_name">Profile name</string>
+    <string name="field_host">Host</string>
+    <string name="field_port">Port</string>
+    <string name="field_username">Username</string>
+    <string name="create_key">Create key</string>
+    <string name="import_key">Import key</string>
+    <string name="identity_unverified">Not verified yet. sshovel shows the host key on the first connection so you can compare it.</string>
+    <string name="identity_pinned">Pinned %1$s</string>
+    <string name="verify_now">Verify now</string>
+    <string name="forget_pinned_key">Forget pinned key</string>
+    <string name="discover_from_server">Discover from server</string>
+    <string name="discover_needs_verify">Verify the server first</string>
+    <string name="add_subnet_hint">Add subnet, e.g. 10.0.0.0/8</string>
+    <string name="add_subnet">Add subnet</string>
+    <string name="subnet_removed">Subnet removed</string>
+    <string name="action_undo">Undo</string>
+    <string name="excluded_subnets">Excluded subnets</string>
+    <plurals name="excluded_summary"><item quantity="one">%d subnet always uses the normal connection</item><item quantity="other">%d subnets always use the normal connection</item></plurals>
+    <string name="field_dns_server">Intranet DNS server</string>
+    <string name="dns_suffixes">Domain suffixes routed to this server</string>
+    <string name="add_suffix">Add suffix</string>
+    <string name="search_domains">Search domains</string>
+    <string name="add_domain">Add domain</string>
+    <string name="dns_reverse">Also resolve reverse lookups for routed subnets</string>
+    <string name="dns_hide_v6">Hide IPv6 answers for intranet names</string>
+    <string name="dns_hide_v6_help">Avoids delays when the tunnel is IPv4-only</string>
+    <string name="apps_all">All apps</string>
+    <string name="apps_only">Only selected</string>
+    <string name="apps_except">All except</string>
+    <plurals name="apps_count"><item quantity="one">%d app</item><item quantity="other">%d apps</item></plurals>
+    <string name="field_keepalive">Keepalive</string>
+    <string name="field_timeout">Connect timeout</string>
+    <string name="unit_seconds">s</string>
+    <string name="field_tunnel_subnet">Tunnel interface subnet</string>
+    <string name="field_mtu">MTU</string>
+    <string name="set_default">Set as default profile</string>
+    <string name="set_default_help">Used by the tile and Always-on VPN</string>
+    <string name="delete_profile">Delete profile</string>
+    <!-- Validation -->
+    <string name="err_cidr_invalid">Not a valid CIDR. Prefix length must be 0–32, e.g. %1$s</string>
+    <string name="err_cidr_covered">Already covered by %1$s</string>
+    <string name="err_cidr_overlap">Overlaps %1$s partially. Use one or the other.</string>
+    <string name="err_tunnel_overlap">Overlaps routed subnet %1$s. Default is %2$s</string>
+    <string name="err_dns_required">Required when domain suffixes are set</string>
+    <string name="err_ip_invalid">Must be an IPv4 address, e.g. 10.20.0.53</string>
+    <string name="err_required">Required</string>
+    <string name="err_port">Port must be 1–65535</string>
+    <string name="fix_problems">Fix %1$d problems to save</string>
+    <string name="show_first">Show first</string>
+    <string name="discard_title">Discard changes?</string>
+    <string name="discard_body">You changed %1$s in %2$s. They haven’t been saved.</string>
+    <string name="keep_editing">Keep editing</string>
+    <string name="discard">Discard</string>
+    <string name="readonly_title">Connected. Disconnect to edit.</string>
+    <string name="readonly_body">Changes to a running tunnel would drop open connections.</string>
+    <string name="forget_title">Forget pinned key?</string>
+    <string name="forget_body">sshovel will stop checking the identity of %1$s and ask you to verify a key on the next connection. If someone is intercepting the connection, you could end up trusting them. Only do this if you know the server’s key changed.</string>
+    <string name="forget_confirm">Forget key</string>
+    <string name="forgot_done">Pinned key forgotten</string>
+    <string name="delete_profile_title">Delete %1$s?</string>
+    <string name="delete_profile_body">The profile and its pinned host key are removed. Keys stay in Keys.</string>
+    <string name="delete_profile_new_default">%1$s becomes the default profile.</string>
+    <string name="delete">Delete</string>
+    <string name="profile_deleted">Profile deleted</string>
+
+    <!-- VPN permission -->
+    <string name="vpn_explainer_title">Android will ask to set up a VPN</string>
+    <string name="vpn_explainer_body">sshovel uses Android’s VPN feature to route intranet traffic. The next screen is Android asking for that permission. You only grant it once.</string>
+    <string name="vpn_explainer_tunnel">Through the tunnel</string>
+    <string name="vpn_explainer_tunnel_body">%1$s and names ending in %2$s</string>
+    <string name="vpn_explainer_else">Everything else</string>
+    <string name="vpn_explainer_else_body">Uses your normal connection, unchanged</string>
+    <string name="vpn_explainer_nothing">Nothing else leaves your phone</string>
+    <string name="vpn_explainer_nothing_body">sshovel only connects to your SSH server, %1$s. No other servers, no analytics.</string>
+    <string name="action_continue">Continue</string>
+    <string name="vpn_denied_note">If the Android dialog didn’t appear, another app may be set as Always-on VPN. Turn it off in Settings → Network → VPN.</string>
+    <string name="open_vpn_settings">Open VPN settings</string>
+
+    <!-- Host key -->
+    <string name="verify_server">Verify server</string>
+    <string name="verify_sent_key">%1$s sent this %2$s key</string>
+    <string name="mismatch_trusted">Trusted</string>
+    <string name="mismatch_received">Received now</string>
+    <string name="mismatch_explain">Someone may be intercepting the connection, or the server was reinstalled and got a new key. Check with the server’s admin. If the change is expected, forget the pinned key in the profile and verify the new one.</string>
+    <string name="review_in_profile">Review in profile</string>
+
+    <!-- Keys -->
+    <string name="keys_title">Keys</string>
+    <string name="keys_empty_title">No keys yet</string>
+    <string name="keys_empty_body">Create a key on this phone or import one you already use.</string>
+    <string name="key_created_here">%1$s, created on this phone</string>
+    <string name="key_imported">%1$s, imported</string>
+    <string name="badge_strongbox">StrongBox</string>
+    <string name="badge_hardware">Hardware-backed</string>
+    <string name="badge_encrypted">Encrypted on device</string>
+    <string name="badge_not_exportable">Not exportable</string>
+    <string name="key_not_used">Not used</string>
+    <string name="key_type">Type</string>
+    <string name="key_created">Created</string>
+    <string name="key_used_by">Used by</string>
+    <string name="public_key">Public key</string>
+    <string name="fingerprint">Fingerprint</string>
+    <string name="copy_as_authorized">Copy as authorized_keys line</string>
+    <string name="key_in_use_title">Key is in use</string>
+    <string name="key_in_use_body">%1$s sign in with “%2$s”. Choose a different key in those profiles, then delete this one.</string>
+    <string name="open_profile">Open %1$s</string>
+    <string name="ok">OK</string>
+    <string name="delete_key_title">Delete %1$s?</string>
+    <string name="delete_key_body">The private key is destroyed and can’t be recovered. Servers that trust it will need a new key.</string>
+    <string name="key_deleted">Key deleted</string>
+    <string name="rename_key">Rename key</string>
+    <string name="key_renamed">Key renamed</string>
+    <string name="create_key_note_strongbox">ECDSA P-256, generated in StrongBox. The private key can never leave this device — not in backups, not to another phone. If the phone is reset, the key is gone.</string>
+    <string name="create_key_note_tee">ECDSA P-256, generated in secure hardware. The private key can never leave this device — not in backups, not to another phone. If the phone is reset, the key is gone.</string>
+    <string name="create">Create</string>
+    <string name="key_created_toast">Key created</string>
+    <string name="import_paste">Paste text</string>
+    <string name="import_file">Pick a file</string>
+    <string name="import_choose_file">Choose file</string>
+    <string name="private_key">Private key</string>
+    <string name="passphrase_optional">Passphrase (optional)</string>
+    <string name="passphrase">Passphrase</string>
+    <string name="import_note">Stored encrypted with a hardware-backed key on this phone. Unlike created keys, a copy of this key exists wherever it came from.</string>
+    <string name="import_action">Import</string>
+    <string name="key_imported_toast">Key imported</string>
+    <string name="err_wrong_passphrase">Wrong passphrase. The key is encrypted; check the passphrase and try again.</string>
+    <string name="err_unsupported_key">Unsupported format. Use an OpenSSH or PEM private key (Ed25519, ECDSA, or RSA 2048+).</string>
+    <string name="err_unsupported_putty">Convert PuTTY keys with puttygen -O private-openssh.</string>
+    <string name="qr_title">Public key QR code</string>
+    <string name="qr_note">Scan it from a computer, then paste the line into %1$s on the server.</string>
+    <string name="done">Done</string>
+
+    <!-- App picker -->
+    <string name="apps_only_title">Tunnel only these apps</string>
+    <string name="apps_except_title">Don’t tunnel these apps</string>
+    <string name="search_apps">Search apps</string>
+    <string name="show_system_apps">Show system apps</string>
+    <string name="apps_selected">%1$d of %2$d selected</string>
+    <string name="select_all">Select all</string>
+    <string name="clear">Clear</string>
+    <string name="apps_no_match">No apps match “%1$s”</string>
+
+    <!-- Discover -->
+    <string name="discover_title">Discover subnets</string>
+    <string name="discover_loading">Reading routes from the server…</string>
+    <string name="discover_count">%1$d routes on %2$s</string>
+    <string name="discover_already">already added</string>
+    <string name="discover_default_route">Default route — would send all traffic through the tunnel</string>
+    <string name="discover_link_local">Link-local — only meaningful on the server</string>
+    <string name="discover_add_selected">Add selected (%1$d)</string>
+    <string name="discover_err_cmd_title">Server doesn’t allow commands</string>
+    <string name="discover_err_cmd_body">The key is limited to forwarding, so sshovel can’t run ip route. This is expected with the suggested restrict line. Add subnets by hand.</string>
+    <string name="discover_add_by_hand">Add by hand</string>
+    <string name="discover_err_timeout_title">No answer from the server</string>
+    <string name="discover_err_timeout_body">%1$s didn’t return routes within %2$d s. Check that you’re online and try again.</string>
+
+    <!-- Diagnostics -->
+    <string name="diagnostics">Diagnostics</string>
+    <string name="tab_events">Events</string>
+    <string name="tab_dns">DNS</string>
+    <string name="tab_connections">Connections</string>
+    <string name="level_all">All levels</string>
+    <string name="level_info">Info and above</string>
+    <string name="level_warn">Warnings and above</string>
+    <string name="level_error">Errors only</string>
+    <string name="comp_ssh">SSH</string>
+    <string name="comp_dns">DNS</string>
+    <string name="comp_tunnel">Tunnel</string>
+    <string name="comp_system">System</string>
+    <string name="sev_warning">warning</string>
+    <string name="sev_error">error</string>
+    <string name="paused_new">Paused · %1$d new</string>
+    <string name="jump_to_latest">Jump to latest</string>
+    <string name="copy_all">Copy all</string>
+    <string name="share_text_file">Share as text file</string>
+    <string name="cleared">Cleared</string>
+    <string name="dns_summary">%1$d tunneled · %2$d direct · %3$d failed</string>
+    <string name="route_tunnel">Tunnel</string>
+    <string name="route_direct">Direct</string>
+    <string name="dns_outside_warning">Resolved outside routed subnets, so traffic won’t use the tunnel. Add %1$s or its subnet to the profile.</string>
+    <string name="conn_failed_header">Failed · %1$d</string>
+    <string name="conn_active_header">Active · %1$d</string>
+    <string name="conn_unknown_app">Unknown app</string>
+    <string name="conn_refused_title">Refused by server policy</string>
+    <string name="conn_refused_body">The jump host blocked forwarding to this address (PermitOpen or firewall). Ask the admin to allow it.</string>
+    <string name="conn_unreachable_title">Destination unreachable</string>
+    <string name="conn_unreachable_body">The jump host has no route to this address. Check the subnet and the server’s network.</string>
+    <string name="conn_timeout_title">Timed out</string>
+    <string name="conn_tunnel_down_title">Tunnel down</string>
+    <string name="diag_off_title">Tunnel is off</string>
+    <string name="diag_off_body">Connect to see events, DNS queries and connections. Events from the last session are kept until you clear them.</string>
+    <string name="diag_none_title">No events yet</string>
+    <string name="diag_none_body">Events appear here as sshovel connects and routes traffic.</string>
+    <string name="diag_no_dns">No DNS queries yet</string>
+    <string name="diag_no_conn">No connections yet</string>
+
+    <!-- Settings -->
+    <string name="settings">Settings</string>
+    <string name="settings_tunnel">Tunnel</string>
+    <string name="settings_default_profile">Default profile</string>
+    <string name="settings_default_profile_sub">%1$s · used by the tile and Always-on VPN</string>
+    <string name="settings_require_unlock">Require unlock to use the tile</string>
+    <string name="settings_require_unlock_sub">On the lock screen the tile asks you to unlock first</string>
+    <string name="settings_always_on">Always-on VPN and Lockdown</string>
+    <string name="settings_always_on_sub">Set in Android’s VPN settings. Always-on starts the default profile at boot; Lockdown blocks apps when sshovel is off.</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_theme">Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="settings_wallpaper">Use wallpaper colors</string>
+    <string name="settings_wallpaper_sub">Off uses sshovel’s blue theme</string>
+    <string name="settings_rerun">Run setup again</string>
+    <string name="settings_about">About sshovel</string>
+    <string name="settings_version">Version %1$s (%2$d)</string>
+    <string name="settings_licenses">Open-source licenses</string>
+
+    <!-- Notifications -->
+    <string name="channel_status">Tunnel status</string>
+    <string name="channel_problems">Problems</string>
+    <string name="notif_connecting">Connecting to %1$s</string>
+    <string name="notif_on">Connected to %1$s</string>
+    <string name="notif_on_text">%1$s · %2$s</string>
+    <string name="notif_on_warning">Connected to %1$s · 1 warning</string>
+    <string name="notif_reconnecting">Reconnecting to %1$s</string>
+    <string name="notif_reconnecting_text">Network changed. Next retry in %1$d s</string>
+    <string name="notif_diagnostics">Diagnostics</string>
+    <string name="notif_review">Review</string>
+    <plurals name="active_connections"><item quantity="one">%d active connection</item><item quantity="other">%d active connections</item></plurals>
+
+    <!-- Error catalog §8 -->
+    <string name="err_auth_title">Key not accepted</string>
+    <string name="err_auth_body">%1$s rejected the key “%2$s”. Add its public key to ~/.ssh/authorized_keys on the server.</string>
+    <string name="err_auth_action">Show public key</string>
+    <string name="err_unreachable_title">Can’t reach server</string>
+    <string name="err_unreachable_body">No response from %1$s. Check the address and that you’re online.</string>
+    <string name="err_unreachable_action">Retry</string>
+    <string name="err_unverified_title">Verify server first</string>
+    <string name="err_unverified_body">This server’s identity hasn’t been confirmed yet.</string>
+    <string name="err_unverified_action">Verify server</string>
+    <string name="err_mismatch_title">Server identity changed</string>
+    <string name="err_mismatch_body">The host key for %1$s doesn’t match the one you trusted. The connection was blocked.</string>
+    <string name="err_mismatch_action">Disconnect</string>
+    <string name="err_forwarding_title">Forwarding not allowed</string>
+    <string name="err_forwarding_body">The server refused to forward connections. Ask the admin to enable AllowTcpForwarding.</string>
+    <string name="err_forwarding_action">View diagnostics</string>
+    <string name="err_dns_title">Intranet DNS not answering</string>
+    <string name="err_dns_body">%1$s isn’t answering through the tunnel. Intranet names won’t resolve.</string>
+    <string name="err_dns_action">View diagnostics</string>
+    <string name="err_network_title">No network</string>
+    <string name="err_network_body">sshovel will reconnect when you’re back online.</string>
+    <string name="err_revoked_title">Disconnected by another VPN</string>
+    <string name="err_revoked_body">Android allows one VPN at a time, and another app took over.</string>
+    <string name="err_revoked_action">Reconnect</string>
+    <string name="err_permission_title">VPN permission needed</string>
+    <string name="err_permission_body">Android needs your permission before sshovel can route traffic.</string>
+    <string name="err_permission_body_denied">Android needs your permission before sshovel can route traffic. Nothing was changed on your phone.</string>
+    <string name="err_permission_action">Continue</string>
+    <string name="err_key_unavailable_title">Key unavailable</string>
+    <string name="err_key_unavailable_body">The key “%1$s” can’t be used. It may have been deleted or invalidated by a security change.</string>
+    <string name="err_key_unavailable_action">Choose key</string>
+
+    <!-- TalkBack -->
+    <string name="a11y_connecting">Connecting to %1$s</string>
+    <string name="a11y_connected">Connected to %1$s</string>
+    <string name="a11y_reconnected">Reconnected to %1$s</string>
+    <string name="a11y_reconnecting">Connection lost. Reconnecting to %1$s. Next retry in %2$d seconds.</string>
+    <string name="a11y_disconnected">Disconnected</string>
+    <string name="a11y_attention">Needs attention. %1$s. %2$s button available.</string>
+    <string name="a11y_warning">Warning: %1$s</string>
+    <string name="a11y_check_passed">%1$s passed</string>
+    <string name="a11y_check_failed">%1$s failed: %2$s</string>
+    <string name="cd_keys">Keys</string>
+    <string name="cd_diagnostics">Diagnostics</string>
+    <string name="cd_settings">Settings</string>
+    <string name="cd_close">Close</string>
+    <string name="cd_copy_fingerprint">Copy fingerprint</string>
+    <string name="cd_copy_command">Copy command</string>
+    <string name="cd_expand_key">Show full key</string>
+    <string name="cd_collapse_key">Collapse key</string>
+    <string name="cd_remove">Remove %1$s</string>
+    <string name="cd_add_subnet">Add subnet</string>
+    <string name="cd_import_key">Import key</string>
+    <string name="cd_rename_key">Rename key</string>
+    <string name="cd_delete_key">Delete key</string>
+    <string name="cd_pause">Pause updates</string>
+    <string name="cd_resume">Resume updates</string>
+    <string name="cd_share_file">Share as text file</string>
+    <string name="cd_more">More options</string>
+    <string name="cd_show_pass">Show passphrase</string>
+    <string name="cd_hide_pass">Hide passphrase</string>
+    <string name="cd_use_profile">Use %1$s</string>
+</resources>

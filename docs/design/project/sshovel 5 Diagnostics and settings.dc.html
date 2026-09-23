@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0..1,0&display=block">
+<script src="sshovel-theme.js"></script>
+<style>body{margin:0;background:#E4E5EA;font-family:Roboto,system-ui,sans-serif;color:#191C20}a{color:#3A608F}a:hover{color:#1F4876}</style>
+</helmet>
+<div style="padding:64px;display:flex;flex-direction:column;gap:56px">
+<header style="display:flex;flex-direction:column;gap:8px;max-width:900px">
+  <span style="font:500 12px/16px Roboto;letter-spacing:1px;text-transform:uppercase;color:#43474E">sshovel · design handoff · 5 of 6</span>
+  <h1 style="margin:0;font:400 45px/52px Roboto">Diagnostics and settings</h1>
+  <p style="margin:0;font:400 16px/24px Roboto;color:#43474E;text-wrap:pretty">§5.9 (G1–G4), §5.10 (G5). Diagnostics uses <code>PrimaryTabRow</code> + <code>HorizontalPager</code>. Data shown is storyboard 6: <span style="font-family:'Roboto Mono',monospace">wiki.corp.example</span> fails in the browser. <a href="sshovel 1 Home.dc.html">← Home</a></p>
+</header>
+<section style="display:flex;flex-wrap:wrap;gap:64px 72px">
+
+<!-- G1 -->
+<div id="G1" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">G1</span><span style="font:500 18px/24px Roboto">Events</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="G1 Events" style="{{ t.frame }}">
+    <dc-import name="StatusBar" vpn="{{ true }}" mobile="{{ true }}" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:400 22px/28px Roboto;padding-left:4px">Diagnostics</span><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">pause</span><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">share</span><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">more_vert</span></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);height:48px;flex:none;border-bottom:1px solid var(--outlineVariant);font:500 14px/20px Roboto">
+      <span style="display:flex;align-items:center;justify-content:center;color:var(--primary);position:relative">Events<span style="position:absolute;bottom:0;left:50%;width:56px;margin-left:-28px;height:3px;border-radius:3px 3px 0 0;background:var(--primary)"></span></span>
+      <span style="display:flex;align-items:center;justify-content:center;gap:6px;color:var(--onSurfaceVariant)">DNS<span style="min-width:16px;height:16px;padding:0 4px;box-sizing:border-box;border-radius:8px;background:var(--error);color:var(--onError);font:500 11px/16px Roboto;text-align:center">1</span></span>
+      <span style="display:flex;align-items:center;justify-content:center;gap:6px;color:var(--onSurfaceVariant)">Connections<span style="min-width:16px;height:16px;padding:0 4px;box-sizing:border-box;border-radius:8px;background:var(--error);color:var(--onError);font:500 11px/16px Roboto;text-align:center">1</span></span>
+    </div>
+    <div style="display:flex;gap:8px;padding:12px 16px;flex:none;overflow:hidden">
+      <span style="height:32px;display:inline-flex;align-items:center;gap:4px;padding:0 8px 0 12px;border-radius:8px;border:1px solid var(--outlineVariant);font:500 14px/20px Roboto;white-space:nowrap">All levels<span class="material-symbols-outlined" style="font-size:18px">arrow_drop_down</span></span>
+      <span style="height:32px;display:inline-flex;align-items:center;gap:6px;padding:0 12px 0 8px;border-radius:8px;background:var(--secondaryContainer);color:var(--onSecondaryContainer);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">check</span>SSH</span>
+      <span style="height:32px;display:inline-flex;align-items:center;gap:6px;padding:0 12px 0 8px;border-radius:8px;background:var(--secondaryContainer);color:var(--onSecondaryContainer);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">check</span>DNS</span>
+      <span style="height:32px;display:inline-flex;align-items:center;gap:6px;padding:0 12px 0 8px;border-radius:8px;background:var(--secondaryContainer);color:var(--onSecondaryContainer);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">check</span>Tunnel</span>
+      <span style="height:32px;display:inline-flex;align-items:center;padding:0 12px;border-radius:8px;border:1px solid var(--outlineVariant);font:500 14px/20px Roboto">System</span>
+    </div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;font:400 12px/16px 'Roboto Mono',monospace">
+      <div style="display:flex;gap:8px;padding:8px 16px;align-items:flex-start"><span class="material-symbols-outlined" style="font-size:18px;color:var(--onSurfaceVariant)">info</span><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="color:var(--onSurfaceVariant)">09:38:12.010 · SSH</span><span>Connection lost: read timeout after 30 s</span></div></div>
+      <div style="display:flex;gap:8px;padding:8px 16px;align-items:flex-start"><span class="material-symbols-outlined" style="font-size:18px;color:var(--onSurfaceVariant)">info</span><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="color:var(--onSurfaceVariant)">09:38:14.310 · SSH</span><span>Connected to jump.corp.example:22, host key matches pin</span></div></div>
+      <div style="display:flex;gap:8px;padding:8px 16px;align-items:flex-start"><span class="material-symbols-outlined" style="font-size:18px;color:var(--onSurfaceVariant)">info</span><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="color:var(--onSurfaceVariant)">09:38:14.402 · SSH</span><span>Authenticated as alex with "Pixel StrongBox"</span></div></div>
+      <div style="display:flex;gap:8px;padding:8px 16px;align-items:flex-start"><span class="material-symbols-outlined" style="font-size:18px;color:var(--onSurfaceVariant)">info</span><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="color:var(--onSurfaceVariant)">09:38:14.415 · Tunnel</span><span>tun0 up 10.99.0.2/24 mtu 1400, 3 routes</span></div></div>
+      <div style="display:flex;gap:8px;padding:8px 16px;align-items:flex-start"><span class="material-symbols-outlined" style="font-size:18px;color:var(--onSurfaceVariant)">info</span><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="color:var(--onSurfaceVariant)">09:38:14.420 · DNS</span><span>corp.example, internal → 10.20.0.53</span></div></div>
+      <div style="display:flex;gap:8px;padding:8px 16px;align-items:flex-start;background:var(--stateReconnectingContainer);color:var(--onStateReconnectingContainer)"><span class="material-symbols-outlined" style="font-size:18px">warning</span><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span>09:41:01.877 · DNS · warning</span><span>git.corp.example → 203.0.113.40 is outside routed subnets</span></div></div>
+      <div style="display:flex;gap:8px;padding:8px 16px;align-items:flex-start"><span class="material-symbols-outlined" style="font-size:18px;color:var(--onSurfaceVariant)">info</span><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="color:var(--onSurfaceVariant)">09:41:02.118 · DNS</span><span>wiki.corp.example A → 10.20.7.15 via tunnel, 14 ms</span></div></div>
+      <div style="display:flex;gap:8px;padding:8px 16px;align-items:flex-start;background:var(--errorContainer);color:var(--onErrorContainer)"><span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1">error</span><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span>09:41:02.301 · Tunnel · error</span><span>10.20.7.15:443 refused by server: open failed, administratively prohibited</span></div></div>
+    </div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Newest at bottom, auto-scroll while at bottom (a “Jump to latest” <code>SmallFloatingActionButton</code> appears otherwise). Severity = icon + word (“warning”, “error”) + container color. Level menu: All levels / Info and above / Warnings and above / Errors only. Overflow: Copy all, Share as text file, Clear. Pause swaps to <code>play_arrow</code> and shows “Paused · 14 new” under the tabs. Tab badges count unread warnings/failures.</p>
+</div>
+
+<!-- G2 -->
+<div id="G2" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">G2</span><span style="font:500 18px/24px Roboto">DNS</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="G2 DNS" style="{{ t.frame }}">
+    <dc-import name="StatusBar" vpn="{{ true }}" mobile="{{ true }}" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:400 22px/28px Roboto;padding-left:4px">Diagnostics</span><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">pause</span><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">share</span><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">more_vert</span></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);height:48px;flex:none;border-bottom:1px solid var(--outlineVariant);font:500 14px/20px Roboto">
+      <span style="display:flex;align-items:center;justify-content:center;color:var(--onSurfaceVariant)">Events</span>
+      <span style="display:flex;align-items:center;justify-content:center;color:var(--primary);position:relative">DNS<span style="position:absolute;bottom:0;left:50%;width:40px;margin-left:-20px;height:3px;border-radius:3px 3px 0 0;background:var(--primary)"></span></span>
+      <span style="display:flex;align-items:center;justify-content:center;gap:6px;color:var(--onSurfaceVariant)">Connections<span style="min-width:16px;height:16px;padding:0 4px;box-sizing:border-box;border-radius:8px;background:var(--error);color:var(--onError);font:500 11px/16px Roboto;text-align:center">1</span></span>
+    </div>
+    <div style="display:flex;gap:16px;padding:12px 16px;flex:none;font:400 14px/20px Roboto;color:var(--onSurfaceVariant)"><span>214 tunneled</span><span>1,902 direct</span><span>3 failed</span></div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+      <div style="display:flex;flex-direction:column;gap:6px;padding:12px 16px;border-top:1px solid var(--outlineVariant)">
+        <div style="display:flex;align-items:center;gap:8px"><span style="flex:1;font:500 14px/20px 'Roboto Mono',monospace">wiki.corp.example</span><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">14 ms · 09:41:02</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px 0 6px;border-radius:6px;background:var(--primaryContainer);color:var(--onPrimaryContainer);font:500 12px/16px Roboto"><span class="material-symbols-outlined" style="font-size:16px">vpn_lock</span>Tunnel</span><span style="font:400 13px/20px 'Roboto Mono',monospace">A 10.20.7.15</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;padding:12px 16px;border-top:1px solid var(--outlineVariant);background:var(--stateReconnectingContainer);color:var(--onStateReconnectingContainer)">
+        <div style="display:flex;align-items:center;gap:8px"><span style="flex:1;font:500 14px/20px 'Roboto Mono',monospace">git.corp.example</span><span style="font:400 12px/16px Roboto">22 ms · 09:41:01</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px 0 6px;border-radius:6px;background:var(--primaryContainer);color:var(--onPrimaryContainer);font:500 12px/16px Roboto"><span class="material-symbols-outlined" style="font-size:16px">vpn_lock</span>Tunnel</span><span style="font:400 13px/20px 'Roboto Mono',monospace">A 203.0.113.40</span></div>
+        <div style="display:flex;gap:6px;align-items:flex-start;font:400 12px/16px Roboto"><span class="material-symbols-outlined" style="font-size:16px">warning</span><span style="flex:1">Resolved outside routed subnets, so traffic won’t use the tunnel. Add <span style="font-family:'Roboto Mono',monospace">203.0.113.40/32</span> or its subnet to the profile.</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;padding:12px 16px;border-top:1px solid var(--outlineVariant)">
+        <div style="display:flex;align-items:center;gap:8px"><span style="flex:1;font:500 14px/20px 'Roboto Mono',monospace">printer.internal</span><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">31 ms · 09:40:44</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px 0 6px;border-radius:6px;background:var(--primaryContainer);color:var(--onPrimaryContainer);font:500 12px/16px Roboto"><span class="material-symbols-outlined" style="font-size:16px">vpn_lock</span>Tunnel</span><span style="display:inline-flex;align-items:center;gap:4px;font:500 13px/20px 'Roboto Mono',monospace;color:var(--error)"><span class="material-symbols-outlined" style="font-size:16px">error</span>NXDOMAIN</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;padding:12px 16px;border-top:1px solid var(--outlineVariant)">
+        <div style="display:flex;align-items:center;gap:8px"><span style="flex:1;font:500 14px/20px 'Roboto Mono',monospace">www.youtube.com</span><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">9 ms · 09:40:40</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px 0 6px;border-radius:6px;border:1px solid var(--outlineVariant);color:var(--onSurfaceVariant);font:500 12px/16px Roboto"><span class="material-symbols-outlined" style="font-size:16px">public</span>Direct</span><span style="font:400 13px/20px 'Roboto Mono',monospace">A 142.250.185.78 +3</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;padding:12px 16px;border-top:1px solid var(--outlineVariant)">
+        <div style="display:flex;align-items:center;gap:8px"><span style="flex:1;font:500 14px/20px 'Roboto Mono',monospace">15.7.20.10.in-addr.arpa</span><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">11 ms · 09:40:38</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px 0 6px;border-radius:6px;background:var(--primaryContainer);color:var(--onPrimaryContainer);font:500 12px/16px Roboto"><span class="material-symbols-outlined" style="font-size:16px">vpn_lock</span>Tunnel</span><span style="font:400 13px/20px 'Roboto Mono',monospace">PTR wiki.corp.example</span></div>
+      </div>
+    </div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Newest first. Route badge: <code>vpn_lock</code> “Tunnel” (primaryContainer) or <code>public</code> “Direct” (outlined). Errors show rcode (NXDOMAIN, SERVFAIL, TIMEOUT) with icon. Long-press a row copies the name. Direct queries collapse to the last 200.</p>
+</div>
+
+<!-- G3 -->
+<div id="G3" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">G3</span><span style="font:500 18px/24px Roboto">Connections · overflow menu open</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="G3 Connections" style="{{ t.frame }}">
+    <dc-import name="StatusBar" vpn="{{ true }}" mobile="{{ true }}" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:400 22px/28px Roboto;padding-left:4px">Diagnostics</span><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">pause</span><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">share</span><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">more_vert</span></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);height:48px;flex:none;border-bottom:1px solid var(--outlineVariant);font:500 14px/20px Roboto">
+      <span style="display:flex;align-items:center;justify-content:center;color:var(--onSurfaceVariant)">Events</span>
+      <span style="display:flex;align-items:center;justify-content:center;color:var(--onSurfaceVariant)">DNS</span>
+      <span style="display:flex;align-items:center;justify-content:center;color:var(--primary);position:relative">Connections<span style="position:absolute;bottom:0;left:50%;width:88px;margin-left:-44px;height:3px;border-radius:3px 3px 0 0;background:var(--primary)"></span></span>
+    </div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+      <span style="padding:16px 16px 8px;font:500 14px/20px Roboto;color:var(--primary)">Failed · 1</span>
+      <div style="display:flex;gap:16px;padding:12px 16px;align-items:flex-start;background:var(--errorContainer);color:var(--onErrorContainer)"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">block</span><div style="flex:1;display:flex;flex-direction:column;gap:2px"><div style="display:flex;gap:8px"><span style="flex:1;font:500 14px/20px 'Roboto Mono',monospace">10.20.7.15:443</span><span style="font:400 12px/16px Roboto">4 s ago</span></div><span style="font:400 14px/20px Roboto">Chrome · wiki.corp.example</span><span style="font:500 14px/20px Roboto">Refused by server policy</span><span style="font:400 12px/16px Roboto;text-wrap:pretty">The jump host blocked forwarding to this address (<span style="font-family:'Roboto Mono',monospace">PermitOpen</span> or firewall). Ask the admin to allow it.</span></div></div>
+      <span style="padding:16px 16px 8px;font:500 14px/20px Roboto;color:var(--primary)">Active · 12</span>
+      <div style="display:flex;gap:16px;padding:12px 16px;align-items:flex-start"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">swap_vert</span><div style="flex:1;display:flex;flex-direction:column;gap:2px"><div style="display:flex;gap:8px"><span style="flex:1;font:500 14px/20px 'Roboto Mono',monospace">10.20.3.8:22</span><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">18 min</span></div><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">Termux · ↓ 1.2 MB ↑ 88 KB</span></div></div>
+      <div style="display:flex;gap:16px;padding:12px 16px;align-items:flex-start"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">swap_vert</span><div style="flex:1;display:flex;flex-direction:column;gap:2px"><div style="display:flex;gap:8px"><span style="flex:1;font:500 14px/20px 'Roboto Mono',monospace">10.20.1.40:443</span><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">6 min</span></div><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">Slack · ↓ 3.4 MB ↑ 210 KB</span></div></div>
+      <div style="display:flex;gap:16px;padding:12px 16px;align-items:flex-start"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">swap_vert</span><div style="flex:1;display:flex;flex-direction:column;gap:2px"><div style="display:flex;gap:8px"><span style="flex:1;font:500 14px/20px 'Roboto Mono',monospace">172.16.8.12:8443</span><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">40 s</span></div><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">Unknown app · ↓ 12 KB ↑ 4 KB</span></div></div>
+    </div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+    <div style="position:absolute;top:96px;right:12px;width:220px;padding:8px 0;border-radius:4px;background:var(--surfaceContainer);box-shadow:0 2px 6px rgba(0,0,0,.2);z-index:4;display:flex;flex-direction:column">
+      <span style="height:48px;display:flex;align-items:center;gap:12px;padding:0 12px;font:400 14px/20px Roboto"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">content_copy</span>Copy all</span>
+      <span style="height:48px;display:flex;align-items:center;gap:12px;padding:0 12px;font:400 14px/20px Roboto"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">description</span>Share as text file</span>
+      <div style="height:1px;background:var(--outlineVariant);margin:8px 0"></div>
+      <span style="height:48px;display:flex;align-items:center;gap:12px;padding:0 12px;font:400 14px/20px Roboto"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">delete_sweep</span>Clear</span>
+    </div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E"><code>DropdownMenu</code>. Other failure reasons: “Destination unreachable”, “Timed out”, “Tunnel down”. Share icon in the bar = Share as text file (redacts nothing; the file name is <span style="font-family:'Roboto Mono',monospace">sshovel-diagnostics-2026-09-23-0941.txt</span>). “Clear” asks nothing; snackbar “Cleared” with “Undo”.</p>
+</div>
+
+<!-- G4 -->
+<div id="G4" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">G4</span><span style="font:500 18px/24px Roboto">Empty · tunnel off (light) / no events yet (dark)</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="G4 Diagnostics empty" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:400 22px/28px Roboto;padding-left:4px">Diagnostics</span></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);height:48px;flex:none;border-bottom:1px solid var(--outlineVariant);font:500 14px/20px Roboto">
+      <span style="display:flex;align-items:center;justify-content:center;color:var(--primary);position:relative">Events<span style="position:absolute;bottom:0;left:50%;width:56px;margin-left:-28px;height:3px;border-radius:3px 3px 0 0;background:var(--primary)"></span></span>
+      <span style="display:flex;align-items:center;justify-content:center;color:var(--onSurfaceVariant)">DNS</span>
+      <span style="display:flex;align-items:center;justify-content:center;color:var(--onSurfaceVariant)">Connections</span>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:0 40px 80px;text-align:center">
+      <sc-if value="{{ t.light }}" hint-placeholder-val="{{ true }}">
+        <span class="material-symbols-outlined" style="font-size:48px;color:var(--onSurfaceVariant)">vpn_key_off</span>
+        <span style="font:400 24px/32px Roboto">Tunnel is off</span>
+        <span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">Connect to see events, DNS queries and connections. Events from the last session are kept until you clear them.</span>
+        <span style="height:40px;display:flex;align-items:center;gap:8px;padding:0 24px 0 16px;border-radius:20px;background:var(--primary);color:var(--onPrimary);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">power_settings_new</span>Connect</span>
+      </sc-if>
+      <sc-if value="{{ t.dark }}" hint-placeholder-val="{{ false }}">
+        <span class="material-symbols-outlined" style="font-size:48px;color:var(--onSurfaceVariant)">receipt_long</span>
+        <span style="font:400 24px/32px Roboto">No events yet</span>
+        <span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">Events appear here as sshovel connects and routes traffic.</span>
+      </sc-if>
+    </div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Empty DNS tab: “No DNS queries yet”. Empty Connections tab: “No connections yet”. Pause/Share/overflow hidden when there is nothing to act on.</p>
+</div>
+
+<!-- G5 -->
+<div id="G5" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">G5</span><span style="font:500 18px/24px Roboto">Settings</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="G5 Settings" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:400 22px/28px Roboto;padding-left:4px">Settings</span></div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+      <span style="padding:8px 16px;font:500 14px/20px Roboto;color:var(--primary)">Tunnel</span>
+      <div style="min-height:72px;display:flex;align-items:center;gap:16px;padding:8px 24px 8px 16px"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">star</span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Default profile</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">Office · used by the tile and Always-on VPN</span></div></div>
+      <div style="min-height:72px;display:flex;align-items:center;gap:16px;padding:8px 24px 8px 16px"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">lock</span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Require unlock to use the tile</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">On the lock screen the tile asks you to unlock first</span></div><span style="width:52px;height:32px;border-radius:16px;background:var(--primary);position:relative;flex:none"><span style="position:absolute;right:4px;top:4px;width:24px;height:24px;border-radius:12px;background:var(--onPrimary)"></span></span></div>
+      <div style="min-height:88px;display:flex;align-items:center;gap:16px;padding:8px 24px 8px 16px"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">shield_lock</span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Always-on VPN and Lockdown</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">Set in Android’s VPN settings. Always-on starts the default profile at boot; Lockdown blocks apps when sshovel is off.</span></div><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">open_in_new</span></div>
+      <div style="min-height:56px;display:flex;align-items:center;gap:16px;padding:8px 24px 8px 16px"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">notifications</span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Notifications</span></div><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">open_in_new</span></div>
+      <div style="height:1px;background:var(--outlineVariant);margin:8px 0"></div>
+      <span style="padding:8px 16px;font:500 14px/20px Roboto;color:var(--primary)">Appearance</span>
+      <div style="display:flex;flex-direction:column;gap:8px;padding:8px 16px 12px">
+        <span style="font:400 16px/24px Roboto">Theme</span>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);height:40px;border:1px solid var(--outline);border-radius:20px;overflow:hidden;font:500 14px/20px Roboto"><span style="display:flex;align-items:center;justify-content:center;gap:6px;background:var(--secondaryContainer);color:var(--onSecondaryContainer);border-right:1px solid var(--outline)"><span class="material-symbols-outlined" style="font-size:18px">check</span>System</span><span style="display:flex;align-items:center;justify-content:center;border-right:1px solid var(--outline)">Light</span><span style="display:flex;align-items:center;justify-content:center">Dark</span></div>
+      </div>
+      <div style="min-height:72px;display:flex;align-items:center;gap:16px;padding:8px 24px 8px 16px"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">palette</span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Use wallpaper colors</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">Off uses sshovel’s blue theme</span></div><span style="width:52px;height:32px;border-radius:16px;background:var(--primary);position:relative;flex:none"><span style="position:absolute;right:4px;top:4px;width:24px;height:24px;border-radius:12px;background:var(--onPrimary)"></span></span></div>
+      <div style="height:1px;background:var(--outlineVariant);margin:8px 0"></div>
+      <div style="min-height:56px;display:flex;align-items:center;gap:16px;padding:8px 24px 8px 16px"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">restart_alt</span><span style="flex:1;font:400 16px/24px Roboto">Run setup again</span></div>
+      <div style="min-height:72px;display:flex;align-items:center;gap:16px;padding:8px 24px 8px 16px"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">info</span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">About sshovel</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">Version 1.0.0 (42)</span></div></div>
+      <div style="min-height:56px;display:flex;align-items:center;gap:16px;padding:8px 24px 8px 16px"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">description</span><span style="flex:1;font:400 16px/24px Roboto">Open-source licenses</span></div>
+    </div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Default profile opens a radio <code>AlertDialog</code>. Always-on row opens <code>Settings.ACTION_VPN_SETTINGS</code>; Notifications opens <code>ACTION_APP_NOTIFICATION_SETTINGS</code>. “Use wallpaper colors” is hidden below Android 12 (not applicable on API 36 — always shown). “Run setup again” lists the 7 steps so one can be reopened.</p>
+</div>
+
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { t: null };
+  componentDidMount() {
+    const chk = () => { if (window.SSHOVEL) this.setState({ t: window.SSHOVEL.themes.map(x => ({ ...x, light: x.id === 'light', dark: x.id === 'dark' })) }); else this._h = setTimeout(chk, 50); };
+    chk();
+  }
+  componentWillUnmount() { clearTimeout(this._h); }
+  renderVals() { return { themes: this.state.t || [] }; }
+}
+</script>
+</body>
+</html>

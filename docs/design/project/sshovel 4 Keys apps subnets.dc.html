@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0..1,0&display=block">
+<script src="sshovel-theme.js"></script>
+<style>body{margin:0;background:#E4E5EA;font-family:Roboto,system-ui,sans-serif;color:#191C20}a{color:#3A608F}a:hover{color:#1F4876}</style>
+</helmet>
+<div style="padding:64px;display:flex;flex-direction:column;gap:56px">
+<header style="display:flex;flex-direction:column;gap:8px;max-width:900px">
+  <span style="font:500 12px/16px Roboto;letter-spacing:1px;text-transform:uppercase;color:#43474E">sshovel · design handoff · 4 of 6</span>
+  <h1 style="margin:0;font:400 45px/52px Roboto">Keys, app picker, discover subnets</h1>
+  <p style="margin:0;font:400 16px/24px Roboto;color:#43474E;text-wrap:pretty">§5.6 (K1–K6), §5.7 (A1), §5.8 (D1–D3). Sheets are <code>ModalBottomSheet</code> with drag handle; predictive back collapses the sheet with a scale-down preview. <a href="sshovel 1 Home.dc.html">← Home</a></p>
+</header>
+<section style="display:flex;flex-wrap:wrap;gap:64px 72px">
+
+<!-- K1 -->
+<div id="K1" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">K1</span><span style="font:500 18px/24px Roboto">Keys</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="K1 Keys" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:400 22px/28px Roboto;padding-left:4px">Keys</span><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">file_open</span></div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;padding-top:8px">
+      <div style="display:flex;gap:16px;padding:12px 16px;align-items:flex-start">
+        <span class="material-symbols-outlined" style="width:40px;height:40px;flex:none;border-radius:20px;background:var(--primaryContainer);color:var(--onPrimaryContainer);display:grid;place-items:center">key</span>
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px"><span style="font:400 16px/24px Roboto">Pixel StrongBox</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">ECDSA P-256, created on this phone</span><span style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"><span style="display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px 0 6px;border-radius:6px;background:var(--secondaryContainer);color:var(--onSecondaryContainer);font:500 12px/16px Roboto"><span class="material-symbols-outlined" style="font-size:16px">memory</span>StrongBox</span><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">12 Mar 2026 · Office, Lab</span></span></div>
+        <span class="material-symbols-outlined" style="color:var(--onSurfaceVariant);align-self:center">chevron_right</span>
+      </div>
+      <div style="display:flex;gap:16px;padding:12px 16px;align-items:flex-start">
+        <span class="material-symbols-outlined" style="width:40px;height:40px;flex:none;border-radius:20px;background:var(--primaryContainer);color:var(--onPrimaryContainer);display:grid;place-items:center">key</span>
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px"><span style="font:400 16px/24px Roboto">Work profile key</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">ECDSA P-256, created on this phone</span><span style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"><span style="display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px 0 6px;border-radius:6px;background:var(--secondaryContainer);color:var(--onSecondaryContainer);font:500 12px/16px Roboto"><span class="material-symbols-outlined" style="font-size:16px">verified_user</span>Hardware-backed</span><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">2 Feb 2026 · Not used</span></span></div>
+        <span class="material-symbols-outlined" style="color:var(--onSurfaceVariant);align-self:center">chevron_right</span>
+      </div>
+      <div style="display:flex;gap:16px;padding:12px 16px;align-items:flex-start">
+        <span class="material-symbols-outlined" style="width:40px;height:40px;flex:none;border-radius:20px;background:var(--surfaceContainerHighest);color:var(--onSurfaceVariant);display:grid;place-items:center">key</span>
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px"><span style="font:400 16px/24px Roboto">laptop-import</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">Ed25519, imported</span><span style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"><span style="display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px 0 6px;border-radius:6px;border:1px solid var(--outlineVariant);color:var(--onSurfaceVariant);font:500 12px/16px Roboto"><span class="material-symbols-outlined" style="font-size:16px">lock</span>Encrypted on device</span><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">20 Jan 2026 · Home lab</span></span></div>
+        <span class="material-symbols-outlined" style="color:var(--onSurfaceVariant);align-self:center">chevron_right</span>
+      </div>
+      <div style="display:flex;gap:16px;padding:12px 16px;align-items:flex-start">
+        <span class="material-symbols-outlined" style="width:40px;height:40px;flex:none;border-radius:20px;background:var(--surfaceContainerHighest);color:var(--onSurfaceVariant);display:grid;place-items:center">key</span>
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px"><span style="font:400 16px/24px Roboto">legacy-rsa</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">RSA 3072, imported</span><span style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"><span style="display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px 0 6px;border-radius:6px;border:1px solid var(--outlineVariant);color:var(--onSurfaceVariant);font:500 12px/16px Roboto"><span class="material-symbols-outlined" style="font-size:16px">lock</span>Encrypted on device</span><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">4 Nov 2025 · Not used</span></span></div>
+        <span class="material-symbols-outlined" style="color:var(--onSurfaceVariant);align-self:center">chevron_right</span>
+      </div>
+    </div>
+    <span style="position:absolute;right:16px;bottom:40px;height:56px;display:flex;align-items:center;gap:12px;padding:0 20px 0 16px;border-radius:16px;background:var(--primaryContainer);color:var(--onPrimaryContainer);font:500 14px/20px Roboto;box-shadow:0 3px 6px rgba(0,0,0,.16)"><span class="material-symbols-outlined">add</span>Create key</span>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Leading disc uses <code>primaryContainer</code> for hardware keys, <code>surfaceContainerHighest</code> for imported — secondary cue only; the badge text is the source of truth. App-bar action <code>file_open</code> = “Import key”. Empty state: “No keys yet” / “Create a key on this phone or import one you already use.”</p>
+</div>
+
+<!-- K2 -->
+<div id="K2" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">K2</span><span style="font:500 18px/24px Roboto">Key detail</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="K2 Key detail" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:400 22px/28px Roboto;padding-left:4px">Pixel StrongBox</span><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">edit</span><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">delete</span></div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:16px;padding:8px 16px 0">
+      <div style="display:flex;flex-wrap:wrap;gap:8px"><span style="height:32px;display:inline-flex;align-items:center;gap:6px;padding:0 12px 0 8px;border-radius:8px;background:var(--secondaryContainer);color:var(--onSecondaryContainer);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">memory</span>StrongBox</span><span style="height:32px;display:inline-flex;align-items:center;gap:6px;padding:0 12px 0 8px;border-radius:8px;border:1px solid var(--outlineVariant);color:var(--onSurfaceVariant);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">block</span>Not exportable</span></div>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:8px 24px;font:400 14px/20px Roboto"><span style="color:var(--onSurfaceVariant)">Type</span><span>ECDSA P-256</span><span style="color:var(--onSurfaceVariant)">Created</span><span>12 Mar 2026 on this phone</span><span style="color:var(--onSurfaceVariant)">Used by</span><span>Office, Lab</span></div>
+      <div style="height:1px;background:var(--outlineVariant)"></div>
+      <span style="font:500 14px/20px Roboto;color:var(--primary)">Public key</span>
+      <div style="border-radius:12px;background:var(--surfaceContainerHighest);padding:12px 4px 12px 16px;display:flex;gap:4px;align-items:flex-start">
+        <span style="flex:1;font:400 13px/20px 'Roboto Mono',monospace;word-break:break-all">ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHk3Pj8fWm0q9sX2c7Qe1RtLbNf4aYh0uVwKz6JdE5gSxL2vN8pQw0mR3tY6uI9oP1aS4dF7gH0jK= pixel-strongbox@sshovel</span>
+        <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;margin-top:-12px;color:var(--onSurfaceVariant)">expand_less</span>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <span style="height:32px;display:inline-flex;align-items:center;gap:8px;padding:0 16px 0 8px;border-radius:8px;border:1px solid var(--outlineVariant);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px;color:var(--primary)">content_copy</span>Copy</span>
+        <span style="height:32px;display:inline-flex;align-items:center;gap:8px;padding:0 16px 0 8px;border-radius:8px;border:1px solid var(--outlineVariant);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px;color:var(--primary)">share</span>Share</span>
+        <span style="height:32px;display:inline-flex;align-items:center;gap:8px;padding:0 16px 0 8px;border-radius:8px;border:1px solid var(--outlineVariant);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px;color:var(--primary)">qr_code_2</span>Show QR code</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;min-height:48px"><span style="flex:1;font:400 14px/20px Roboto">Copy as <span style="font-family:'Roboto Mono',monospace;font-size:13px">authorized_keys</span> line</span><span style="width:52px;height:32px;border-radius:16px;background:var(--primary);position:relative;flex:none"><span style="position:absolute;right:4px;top:4px;width:24px;height:24px;border-radius:12px;background:var(--onPrimary)"></span></span></div>
+      <div style="height:1px;background:var(--outlineVariant)"></div>
+      <span style="font:500 14px/20px Roboto;color:var(--primary)">Fingerprint</span>
+      <div style="display:flex;gap:4px;align-items:flex-start"><span style="flex:1;font:500 14px/22px 'Roboto Mono',monospace;word-break:break-all">SHA256:4xQk Lr8Z m2Tn Wc5J hY0b Pq7V sE3u Nd1K oA6f Gi9R tM2w</span><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;margin-top:-12px;color:var(--onSurfaceVariant)">content_copy</span></div>
+    </div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Public key shown expanded. The “Copy as authorized_keys line” switch prefixes <code>restrict,port-forwarding</code> for Copy, Share and QR. Rename (<code>edit</code>) opens an <code>AlertDialog</code> with one text field; confirmation “Key renamed”.</p>
+</div>
+
+<!-- K3 -->
+<div id="K3" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">K3</span><span style="font:500 18px/24px Roboto">Delete blocked (key in use)</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="K3 Delete blocked" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:400 22px/28px Roboto;padding-left:4px">Pixel StrongBox</span><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">edit</span><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">delete</span></div>
+    <div style="flex:1"></div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.32);display:flex;align-items:center;justify-content:center;z-index:4">
+      <div style="width:312px;padding:24px;border-radius:28px;background:var(--surfaceContainerHigh);display:flex;flex-direction:column;gap:16px;color:var(--onSurface)">
+        <span class="material-symbols-outlined" style="align-self:center;color:var(--secondary)">link</span>
+        <span style="font:400 24px/32px Roboto;text-align:center">Key is in use</span>
+        <span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">Office and Lab sign in with “Pixel StrongBox”. Choose a different key in those profiles, then delete this one.</span>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px"><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Open Office</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">OK</span></div>
+      </div>
+    </div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Unused key → standard destructive dialog “Delete Pixel StrongBox?” / “The private key is destroyed and can’t be recovered. Servers that trust it will need a new key.” / Cancel · Delete (error). Confirmation “Key deleted”.</p>
+</div>
+
+<!-- K4 -->
+<div id="K4" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">K4</span><span style="font:500 18px/24px Roboto">Create key sheet</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="K4 Create key" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:400 22px/28px Roboto;padding-left:4px">Keys</span></div>
+    <div style="flex:1"></div>
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.32);z-index:4;display:flex;flex-direction:column;justify-content:flex-end">
+      <div style="border-radius:28px 28px 0 0;background:var(--surfaceContainerLow);display:flex;flex-direction:column;gap:20px;padding:0 24px;color:var(--onSurface)">
+        <div style="height:48px;display:grid;place-items:center"><span style="width:32px;height:4px;border-radius:2px;background:var(--onSurfaceVariant);opacity:.4"></span></div>
+        <span style="font:400 24px/32px Roboto;margin-top:-12px">Create key</span>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="position:relative;height:56px;border:2px solid var(--primary);border-radius:4px;display:flex;align-items:center;padding:0 15px;font:400 16px/24px Roboto"><span style="position:absolute;top:-9px;left:11px;padding:0 4px;background:var(--surfaceContainerLow);font:400 12px/16px Roboto;color:var(--primary)">Key name</span>Pixel StrongBox 2</div>
+          <span style="padding:0 16px;font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Shown in the public key comment</span>
+        </div>
+        <div style="display:flex;gap:16px;padding:16px;border-radius:12px;background:var(--surfaceContainerHigh);align-items:flex-start"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">memory</span><span style="flex:1;font:400 14px/20px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">ECDSA P-256, generated in StrongBox. The private key can never leave this device — not in backups, not to another phone. If the phone is reset, the key is gone.</span></div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;padding-bottom:8px"><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Cancel</span><span style="height:40px;display:flex;align-items:center;padding:0 24px;border-radius:20px;background:var(--primary);color:var(--onPrimary);font:500 14px/20px Roboto">Create</span></div>
+        <div style="height:24px;flex:none;display:grid;place-items:center;margin:0 -24px"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+      </div>
+    </div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Sheet sits above the IME (<code>imePadding</code>). Note text adapts: “…generated in secure hardware (TEE)…” when StrongBox is absent. On Create the button shows a 20 dp progress indicator; result snackbar “Key created”.</p>
+</div>
+
+<!-- K5 -->
+<div id="K5" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">K5</span><span style="font:500 18px/24px Roboto">Import key sheet · paste</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="K5 Import key" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="flex:1"></div>
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.32);z-index:4;display:flex;flex-direction:column;justify-content:flex-end">
+      <div style="border-radius:28px 28px 0 0;background:var(--surfaceContainerLow);display:flex;flex-direction:column;gap:20px;padding:0 24px;color:var(--onSurface)">
+        <div style="height:48px;display:grid;place-items:center"><span style="width:32px;height:4px;border-radius:2px;background:var(--onSurfaceVariant);opacity:.4"></span></div>
+        <span style="font:400 24px/32px Roboto;margin-top:-12px">Import key</span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;height:40px;border:1px solid var(--outline);border-radius:20px;overflow:hidden;font:500 14px/20px Roboto"><span style="display:flex;align-items:center;justify-content:center;gap:6px;background:var(--secondaryContainer);color:var(--onSecondaryContainer);border-right:1px solid var(--outline)"><span class="material-symbols-outlined" style="font-size:18px">check</span>Paste text</span><span style="display:flex;align-items:center;justify-content:center;gap:6px">Pick a file</span></div>
+        <div style="position:relative;height:120px;border:1px solid var(--outline);border-radius:4px;padding:16px;font:400 13px/20px 'Roboto Mono',monospace;overflow:hidden;box-sizing:border-box"><span style="position:absolute;top:-9px;left:12px;padding:0 4px;background:var(--surfaceContainerLow);font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Private key</span>-----BEGIN OPENSSH PRIVATE KEY-----<br>b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABB…<br>-----END OPENSSH PRIVATE KEY-----</div>
+        <div style="position:relative;height:56px;border:1px solid var(--outline);border-radius:4px;display:flex;align-items:center;padding:0 4px 0 16px;font:400 16px/24px Roboto"><span style="position:absolute;top:-9px;left:12px;padding:0 4px;background:var(--surfaceContainerLow);font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Passphrase (optional)</span><span style="flex:1;letter-spacing:3px">••••••••••</span><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">visibility</span></div>
+        <div style="position:relative;height:56px;border:1px solid var(--outline);border-radius:4px;display:flex;align-items:center;padding:0 16px;font:400 16px/24px Roboto"><span style="position:absolute;top:-9px;left:12px;padding:0 4px;background:var(--surfaceContainerLow);font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Key name</span>laptop-import</div>
+        <div style="display:flex;gap:12px;align-items:flex-start"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant);font-size:20px">info</span><span style="flex:1;font:400 12px/16px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">Stored encrypted with a hardware-backed key on this phone. Unlike created keys, a copy of this key exists wherever it came from.</span></div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;padding-bottom:8px"><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Cancel</span><span style="height:40px;display:flex;align-items:center;padding:0 24px;border-radius:20px;background:var(--primary);color:var(--onPrimary);font:500 14px/20px Roboto">Import</span></div>
+        <div style="height:24px;flex:none;display:grid;place-items:center;margin:0 -24px"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+      </div>
+    </div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">“Pick a file” replaces the text field with an outlined button “Choose file” (SAF <code>OpenDocument</code>) and, once picked, the file name in monospace. Clipboard is cleared after import. Success: sheet closes, snackbar “Key imported”, new row in K1.</p>
+</div>
+
+<!-- K5b -->
+<div id="K5b" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">K5b</span><span style="font:500 18px/24px Roboto">Import errors · wrong passphrase (light) / unsupported format (dark)</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="K5b Import errors" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="flex:1"></div>
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.32);z-index:4;display:flex;flex-direction:column;justify-content:flex-end">
+      <div style="border-radius:28px 28px 0 0;background:var(--surfaceContainerLow);display:flex;flex-direction:column;gap:20px;padding:0 24px;color:var(--onSurface)">
+        <div style="height:48px;display:grid;place-items:center"><span style="width:32px;height:4px;border-radius:2px;background:var(--onSurfaceVariant);opacity:.4"></span></div>
+        <span style="font:400 24px/32px Roboto;margin-top:-12px">Import key</span>
+        <sc-if value="{{ t.light }}" hint-placeholder-val="{{ true }}">
+          <div style="position:relative;height:88px;border:1px solid var(--outline);border-radius:4px;padding:16px;font:400 13px/20px 'Roboto Mono',monospace;overflow:hidden;box-sizing:border-box"><span style="position:absolute;top:-9px;left:12px;padding:0 4px;background:var(--surfaceContainerLow);font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Private key</span>-----BEGIN OPENSSH PRIVATE KEY-----<br>b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIA…</div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="position:relative;height:56px;border:2px solid var(--error);border-radius:4px;display:flex;align-items:center;padding:0 3px 0 15px;font:400 16px/24px Roboto"><span style="position:absolute;top:-9px;left:11px;padding:0 4px;background:var(--surfaceContainerLow);font:400 12px/16px Roboto;color:var(--error)">Passphrase</span><span style="flex:1;letter-spacing:3px">•••••••</span><span class="material-symbols-outlined" style="color:var(--error);font-variation-settings:'FILL' 1;width:48px;height:48px;display:grid;place-items:center">error</span></div>
+            <span style="padding:0 16px;font:400 12px/16px Roboto;color:var(--error)">Wrong passphrase. The key is encrypted; check the passphrase and try again.</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ t.dark }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="position:relative;height:88px;border:2px solid var(--error);border-radius:4px;padding:15px;font:400 13px/20px 'Roboto Mono',monospace;overflow:hidden;box-sizing:border-box"><span style="position:absolute;top:-9px;left:11px;padding:0 4px;background:var(--surfaceContainerLow);font:400 12px/16px Roboto;color:var(--error)">Private key</span>PuTTY-User-Key-File-3: ssh-rsa<br>Encryption: aes256-cbc</div>
+            <span style="padding:0 16px;display:flex;gap:6px;font:400 12px/16px Roboto;color:var(--error)"><span class="material-symbols-outlined" style="font-size:16px;font-variation-settings:'FILL' 1">error</span>Unsupported format. Use an OpenSSH or PEM private key (Ed25519, ECDSA, or RSA 2048+). Convert PuTTY keys with <span style="font-family:'Roboto Mono',monospace">puttygen -O private-openssh</span>.</span>
+          </div>
+        </sc-if>
+        <div style="display:flex;justify-content:flex-end;gap:8px;padding-bottom:8px"><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Cancel</span><span style="height:40px;display:flex;align-items:center;padding:0 24px;border-radius:20px;background:var(--primary);color:var(--onPrimary);font:500 14px/20px Roboto">Import</span></div>
+        <div style="height:24px;flex:none;display:grid;place-items:center;margin:0 -24px"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+      </div>
+    </div>
+  </div>
+  </sc-for>
+  </div>
+</div>
+
+<!-- K6 -->
+<div id="K6" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">K6</span><span style="font:500 18px/24px Roboto">QR sheet</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="K6 QR" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="flex:1"></div>
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.32);z-index:4;display:flex;flex-direction:column;justify-content:flex-end">
+      <div style="border-radius:28px 28px 0 0;background:var(--surfaceContainerLow);display:flex;flex-direction:column;align-items:center;gap:16px;padding:0 24px;color:var(--onSurface)">
+        <div style="height:48px;display:grid;place-items:center"><span style="width:32px;height:4px;border-radius:2px;background:var(--onSurfaceVariant);opacity:.4"></span></div>
+        <span style="font:400 24px/32px Roboto;margin-top:-12px;align-self:flex-start">Public key QR code</span>
+        <div style="width:288px;height:288px;border-radius:16px;background:#FFFFFF;display:grid;place-items:center"><span class="material-symbols-outlined" style="font-size:256px;color:#000000;font-variation-settings:'wght' 300">qr_code_2</span></div>
+        <span style="font:400 13px/20px 'Roboto Mono',monospace;color:var(--onSurfaceVariant);max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">restrict,port-forwarding ecdsa-sha2-nistp256 AAAAE2Vj…</span>
+        <span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant);text-align:center;text-wrap:pretty">Scan it from a computer, then paste the line into <span style="font-family:'Roboto Mono',monospace;font-size:13px">~/.ssh/authorized_keys</span> on the server.</span>
+        <span style="align-self:flex-end;height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto;margin-bottom:8px">Done</span>
+        <div style="height:24px;flex:none;align-self:stretch;display:grid;place-items:center;margin:0 -24px"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+      </div>
+    </div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">QR (placeholder glyph here; render a real QR with a QR library, ECC level M) is always black on white with a 4-module quiet zone, in both themes. Screen brightness raised to max while the sheet is open.</p>
+</div>
+
+<!-- A1 -->
+<div id="A1" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">A1</span><span style="font:500 18px/24px Roboto">App picker · Only selected apps</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="A1 App picker" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:400 22px/28px Roboto;padding-left:4px">Tunnel only these apps</span></div>
+    <div style="margin:0 16px;height:56px;border-radius:28px;background:var(--surfaceContainerHigh);display:flex;align-items:center;gap:16px;padding:0 16px;flex:none"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">search</span><span style="font:400 16px/24px Roboto;color:var(--onSurfaceVariant)">Search apps</span></div>
+    <div style="display:flex;align-items:center;gap:16px;padding:8px 16px;min-height:56px;flex:none"><span style="flex:1;font:400 16px/24px Roboto">Show system apps</span><span style="width:52px;height:32px;border-radius:16px;background:var(--surfaceContainerHighest);border:2px solid var(--outline);box-sizing:border-box;position:relative;flex:none"><span style="position:absolute;left:6px;top:6px;width:16px;height:16px;border-radius:8px;background:var(--outline)"></span></span></div>
+    <div style="display:flex;align-items:center;gap:4px;padding:0 12px 0 16px;flex:none"><span style="flex:1;font:500 14px/20px Roboto;color:var(--onSurfaceVariant)">3 of 64 selected</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Select all</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Clear</span></div>
+    <div style="height:1px;background:var(--outlineVariant);flex:none"></div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+      <div style="height:72px;display:flex;align-items:center;gap:16px;padding:0 12px 0 16px"><span style="width:40px;height:40px;border-radius:12px;background:var(--tertiaryContainer);color:var(--onTertiaryContainer);display:grid;place-items:center;font:500 16px Roboto;flex:none">C</span><div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Chrome</span><span style="font:400 12px/16px 'Roboto Mono',monospace;color:var(--onSurfaceVariant)">com.android.chrome</span></div><span style="width:48px;height:48px;display:grid;place-items:center"><span class="material-symbols-outlined" style="width:18px;height:18px;border-radius:2px;background:var(--primary);color:var(--onPrimary);font-size:18px;display:grid;place-items:center">check</span></span></div>
+      <div style="height:72px;display:flex;align-items:center;gap:16px;padding:0 12px 0 16px"><span style="width:40px;height:40px;border-radius:12px;background:var(--secondaryContainer);color:var(--onSecondaryContainer);display:grid;place-items:center;font:500 16px Roboto;flex:none">F</span><div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Firefox</span><span style="font:400 12px/16px 'Roboto Mono',monospace;color:var(--onSurfaceVariant)">org.mozilla.firefox</span></div><span style="width:48px;height:48px;display:grid;place-items:center"><span style="width:18px;height:18px;border-radius:2px;border:2px solid var(--onSurfaceVariant);box-sizing:border-box"></span></span></div>
+      <div style="height:72px;display:flex;align-items:center;gap:16px;padding:0 12px 0 16px"><span style="width:40px;height:40px;border-radius:12px;background:var(--primaryContainer);color:var(--onPrimaryContainer);display:grid;place-items:center;font:500 16px Roboto;flex:none">G</span><div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Gmail</span><span style="font:400 12px/16px 'Roboto Mono',monospace;color:var(--onSurfaceVariant)">com.google.android.gm</span></div><span style="width:48px;height:48px;display:grid;place-items:center"><span style="width:18px;height:18px;border-radius:2px;border:2px solid var(--onSurfaceVariant);box-sizing:border-box"></span></span></div>
+      <div style="height:72px;display:flex;align-items:center;gap:16px;padding:0 12px 0 16px"><span style="width:40px;height:40px;border-radius:12px;background:var(--tertiaryContainer);color:var(--onTertiaryContainer);display:grid;place-items:center;font:500 16px Roboto;flex:none">H</span><div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Home Assistant</span><span style="font:400 12px/16px 'Roboto Mono',monospace;color:var(--onSurfaceVariant);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">io.homeassistant.companion.android</span></div><span style="width:48px;height:48px;display:grid;place-items:center"><span style="width:18px;height:18px;border-radius:2px;border:2px solid var(--onSurfaceVariant);box-sizing:border-box"></span></span></div>
+      <div style="height:72px;display:flex;align-items:center;gap:16px;padding:0 12px 0 16px"><span style="width:40px;height:40px;border-radius:12px;background:var(--secondaryContainer);color:var(--onSecondaryContainer);display:grid;place-items:center;font:500 16px Roboto;flex:none">S</span><div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Slack</span><span style="font:400 12px/16px 'Roboto Mono',monospace;color:var(--onSurfaceVariant)">com.Slack</span></div><span style="width:48px;height:48px;display:grid;place-items:center"><span class="material-symbols-outlined" style="width:18px;height:18px;border-radius:2px;background:var(--primary);color:var(--onPrimary);font-size:18px;display:grid;place-items:center">check</span></span></div>
+      <div style="height:72px;display:flex;align-items:center;gap:16px;padding:0 12px 0 16px"><span style="width:40px;height:40px;border-radius:12px;background:var(--primaryContainer);color:var(--onPrimaryContainer);display:grid;place-items:center;font:500 16px Roboto;flex:none">T</span><div style="flex:1;min-width:0;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Termux</span><span style="font:400 12px/16px 'Roboto Mono',monospace;color:var(--onSurfaceVariant)">com.termux</span></div><span style="width:48px;height:48px;display:grid;place-items:center"><span class="material-symbols-outlined" style="width:18px;height:18px;border-radius:2px;background:var(--primary);color:var(--onPrimary);font-size:18px;display:grid;place-items:center">check</span></span></div>
+    </div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Lettered squares stand in for real app icons (<code>PackageManager.getApplicationIcon</code>, 40 dp). In “All except selected” mode the title is “Don’t tunnel these apps”. sshovel itself is never listed. Whole row toggles the <code>Checkbox</code>. Changes apply on back (no save button). No results: “No apps match “{query}””.</p>
+</div>
+
+<!-- D1 -->
+<div id="D1" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">D1</span><span style="font:500 18px/24px Roboto">Discover subnets · loading</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="D1 Discover loading" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="flex:1"></div>
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.32);z-index:4;display:flex;flex-direction:column;justify-content:flex-end">
+      <div style="border-radius:28px 28px 0 0;background:var(--surfaceContainerLow);display:flex;flex-direction:column;gap:20px;padding:0 24px;color:var(--onSurface)">
+        <div style="height:48px;display:grid;place-items:center"><span style="width:32px;height:4px;border-radius:2px;background:var(--onSurfaceVariant);opacity:.4"></span></div>
+        <span style="font:400 24px/32px Roboto;margin-top:-12px">Discover subnets</span>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:32px 0">
+          <span style="width:40px;height:40px;border-radius:50%;border:4px solid var(--primary);border-right-color:var(--secondaryContainer);border-bottom-color:var(--secondaryContainer);box-sizing:border-box;transform:rotate(20deg)"></span>
+          <span style="font:400 16px/24px Roboto">Reading routes from the server…</span>
+          <span style="font:400 13px/20px 'Roboto Mono',monospace;color:var(--onSurfaceVariant)">ip -4 route show on jump.corp.example</span>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;padding-bottom:8px"><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Cancel</span></div>
+        <div style="height:24px;flex:none;display:grid;place-items:center;margin:0 -24px"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+      </div>
+    </div>
+  </div>
+  </sc-for>
+  </div>
+</div>
+
+<!-- D2 -->
+<div id="D2" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">D2</span><span style="font:500 18px/24px Roboto">Discover subnets · results</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="D2 Discover results" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="flex:1"></div>
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.32);z-index:4;display:flex;flex-direction:column;justify-content:flex-end">
+      <div style="border-radius:28px 28px 0 0;background:var(--surfaceContainerLow);display:flex;flex-direction:column;gap:8px;color:var(--onSurface)">
+        <div style="height:48px;display:grid;place-items:center"><span style="width:32px;height:4px;border-radius:2px;background:var(--onSurfaceVariant);opacity:.4"></span></div>
+        <div style="display:flex;flex-direction:column;gap:4px;padding:0 24px 8px;margin-top:-12px"><span style="font:400 24px/32px Roboto">Discover subnets</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">6 routes on <span style="font-family:'Roboto Mono',monospace;font-size:13px">jump.corp.example</span></span></div>
+        <div style="min-height:64px;display:flex;align-items:center;gap:8px;padding:0 24px 0 12px"><span style="width:48px;height:48px;display:grid;place-items:center"><span class="material-symbols-outlined" style="width:18px;height:18px;border-radius:2px;background:var(--primary);color:var(--onPrimary);font-size:18px;display:grid;place-items:center">check</span></span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px 'Roboto Mono',monospace">10.20.0.0/16</span><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)"><span style="font-family:'Roboto Mono',monospace">eth1</span> · already added</span></div></div>
+        <div style="min-height:64px;display:flex;align-items:center;gap:8px;padding:0 24px 0 12px"><span style="width:48px;height:48px;display:grid;place-items:center"><span class="material-symbols-outlined" style="width:18px;height:18px;border-radius:2px;background:var(--primary);color:var(--onPrimary);font-size:18px;display:grid;place-items:center">check</span></span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px 'Roboto Mono',monospace">10.40.0.0/16</span><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)"><span style="font-family:'Roboto Mono',monospace">eth2 via 10.20.0.1</span></span></div></div>
+        <div style="min-height:64px;display:flex;align-items:center;gap:8px;padding:0 24px 0 12px"><span style="width:48px;height:48px;display:grid;place-items:center"><span class="material-symbols-outlined" style="width:18px;height:18px;border-radius:2px;background:var(--primary);color:var(--onPrimary);font-size:18px;display:grid;place-items:center">check</span></span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px 'Roboto Mono',monospace">172.16.8.0/22</span><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)"><span style="font-family:'Roboto Mono',monospace">wg0</span></span></div></div>
+        <div style="min-height:64px;display:flex;align-items:center;gap:8px;padding:0 24px 0 12px"><span style="width:48px;height:48px;display:grid;place-items:center"><span style="width:18px;height:18px;border-radius:2px;border:2px solid var(--onSurfaceVariant);box-sizing:border-box"></span></span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px 'Roboto Mono',monospace">192.168.122.0/24</span><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)"><span style="font-family:'Roboto Mono',monospace">virbr0</span></span></div></div>
+        <div style="min-height:64px;display:flex;align-items:center;gap:8px;padding:0 24px 0 12px"><span style="width:48px;height:48px;display:grid;place-items:center"><span style="width:18px;height:18px;border-radius:2px;border:2px solid var(--onSurfaceVariant);box-sizing:border-box"></span></span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px 'Roboto Mono',monospace">0.0.0.0/0</span><span style="display:flex;align-items:center;gap:4px;font:400 12px/16px Roboto;color:var(--onSurfaceVariant)"><span class="material-symbols-outlined" style="font-size:14px">warning</span>Default route — would send all traffic through the tunnel</span></div></div>
+        <div style="min-height:64px;display:flex;align-items:center;gap:8px;padding:0 24px 0 12px"><span style="width:48px;height:48px;display:grid;place-items:center"><span style="width:18px;height:18px;border-radius:2px;border:2px solid var(--onSurfaceVariant);box-sizing:border-box"></span></span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px 'Roboto Mono',monospace">169.254.0.0/16</span><span style="display:flex;align-items:center;gap:4px;font:400 12px/16px Roboto;color:var(--onSurfaceVariant)"><span class="material-symbols-outlined" style="font-size:14px">info</span>Link-local — only meaningful on the server</span></div></div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;padding:8px 24px 16px"><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Cancel</span><span style="height:40px;display:flex;align-items:center;padding:0 24px;border-radius:20px;background:var(--primary);color:var(--onPrimary);font:500 14px/20px Roboto">Add selected (2)</span></div>
+        <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+      </div>
+    </div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Already-added routes: checked and disabled. Default and link-local routes are unchecked by default and labelled with icon + text. Count in the primary button updates live; disabled at 0.</p>
+</div>
+
+<!-- D3 -->
+<div id="D3" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">D3</span><span style="font:500 18px/24px Roboto">Discover errors · commands not allowed (light) / timeout (dark)</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="D3 Discover errors" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="flex:1"></div>
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,.32);z-index:4;display:flex;flex-direction:column;justify-content:flex-end">
+      <div style="border-radius:28px 28px 0 0;background:var(--surfaceContainerLow);display:flex;flex-direction:column;gap:20px;padding:0 24px;color:var(--onSurface)">
+        <div style="height:48px;display:grid;place-items:center"><span style="width:32px;height:4px;border-radius:2px;background:var(--onSurfaceVariant);opacity:.4"></span></div>
+        <span style="font:400 24px/32px Roboto;margin-top:-12px">Discover subnets</span>
+        <sc-if value="{{ t.light }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;gap:16px;padding:16px;border-radius:12px;background:var(--errorContainer);color:var(--onErrorContainer);align-items:flex-start"><span class="material-symbols-outlined">terminal</span><div style="flex:1;display:flex;flex-direction:column;gap:4px"><span style="font:500 16px/24px Roboto">Server doesn’t allow commands</span><span style="font:400 14px/20px Roboto;text-wrap:pretty">The key is limited to forwarding, so sshovel can’t run <span style="font-family:'Roboto Mono',monospace;font-size:13px">ip route</span>. This is expected with the suggested <span style="font-family:'Roboto Mono',monospace;font-size:13px">restrict</span> line. Add subnets by hand.</span></div></div>
+          <div style="display:flex;justify-content:flex-end;gap:8px;padding-bottom:8px"><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Cancel</span><span style="height:40px;display:flex;align-items:center;padding:0 24px;border-radius:20px;background:var(--primary);color:var(--onPrimary);font:500 14px/20px Roboto">Add by hand</span></div>
+        </sc-if>
+        <sc-if value="{{ t.dark }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:16px;padding:16px;border-radius:12px;background:var(--errorContainer);color:var(--onErrorContainer);align-items:flex-start"><span class="material-symbols-outlined">timer_off</span><div style="flex:1;display:flex;flex-direction:column;gap:4px"><span style="font:500 16px/24px Roboto">No answer from the server</span><span style="font:400 14px/20px Roboto;text-wrap:pretty"><span style="font-family:'Roboto Mono',monospace;font-size:13px">jump.corp.example:22</span> didn’t return routes within 15 s. Check that you’re online and try again.</span></div></div>
+          <div style="display:flex;justify-content:flex-end;gap:8px;padding-bottom:8px"><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Cancel</span><span style="height:40px;display:flex;align-items:center;gap:8px;padding:0 24px 0 16px;border-radius:20px;background:var(--primary);color:var(--onPrimary);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">refresh</span>Try again</span></div>
+        </sc-if>
+        <div style="height:24px;flex:none;display:grid;place-items:center;margin:0 -24px"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+      </div>
+    </div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Both errors exist in both themes. “Add by hand” closes the sheet and focuses the “Add subnet” field in P2.</p>
+</div>
+
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { t: null };
+  componentDidMount() {
+    const chk = () => { if (window.SSHOVEL) this.setState({ t: window.SSHOVEL.themes.map(x => ({ ...x, light: x.id === 'light', dark: x.id === 'dark' })) }); else this._h = setTimeout(chk, 50); };
+    chk();
+  }
+  componentWillUnmount() { clearTimeout(this._h); }
+  renderVals() { return { themes: this.state.t || [] }; }
+}
+</script>
+</body>
+</html>

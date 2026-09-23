@@ -1,0 +1,14 @@
+/* GSI Design System — Webfonts
+ *
+ * The system is set in HELVETICA, with Arial as the fallback — both are system
+ * fonts, so NO webfont is loaded and the compiler reports 0 embedded @font-face
+ * (correct and intentional). Per the GSI/FAIR design guidelines (§2.2), Arial /
+ * Helvetica is the sanctioned font wherever the licensed corporate face
+ * (Linotype Syntax) isn't available — e-mail, PowerPoint, Word and the web.
+ *
+ * OPTIONAL UPGRADE — to use the licensed corporate font Linotype Syntax instead
+ * of Helvetica: self-host the Syntax woff2 files, add one @font-face rule per
+ * weight (Regular 400, Bold 700, Black 800) pointing at them, then prepend the
+ * Syntax family name to the sans and display font tokens in the typography
+ * stylesheet. See readme.md for the full instructions.
+ */

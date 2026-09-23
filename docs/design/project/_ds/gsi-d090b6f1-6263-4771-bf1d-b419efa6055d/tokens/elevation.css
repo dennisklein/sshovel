@@ -1,0 +1,33 @@
+/* GSI Design System — Elevation, radius, borders, motion
+ * The logo is blocky and geometric, so the system favours SHARP corners and
+ * crisp 1px borders over heavy rounding and shadow. Shadows are restrained and
+ * cool-tinted; the orange accent does the emphasis work instead.
+ */
+:root {
+  /* ---- Radii (kept small — the brand is angular) ---- */
+  --radius-none: 0;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-pill: 999px;
+
+  /* ---- Borders ---- */
+  --border-thin:   1px;
+  --border-medium: 2px;
+  --border-accent: 3px;   /* orange emphasis underline / left rule */
+
+  /* ---- Shadows (subtle, navy-tinted) ---- */
+  --shadow-xs: 0 1px 2px rgba(19,21,25,0.06);
+  --shadow-sm: 0 1px 3px rgba(19,21,25,0.08), 0 1px 2px rgba(19,21,25,0.06);
+  --shadow-md: 0 4px 12px rgba(19,21,25,0.10);
+  --shadow-lg: 0 12px 32px rgba(19,21,25,0.14);
+  --shadow-focus: 0 0 0 3px rgba(44,111,179,0.35);
+
+  /* ---- Motion ---- */
+  --ease-standard: cubic-bezier(0.2, 0, 0.1, 1); /* @kind other */
+  --ease-out:      cubic-bezier(0.16, 1, 0.3, 1); /* @kind other */
+  --dur-fast: 120ms; /* @kind other */
+  --dur-base: 200ms; /* @kind other */
+  --dur-slow: 360ms; /* @kind other */
+}

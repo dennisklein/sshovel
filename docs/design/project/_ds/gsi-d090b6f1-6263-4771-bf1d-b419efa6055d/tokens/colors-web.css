@@ -1,0 +1,82 @@
+/* GSI Design System — Web UI palette (accessibility layer)
+ * =========================================================================
+ * WHY THIS FILE EXISTS
+ * The official GSI/FAIR brand colours (tokens/colors.css) are tuned for PRINT
+ * and DECORATIVE use — the saffron house orange, light red and green are meant
+ * for fills, squares, rules and the logo dot, with body text always black.
+ * Used directly as on-screen TEXT, LINKS or small UI they fail WCAG 2.1 AA:
+ *
+ *   brand orange  #FABE5D on white  = 1.67:1   FAIL  (needs 4.5)
+ *   green         #56AC36 on white  = 2.86:1   FAIL
+ *   light red     #E85245 on white  = 3.67:1   AA-large only
+ *   blue-light    #0E8BAE on white  = 3.95:1   AA-large only
+ *   teal          #009478 on white  = 3.81:1   AA-large only
+ *
+ * This layer provides hue-matched, DARKENED companions that meet AA (≥4.5:1 for
+ * text, ≥3:1 for UI/large) on white — and lightened companions for use ON the
+ * navy dark surface. Same brand hues, accessible luminance.
+ *
+ * RULE OF THUMB
+ *   • Decorative fills, big shapes, charts, the logo dot → use brand --gsi-*.
+ *   • Anything a user must READ (text, links, icons, small badges, focus,
+ *     form states) → use the --ui-* tokens below.
+ * ========================================================================= */
+:root {
+  /* ---- Accessible text/icon colours ON WHITE (all ≥4.5:1) ---- */
+  --ui-orange:    #9A6304; /* 5.05 — accessible orange text/icon (brand orange reads 1.67) */
+  --ui-red:       #C92A1B; /* 5.48 — danger text */
+  --ui-ruby:      #B10057; /* 6.98 — brand ruby already passes */
+  --ui-blue:      #005EA8; /* 6.63 — brand dark blue already passes; primary link */
+  --ui-cyan:      #0D7C9B; /* 4.80 — accessible light-blue text */
+  --ui-teal:      #00806A; /* 4.89 — accessible teal text */
+  --ui-green:     #3F7E28; /* 4.97 — accessible green text (brand green reads 2.86) */
+
+  /* ---- Accessible neutrals ---- */
+  --ui-text:        #1A1A1A; /* 16.1 — primary body text */
+  --ui-text-2:      #4D4D4D; /* 8.45 — secondary text */
+  --ui-text-muted:  #767676; /* 4.54 — lowest-contrast text still AA (placeholders, captions) */
+  --ui-border:      #DDDDDD; /* hairline — decorative, not held to text contrast */
+  --ui-border-strong:#C6C6C6;
+
+  /* ---- Accessible colours ON THE NAVY dark surface (#292D35, all ≥4.5:1) ---- */
+  --ui-on-dark:        #FFFFFF; /* 13.4 */
+  --ui-on-dark-2:      #C9CCD2; /* 8.6  — secondary text on navy */
+  --ui-orange-on-dark: #FABE5D; /* 8.28 — brand orange is great on dark */
+  --ui-cyan-on-dark:   #5FC4DE; /* 6.86 */
+  --ui-green-on-dark:  #8FD46F; /* 7.77 */
+  --ui-link-on-dark:   #7FB6E8; /* 6.42 */
+
+  /* ---- Solid buttons (text colour that passes ON each fill) ---- */
+  --ui-btn-primary-bg:   #9A6304; /* white text → 5.05  (use this, NOT brand orange, for solid text buttons) */
+  --ui-btn-primary-fg:   #FFFFFF;
+  --ui-btn-accent-bg:    #FABE5D; /* brand orange fill — pair with BLACK text → 10.4 */
+  --ui-btn-accent-fg:    #1A1A1A;
+  --ui-btn-neutral-bg:   #1A1A1A;
+  --ui-btn-neutral-fg:   #FFFFFF;
+
+  /* ---- Semantic UI states (accessible by default) ---- */
+  --ui-link:        var(--ui-blue);
+  --ui-link-hover:  #00467E;
+  --ui-focus:       #005EA8;      /* focus ring — 3:1 vs white AND vs most fills */
+  --ui-success:     var(--ui-green);
+  --ui-warning:     var(--ui-orange);
+  --ui-danger:      var(--ui-red);
+  --ui-info:        var(--ui-blue);
+
+  /* ---- Soft status fills (tints for badges/alerts; pair with the matching
+   *      --ui-* colour as text, which stays AA on the tint) ---- */
+  --ui-success-soft: #E7F2E1;
+  --ui-warning-soft: #FDEBCB;
+  --ui-danger-soft:  #FBE3E0;
+  --ui-info-soft:    #DCEBF6;
+
+  /* ---- Re-point the shared semantic aliases at the accessible values, so
+   *      existing components inherit AA contrast with no markup changes. ---- */
+  --text-muted:  var(--ui-text-muted); /* was 5.10 → keep AA, slightly lighter ok */
+  --text-accent: var(--ui-orange);     /* was #B97800 (3.65, AA-large) → now 5.05 AA */
+  --link:        var(--ui-link);
+  --link-hover:  var(--ui-link-hover);
+  --focus-ring:  var(--ui-focus);
+  --danger:      var(--ui-danger);
+  --success:     var(--ui-success);
+}

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0..1,0&display=block">
+<script src="sshovel-theme.js"></script>
+<style>body{margin:0;background:#E4E5EA;font-family:Roboto,system-ui,sans-serif;color:#191C20}a{color:#3A608F}a:hover{color:#1F4876}</style>
+</helmet>
+<div style="padding:64px;display:flex;flex-direction:column;gap:64px;max-width:1720px">
+<header style="display:flex;flex-direction:column;gap:8px;max-width:900px">
+  <span style="font:500 12px/16px Roboto;letter-spacing:1px;text-transform:uppercase;color:#43474E">sshovel · design handoff · 6 of 6</span>
+  <h1 style="margin:0;font:400 45px/52px Roboto">System surfaces, components, storyboards</h1>
+  <p style="margin:0;font:400 16px/24px Roboto;color:#43474E;text-wrap:pretty">§4, §6, §7. Tile and notification are drawn by SystemUI; mocks here only show what we control (icon, label, subtitle, state, text, actions). SVG sources are in <span style="font-family:'Roboto Mono',monospace">handoff/icons/</span>. <a href="sshovel 1 Home.dc.html">← Home</a></p>
+</header>
+
+<!-- Icons -->
+<section id="icons" style="display:flex;flex-direction:column;gap:20px">
+  <h2 style="margin:0;font:400 28px/36px Roboto">Icons</h2>
+  <div style="display:flex;flex-wrap:wrap;gap:24px">
+    <div style="background:#fff;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:16px;width:260px">
+      <span style="font:500 14px/20px Roboto">Tile + notification icon</span>
+      <div style="display:flex;gap:16px;align-items:flex-end">
+        <svg width="96" height="96" viewBox="0 0 24 24" style="background:#F2F3FA;border-radius:8px"><path fill="#191C20" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg>
+        <svg width="24" height="24" viewBox="0 0 24 24"><path fill="#191C20" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#191C20" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg>
+      </div>
+      <span style="font:400 12px/16px Roboto;color:#43474E">Spade with a T-grip; the keyhole in the blade reads as “tunnel mouth” and “key”. Single path, even-odd. <span style="font-family:'Roboto Mono',monospace">ic_sshovel.svg</span></span>
+    </div>
+    <div style="background:#fff;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:16px;width:260px">
+      <span style="font:500 14px/20px Roboto">Needs attention variant</span>
+      <div style="display:flex;gap:16px;align-items:flex-end">
+        <svg width="96" height="96" viewBox="0 0 24 24" style="background:#F2F3FA;border-radius:8px"><path fill="#191C20" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M11.1 12.6h1.8v4.4h-1.8z M11.1 18.2h1.8v1.8h-1.8z"></path></svg>
+        <svg width="24" height="24" viewBox="0 0 24 24"><path fill="#191C20" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M11.1 12.6h1.8v4.4h-1.8z M11.1 18.2h1.8v1.8h-1.8z"></path></svg>
+      </div>
+      <span style="font:400 12px/16px Roboto;color:#43474E">Keyhole replaced by “!”. Used by the tile and the error notification in Needs attention. <span style="font-family:'Roboto Mono',monospace">ic_sshovel_attention.svg</span></span>
+    </div>
+    <div style="background:#fff;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:16px;width:520px">
+      <span style="font:500 14px/20px Roboto">Adaptive app icon (108 dp canvas, 66 dp safe zone)</span>
+      <div style="display:flex;gap:16px;align-items:flex-end">
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:center"><svg width="96" height="96" viewBox="0 0 108 108"><rect width="108" height="108" fill="#1F4876"></rect><path d="M24 108V80a30 30 0 0 1 60 0v28z" fill="#173A60"></path><g transform="translate(30 30) scale(2)"><path fill="#D3E3FF" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></g><circle cx="54" cy="54" r="33" fill="none" stroke="#FABE5D" stroke-width=".8" stroke-dasharray="2 2"></circle></svg><span style="font:400 11px/16px Roboto;color:#43474E">layers + safe zone</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:center"><svg width="72" height="72" viewBox="0 0 108 108" style="border-radius:50%"><rect width="108" height="108" fill="#1F4876"></rect><path d="M24 108V80a30 30 0 0 1 60 0v28z" fill="#173A60"></path><g transform="translate(30 30) scale(2)"><path fill="#D3E3FF" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></g></svg><span style="font:400 11px/16px Roboto;color:#43474E">circle mask</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:center"><svg width="72" height="72" viewBox="0 0 108 108" style="border-radius:22px"><rect width="108" height="108" fill="#1F4876"></rect><path d="M24 108V80a30 30 0 0 1 60 0v28z" fill="#173A60"></path><g transform="translate(30 30) scale(2)"><path fill="#D3E3FF" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></g></svg><span style="font:400 11px/16px Roboto;color:#43474E">squircle</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:center"><svg width="72" height="72" viewBox="0 0 108 108" style="border-radius:50%"><rect width="108" height="108" fill="#D3E3FF"></rect><g transform="translate(30 30) scale(2)"><path fill="#1F4876" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></g></svg><span style="font:400 11px/16px Roboto;color:#43474E">themed (monochrome)</span></div>
+      </div>
+      <span style="font:400 12px/16px Roboto;color:#43474E">Background: <span style="font-family:'Roboto Mono',monospace">#1F4876</span> with a tunnel arch <span style="font-family:'Roboto Mono',monospace">#173A60</span>. Foreground: shovel <span style="font-family:'Roboto Mono',monospace">#D3E3FF</span> at 48 dp. Monochrome layer = same glyph, no arch.</span>
+    </div>
+  </div>
+</section>
+
+<!-- State indicator -->
+<section id="indicator" style="display:flex;flex-direction:column;gap:20px">
+  <h2 style="margin:0;font:400 28px/36px Roboto">State indicator · all five states</h2>
+  <div style="display:flex;flex-wrap:wrap;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+    <div style="{{ t.panel }}">
+      <span style="font:500 12px/16px Roboto;color:var(--onSurfaceVariant)">{{ t.label }} · large (40 dp, hero) / small (32 dp, rows)</span>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <span style="display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px 0 12px;border-radius:8px;background:var(--surfaceContainerHighest);color:var(--onSurfaceVariant);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:20px">vpn_key_off</span>Off</span>
+        <span style="display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px 0 12px;border-radius:8px;background:var(--primaryContainer);color:var(--onPrimaryContainer);font:500 14px/20px Roboto"><span style="width:18px;height:18px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;box-sizing:border-box"></span>Connecting…</span>
+        <span style="display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px 0 12px;border-radius:8px;background:var(--stateOnContainer);color:var(--onStateOnContainer);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1">vpn_lock</span>On</span>
+        <span style="display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px 0 12px;border-radius:8px;background:var(--stateReconnectingContainer);color:var(--onStateReconnectingContainer);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:20px">sync_problem</span>Reconnecting…</span>
+        <span style="display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px 0 12px;border-radius:8px;background:var(--errorContainer);color:var(--onErrorContainer);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:20px;font-variation-settings:'FILL' 1">error</span>Needs attention</span>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <span style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px 0 8px;border-radius:8px;background:var(--surfaceContainerHighest);color:var(--onSurfaceVariant);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">vpn_key_off</span>Off</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px 0 8px;border-radius:8px;background:var(--primaryContainer);color:var(--onPrimaryContainer);font:500 14px/20px Roboto"><span style="width:16px;height:16px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;box-sizing:border-box"></span>Connecting…</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px 0 8px;border-radius:8px;background:var(--stateOnContainer);color:var(--onStateOnContainer);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1">vpn_lock</span>On</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px 0 8px;border-radius:8px;background:var(--stateReconnectingContainer);color:var(--onStateReconnectingContainer);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">sync_problem</span>Reconnecting…</span>
+        <span style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px 0 8px;border-radius:8px;background:var(--errorContainer);color:var(--onErrorContainer);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1">error</span>Needs attention</span>
+      </div>
+      <span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">On an errorContainer surface (hero), Needs attention inverts to <code>error</code> / <code>onError</code>. The status hero in every state: <a href="sshovel 1 Home.dc.html#H1">H1</a> <a href="sshovel 1 Home.dc.html#H2">H2</a> <a href="sshovel 1 Home.dc.html#H3">H3</a> <a href="sshovel 1 Home.dc.html#H4">H4</a> <a href="sshovel 1 Home.dc.html#H5">H5</a></span>
+    </div>
+  </sc-for>
+  </div>
+</section>
+
+<!-- Tile -->
+<section id="tile" style="display:flex;flex-direction:column;gap:20px">
+  <h2 style="margin:0;font:400 28px/36px Roboto">Quick Settings tile</h2>
+  <div style="display:flex;flex-wrap:wrap;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+    <div style="{{ t.panel }}">
+      <span style="font:500 12px/16px Roboto;color:var(--onSurfaceVariant)">{{ t.label }} shade</span>
+      <div style="display:grid;grid-template-columns:repeat(3,200px);gap:12px 8px">
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:72px;border-radius:36px;background:var(--surfaceContainerHighest);display:flex;align-items:center;gap:10px;padding:0 12px"><span style="width:48px;height:48px;border-radius:24px;display:grid;place-items:center;background:var(--surfaceContainerHigh);flex:none"><svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg></span><span style="display:flex;flex-direction:column"><span style="font:500 14px/20px Roboto">sshovel</span><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Set up</span></span></div><span style="font:400 11px/16px Roboto;color:var(--onSurfaceVariant)">No profile · inactive</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:72px;border-radius:36px;background:var(--surfaceContainerHighest);display:flex;align-items:center;gap:10px;padding:0 12px"><span style="width:48px;height:48px;border-radius:24px;display:grid;place-items:center;background:var(--surfaceContainerHigh);flex:none"><svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg></span><span style="display:flex;flex-direction:column"><span style="font:500 14px/20px Roboto">sshovel</span><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Off</span></span></div><span style="font:400 11px/16px Roboto;color:var(--onSurfaceVariant)">Off · inactive</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:72px;border-radius:36px;background:var(--primary);color:var(--onPrimary);display:flex;align-items:center;gap:10px;padding:0 12px"><span style="width:48px;height:48px;border-radius:24px;display:grid;place-items:center;background:var(--onPrimary);color:var(--primary);flex:none"><svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg></span><span style="display:flex;flex-direction:column"><span style="font:500 14px/20px Roboto">sshovel</span><span style="font:400 12px/16px Roboto">Connecting…</span></span></div><span style="font:400 11px/16px Roboto;color:var(--onSurfaceVariant)">Connecting · active</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:72px;border-radius:36px;background:var(--primary);color:var(--onPrimary);display:flex;align-items:center;gap:10px;padding:0 12px"><span style="width:48px;height:48px;border-radius:24px;display:grid;place-items:center;background:var(--onPrimary);color:var(--primary);flex:none"><svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg></span><span style="display:flex;flex-direction:column"><span style="font:500 14px/20px Roboto">sshovel</span><span style="font:400 12px/16px Roboto">Office</span></span></div><span style="font:400 11px/16px Roboto;color:var(--onSurfaceVariant)">On · active · subtitle = profile</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:72px;border-radius:36px;background:var(--primary);color:var(--onPrimary);display:flex;align-items:center;gap:10px;padding:0 12px"><span style="width:48px;height:48px;border-radius:24px;display:grid;place-items:center;background:var(--onPrimary);color:var(--primary);flex:none"><svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg></span><span style="display:flex;flex-direction:column"><span style="font:500 14px/20px Roboto">sshovel</span><span style="font:400 12px/16px Roboto">Reconnecting…</span></span></div><span style="font:400 11px/16px Roboto;color:var(--onSurfaceVariant)">Reconnecting · active</span></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:72px;border-radius:36px;background:var(--surfaceContainerHighest);display:flex;align-items:center;gap:10px;padding:0 12px"><span style="width:48px;height:48px;border-radius:24px;display:grid;place-items:center;background:var(--surfaceContainerHigh);flex:none"><svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M11.1 12.6h1.8v4.4h-1.8z M11.1 18.2h1.8v1.8h-1.8z"></path></svg></span><span style="display:flex;flex-direction:column"><span style="font:500 14px/20px Roboto">sshovel</span><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Tap to fix</span></span></div><span style="font:400 11px/16px Roboto;color:var(--onSurfaceVariant)">Needs attention · inactive · attention icon</span></div>
+      </div>
+    </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:900px;font:400 14px/20px Roboto;color:#43474E">Tile colors are SystemUI’s, not ours. Tap: Off/Needs attention → connect (or open V1 / the fix screen via <code>startActivityAndCollapse</code>); Connecting/On/Reconnecting → disconnect. Needs attention tap opens the app on the error. Long-press → Home (<code>ACTION_QS_TILE_PREFERENCES</code>). <code>stateDescription</code> mirrors the subtitle for TalkBack. With “Require unlock” on, tap on the lock screen calls <code>unlockAndRun</code>.</p>
+</section>
+
+<!-- Notifications -->
+<section id="notifications" style="display:flex;flex-direction:column;gap:20px">
+  <h2 style="margin:0;font:400 28px/36px Roboto">Ongoing notification</h2>
+  <div style="display:flex;flex-wrap:wrap;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+    <div style="{{ t.panel }}">
+      <span style="font:500 12px/16px Roboto;color:var(--onSurfaceVariant)">{{ t.label }} shade · width 380</span>
+      <div style="width:380px;border-radius:24px;background:var(--surfaceContainerHigh);padding:16px;display:flex;gap:12px">
+        <span style="width:32px;height:32px;border-radius:16px;background:var(--primary);color:var(--onPrimary);display:grid;place-items:center;flex:none"><svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg></span>
+        <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">sshovel · now</span><span style="font:500 14px/20px Roboto">Connecting to Office</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">Authenticating with “Pixel StrongBox”</span><div style="height:4px;border-radius:2px;background:var(--secondaryContainer);margin:8px 0 4px;position:relative;overflow:hidden"><div style="position:absolute;left:20%;width:40%;top:0;bottom:0;background:var(--primary)"></div></div><div style="display:flex;gap:16px;margin-top:4px"><span style="font:500 14px/20px Roboto;color:var(--primary)">Cancel</span></div></div>
+      </div>
+      <div style="width:380px;border-radius:24px;background:var(--surfaceContainerHigh);padding:16px;display:flex;gap:12px">
+        <span style="width:32px;height:32px;border-radius:16px;background:var(--primary);color:var(--onPrimary);display:grid;place-items:center;flex:none"><svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg></span>
+        <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">sshovel · 1 h 24 min</span><span style="font:500 14px/20px Roboto">Connected to Office</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">3 subnets · 12 active connections</span><div style="display:flex;gap:16px;margin-top:8px"><span style="font:500 14px/20px Roboto;color:var(--primary)">Disconnect</span><span style="font:500 14px/20px Roboto;color:var(--primary)">Diagnostics</span></div></div>
+      </div>
+      <div style="width:380px;border-radius:24px;background:var(--surfaceContainerHigh);padding:16px;display:flex;gap:12px">
+        <span style="width:32px;height:32px;border-radius:16px;background:var(--primary);color:var(--onPrimary);display:grid;place-items:center;flex:none"><svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg></span>
+        <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">sshovel · now</span><span style="font:500 14px/20px Roboto">Reconnecting to Office</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">Network changed. Next retry in 8 s</span><div style="display:flex;gap:16px;margin-top:8px"><span style="font:500 14px/20px Roboto;color:var(--primary)">Retry now</span><span style="font:500 14px/20px Roboto;color:var(--primary)">Disconnect</span></div></div>
+      </div>
+      <div style="width:380px;border-radius:24px;background:var(--surfaceContainerHigh);padding:16px;display:flex;gap:12px">
+        <span style="width:32px;height:32px;border-radius:16px;background:var(--error);color:var(--onError);display:grid;place-items:center;flex:none"><svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M11.1 12.6h1.8v4.4h-1.8z M11.1 18.2h1.8v1.8h-1.8z"></path></svg></span>
+        <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">sshovel · Problems · now</span><span style="font:500 14px/20px Roboto">Server identity changed</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">The host key for jump.corp.example doesn’t match the one you trusted. The connection was blocked.</span><div style="display:flex;gap:16px;margin-top:8px"><span style="font:500 14px/20px Roboto;color:var(--primary)">Review</span></div></div>
+      </div>
+      <div style="width:380px;border-radius:24px;background:var(--surfaceContainerHigh);padding:16px;display:flex;gap:12px">
+        <span style="width:32px;height:32px;border-radius:16px;background:var(--primary);color:var(--onPrimary);display:grid;place-items:center;flex:none"><svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg></span>
+        <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">sshovel · 2 h 03 min</span><span style="font:500 14px/20px Roboto">Connected to Office · 1 warning</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">Intranet DNS not answering. 10.20.0.53 isn’t answering through the tunnel.</span><div style="display:flex;gap:16px;margin-top:8px"><span style="font:500 14px/20px Roboto;color:var(--primary)">View diagnostics</span><span style="font:500 14px/20px Roboto;color:var(--primary)">Disconnect</span></div></div>
+      </div>
+    </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:900px;font:400 14px/20px Roboto;color:#43474E">Channels: <span style="font-family:'Roboto Mono',monospace">tunnel_status</span> (IMPORTANCE_LOW, ongoing, foreground-service notification, <code>setOnlyAlertOnce</code>) and <span style="font-family:'Roboto Mono',monospace">tunnel_problems</span> (IMPORTANCE_DEFAULT, auto-cancel). Off = no notification. Needs attention posts on the problems channel with the §8 title/body and the fix action; tapping the body opens the relevant screen. On-state warnings (<code>FORWARDING_DENIED</code>, <code>DNS_UNREACHABLE</code>) stay on the low channel and change title/text. Accent color: <code>colorScheme.primary</code>; attention: <code>error</code>.</p>
+</section>
+
+<!-- Storyboards -->
+<section id="storyboards" style="display:flex;flex-direction:column;gap:32px">
+  <h2 style="margin:0;font:400 28px/36px Roboto">Storyboards</h2>
+
+  <div id="SB2" style="display:flex;flex-direction:column;gap:16px">
+    <h3 style="margin:0;font:500 20px/28px Roboto">2 · Tile tap when Off → Connecting → On (tile, notification, hero in sync)</h3>
+    <sc-for list="{{ themes }}" as="t" hint-placeholder-count="1">
+    <sc-if value="{{ t.light }}" hint-placeholder-val="{{ true }}">
+    <div style="{{ t.panel }}">
+      <div style="display:grid;grid-template-columns:120px repeat(3,300px);gap:16px;align-items:center">
+        <span></span><span style="font:500 14px/20px Roboto">① Off · user taps tile</span><span style="font:500 14px/20px Roboto">② Connecting · 0–2 s</span><span style="font:500 14px/20px Roboto">③ On</span>
+        <span style="font:500 12px/16px Roboto;color:var(--onSurfaceVariant)">Tile</span>
+        <div style="height:64px;border-radius:32px;background:var(--surfaceContainerHighest);display:flex;align-items:center;gap:10px;padding:0 10px"><span style="width:44px;height:44px;border-radius:22px;display:grid;place-items:center;background:var(--surfaceContainerHigh)"><svg width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg></span><span style="display:flex;flex-direction:column"><span style="font:500 14px/20px Roboto">sshovel</span><span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Off</span></span></div>
+        <div style="height:64px;border-radius:32px;background:var(--primary);color:var(--onPrimary);display:flex;align-items:center;gap:10px;padding:0 10px"><span style="width:44px;height:44px;border-radius:22px;display:grid;place-items:center;background:var(--onPrimary);color:var(--primary)"><svg width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg></span><span style="display:flex;flex-direction:column"><span style="font:500 14px/20px Roboto">sshovel</span><span style="font:400 12px/16px Roboto">Connecting…</span></span></div>
+        <div style="height:64px;border-radius:32px;background:var(--primary);color:var(--onPrimary);display:flex;align-items:center;gap:10px;padding:0 10px"><span style="width:44px;height:44px;border-radius:22px;display:grid;place-items:center;background:var(--onPrimary);color:var(--primary)"><svg width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg></span><span style="display:flex;flex-direction:column"><span style="font:500 14px/20px Roboto">sshovel</span><span style="font:400 12px/16px Roboto">Office</span></span></div>
+        <span style="font:500 12px/16px Roboto;color:var(--onSurfaceVariant)">Notification</span>
+        <span style="font:400 13px/20px Roboto;color:var(--onSurfaceVariant)">None</span>
+        <div style="border-radius:20px;background:var(--surfaceContainerHigh);padding:12px 16px;display:flex;flex-direction:column;gap:2px"><span style="font:500 14px/20px Roboto">Connecting to Office</span><span style="font:400 13px/18px Roboto;color:var(--onSurfaceVariant)">Authenticating with “Pixel StrongBox”</span><span style="font:500 13px/20px Roboto;color:var(--primary);margin-top:4px">Cancel</span></div>
+        <div style="border-radius:20px;background:var(--surfaceContainerHigh);padding:12px 16px;display:flex;flex-direction:column;gap:2px"><span style="font:500 14px/20px Roboto">Connected to Office</span><span style="font:400 13px/18px Roboto;color:var(--onSurfaceVariant)">3 subnets · 0 active connections</span><span style="font:500 13px/20px Roboto;color:var(--primary);margin-top:4px">Disconnect</span></div>
+        <span style="font:500 12px/16px Roboto;color:var(--onSurfaceVariant)">Home hero</span>
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="align-self:flex-start;display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px 0 8px;border-radius:8px;background:var(--surfaceContainerHighest);color:var(--onSurfaceVariant);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">vpn_key_off</span>Off</span><a href="sshovel 1 Home.dc.html#H1" style="font:400 12px/16px Roboto">H1</a></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="align-self:flex-start;display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px 0 8px;border-radius:8px;background:var(--primaryContainer);color:var(--onPrimaryContainer);font:500 14px/20px Roboto"><span style="width:16px;height:16px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;box-sizing:border-box"></span>Connecting…</span><a href="sshovel 1 Home.dc.html#H2" style="font:400 12px/16px Roboto">H2</a></div>
+        <div style="display:flex;flex-direction:column;gap:6px"><span style="align-self:flex-start;display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px 0 8px;border-radius:8px;background:var(--stateOnContainer);color:var(--onStateOnContainer);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1">vpn_lock</span>On</span><a href="sshovel 1 Home.dc.html#H3" style="font:400 12px/16px Roboto">H3</a></div>
+        <span style="font:500 12px/16px Roboto;color:var(--onSurfaceVariant)">TalkBack</span>
+        <span style="font:400 13px/18px Roboto;color:var(--onSurfaceVariant)">Tile: “sshovel, Off, switch”</span>
+        <span style="font:400 13px/18px Roboto;color:var(--onSurfaceVariant)">“Connecting to Office”</span>
+        <span style="font:400 13px/18px Roboto;color:var(--onSurfaceVariant)">“Connected to Office”</span>
+      </div>
+    </div>
+    </sc-if>
+    </sc-for>
+    <p style="margin:0;max-width:900px;font:400 14px/20px Roboto;color:#43474E">All three surfaces read one <code>StateFlow&lt;TunnelState&gt;</code>; they must never disagree. The status bar key icon appears at ③ (system-drawn).</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(520px,1fr));gap:24px">
+    <div id="SB1" style="background:#fff;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px">
+      <h3 style="margin:0;font:500 20px/28px Roboto">1 · First run → onboarding → connect → On</h3>
+      <ol style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font:400 14px/20px Roboto;color:#191C20">
+        <li><a href="sshovel 1 Home.dc.html#H0">H0</a> Empty home → “Set up sshovel”</li>
+        <li><a href="sshovel 2 Onboarding.dc.html#O1">O1</a> Welcome → <a href="sshovel 2 Onboarding.dc.html#O2">O2</a> key created (StrongBox)</li>
+        <li><a href="sshovel 2 Onboarding.dc.html#O3">O3</a> Copy authorized_keys line → install on server</li>
+        <li><a href="sshovel 2 Onboarding.dc.html#O4">O4</a> Server, subnets, DNS</li>
+        <li><a href="sshovel 2 Onboarding.dc.html#O5">O5</a> Trust this server → snackbar “Server trusted” → <a href="sshovel 2 Onboarding.dc.html#O6a">O6a</a> test passes</li>
+        <li><a href="sshovel 2 Onboarding.dc.html#O7">O7</a> Add tile → system prompt → <a href="sshovel 2 Onboarding.dc.html#O8">O8</a> Tile added</li>
+        <li><a href="sshovel 2 Onboarding.dc.html#O9">O9</a> Connect now → <a href="sshovel 3 Profile and security.dc.html#V1">V1</a> → system VPN dialog → <a href="sshovel 1 Home.dc.html#H2">H2</a> → <a href="sshovel 1 Home.dc.html#H3">H3</a></li>
+      </ol>
+    </div>
+    <div id="SB3" style="background:#fff;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px">
+      <h3 style="margin:0;font:500 20px/28px Roboto">3 · Tile tap without VPN permission</h3>
+      <ol style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font:400 14px/20px Roboto">
+        <li>Tile “Off” tapped. <code>VpnService.prepare()</code> ≠ null → tile stays Off, shade collapses</li>
+        <li><a href="sshovel 3 Profile and security.dc.html#V1">V1</a> opens over the current app → Continue</li>
+        <li>System dialog → Allow → app returns to <a href="sshovel 1 Home.dc.html#H2">H2</a>, tile “Connecting…” → <a href="sshovel 1 Home.dc.html#H3">H3</a>, tile “Office”</li>
+        <li>Deny → <a href="sshovel 3 Profile and security.dc.html#V2">V2</a> “VPN permission needed” → Try again re-launches the system dialog</li>
+      </ol>
+    </div>
+    <div id="SB4" style="background:#fff;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px">
+      <h3 style="margin:0;font:500 20px/28px Roboto">4 · Wi-Fi → mobile data while On</h3>
+      <ol style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font:400 14px/20px Roboto">
+        <li><a href="sshovel 1 Home.dc.html#H3">H3</a> On over Wi-Fi</li>
+        <li>Default network changes → SSH read times out → <a href="sshovel 1 Home.dc.html#H4">H4</a> Reconnecting (retry 2 s, 4 s, 8 s…). Tile “Reconnecting…”, notification “Retry now”. TalkBack: “Reconnecting to Office. Next retry in 8 seconds.”</li>
+        <li>Retry succeeds on mobile data → <a href="sshovel 1 Home.dc.html#H3">H3</a>; uptime resets, traffic counters continue. TalkBack: “Connected to Office”.</li>
+        <li>No network at all → detail “No network. sshovel will reconnect when you’re back online.”; waits for <code>onAvailable</code> instead of retrying.</li>
+      </ol>
+    </div>
+    <div id="SB5" style="background:#fff;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px">
+      <h3 style="margin:0;font:500 20px/28px Roboto">5 · Host key changed</h3>
+      <ol style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font:400 14px/20px Roboto">
+        <li>Connect → <a href="sshovel 1 Home.dc.html#H2">H2</a> “Checking server identity”</li>
+        <li>Mismatch → tunnel stops, state Needs attention; tile “Tap to fix” (attention icon); problems notification “Server identity changed”</li>
+        <li>If the app is foreground: <a href="sshovel 3 Profile and security.dc.html#S4">S4</a> opens immediately. Otherwise the notification or tile opens it.</li>
+        <li>Disconnect or back → <a href="sshovel 1 Home.dc.html#H6">H6</a>. “Review in profile” → <a href="sshovel 3 Profile and security.dc.html#P2">P2</a> → Forget pinned key (<a href="sshovel 3 Profile and security.dc.html#P7">P7</a>) → next connect shows <a href="sshovel 3 Profile and security.dc.html#S3">S3</a>.</li>
+      </ol>
+    </div>
+    <div id="SB6" style="background:#fff;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:12px">
+      <h3 style="margin:0;font:500 20px/28px Roboto">6 · wiki.corp.example fails in the browser</h3>
+      <ol style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font:400 14px/20px Roboto">
+        <li>Chrome shows a connection error. User pulls down the notification → “Diagnostics” (or Home → troubleshoot)</li>
+        <li><a href="sshovel 5 Diagnostics and settings.dc.html#G2">G2</a> DNS: <span style="font-family:'Roboto Mono',monospace">wiki.corp.example</span> → <span style="font-family:'Roboto Mono',monospace">10.20.7.15</span>, Tunnel, 14 ms — DNS is fine</li>
+        <li>Connections tab badge “1” → <a href="sshovel 5 Diagnostics and settings.dc.html#G3">G3</a>: <span style="font-family:'Roboto Mono',monospace">10.20.7.15:443</span> · Chrome · “Refused by server policy” with next step: ask the admin</li>
+        <li>Variant: the name resolves outside routed subnets → warning row in G2 tells the user which /32 to add</li>
+      </ol>
+    </div>
+  </div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { t: null };
+  componentDidMount() {
+    const chk = () => {
+      if (!window.SSHOVEL) { this._h = setTimeout(chk, 50); return; }
+      const t = window.SSHOVEL.themes.map(x => {
+        const panel = { ...x.frame, width: 'auto', height: 'auto', borderRadius: 20, padding: 24, gap: 16, boxShadow: 'none' };
+        return { ...x, panel, light: x.id === 'light', dark: x.id === 'dark' };
+      });
+      this.setState({ t });
+    };
+    chk();
+  }
+  componentWillUnmount() { clearTimeout(this._h); }
+  renderVals() { return { themes: this.state.t || [] }; }
+}
+</script>
+</body>
+</html>

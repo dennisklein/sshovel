@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0..1,0&display=block">
+<script src="sshovel-theme.js"></script>
+<style>body{margin:0;background:#E4E5EA;font-family:Roboto,system-ui,sans-serif;color:#191C20}a{color:#3A608F}a:hover{color:#1F4876}</style>
+</helmet>
+<div style="padding:64px;display:flex;flex-direction:column;gap:56px">
+<header style="display:flex;flex-direction:column;gap:8px;max-width:900px">
+  <span style="font:500 12px/16px Roboto;letter-spacing:1px;text-transform:uppercase;color:#43474E">sshovel · design handoff · 2 of 6</span>
+  <h1 style="margin:0;font:400 45px/52px Roboto">Onboarding</h1>
+  <p style="margin:0;font:400 16px/24px Roboto;color:#43474E;text-wrap:pretty">§5.2. Linear, skippable, 7 steps. Top bar: back + “Skip”; determinate progress shows the step. Each step can be reopened from Settings → “Run setup again”. <a href="sshovel 1 Home.dc.html">← Home</a></p>
+</header>
+<section style="display:flex;flex-wrap:wrap;gap:64px 72px">
+
+<!-- O1 -->
+<div id="O1" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">O1</span><span style="font:500 18px/24px Roboto">Welcome</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="O1 Welcome" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;justify-content:flex-end;padding:0 12px"><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Skip</span></div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:24px;padding:24px 24px 0">
+      <div style="width:112px;height:112px;border-radius:28px;background:var(--primaryContainer);color:var(--onPrimaryContainer);display:grid;place-items:center"><svg width="64" height="64" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg></div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span style="font:400 36px/44px Roboto">Reach your intranet from any app</span>
+        <span style="font:400 16px/24px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">sshovel opens one SSH connection to a jump host and sends only intranet traffic through it. Everything else keeps using your normal connection.</span>
+      </div>
+      <div style="display:flex;flex-direction:column;border-radius:16px;background:var(--surfaceContainerLow)">
+        <span style="padding:16px 16px 4px;font:500 14px/20px Roboto;color:var(--onSurfaceVariant)">You need</span>
+        <div style="display:flex;gap:16px;align-items:center;padding:12px 16px"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">dns</span><span style="font:400 16px/24px Roboto">An SSH server you can log in to with a key</span></div>
+        <div style="display:flex;gap:16px;align-items:center;padding:12px 16px 16px"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">lan</span><span style="font:400 16px/24px Roboto">The intranet subnets you want to reach</span></div>
+      </div>
+    </div>
+    <div style="flex:none;display:flex;justify-content:flex-end;padding:16px 24px"><span style="height:40px;display:flex;align-items:center;padding:0 24px;border-radius:20px;background:var(--primary);color:var(--onPrimary);font:500 14px/20px Roboto">Get started</span></div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+</div>
+
+<!-- O2 -->
+<div id="O2" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">O2</span><span style="font:500 18px/24px Roboto">Create a key · created, StrongBox</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="O2 Create key" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 12px 0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:500 14px/20px Roboto;color:var(--onSurfaceVariant);padding-left:4px">Step 2 of 7</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Skip</span></div>
+    <div style="margin:0 24px;height:4px;display:flex;gap:4px"><div style="width:28%;background:var(--primary);border-radius:2px"></div><div style="flex:1;background:var(--secondaryContainer);border-radius:2px"></div></div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:24px;padding:32px 24px 0">
+      <div style="display:flex;flex-direction:column;gap:8px"><span style="font:400 28px/36px Roboto">Create a key</span><span style="font:400 16px/24px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">sshovel generates a key pair on this phone. The private key is created inside secure hardware and can never leave it.</span></div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="position:relative;height:56px;border:1px solid var(--outline);border-radius:4px;display:flex;align-items:center;padding:0 16px;font:400 16px/24px Roboto"><span style="position:absolute;top:-9px;left:12px;padding:0 4px;background:var(--surface);font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Key name</span>Pixel StrongBox</div>
+        <span style="padding:0 16px;font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Shown in the comment of the public key</span>
+      </div>
+      <div style="border-radius:12px;border:1px solid var(--outlineVariant);padding:16px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;gap:12px"><span class="material-symbols-outlined" style="width:40px;height:40px;border-radius:20px;background:var(--stateOnContainer);color:var(--onStateOnContainer);display:grid;place-items:center">check</span><div style="display:flex;flex-direction:column"><span style="font:500 16px/24px Roboto">Key created</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">ECDSA P-256</span></div></div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <span style="height:32px;display:inline-flex;align-items:center;gap:6px;padding:0 12px 0 8px;border-radius:8px;background:var(--secondaryContainer);color:var(--onSecondaryContainer);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">memory</span>StrongBox</span>
+          <span style="height:32px;display:inline-flex;align-items:center;gap:6px;padding:0 12px 0 8px;border-radius:8px;border:1px solid var(--outlineVariant);color:var(--onSurfaceVariant);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">block</span>Not exportable</span>
+        </div>
+        <span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">Stored in StrongBox, a separate security chip. Unlocking the phone is not required to use it, so the tunnel can reconnect in your pocket.</span>
+      </div>
+    </div>
+    <div style="flex:none;display:flex;justify-content:space-between;align-items:center;padding:16px 24px"><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Import a key instead</span><span style="height:40px;display:flex;align-items:center;padding:0 24px;border-radius:20px;background:var(--primary);color:var(--onPrimary);font:500 14px/20px Roboto">Next</span></div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Before creation the card is absent and the primary button reads “Create key”. Badge falls back to “Hardware-backed” (TEE) or “Encrypted on device” when StrongBox is unavailable. “Import a key instead” opens the import sheet (<a href="sshovel 4 Keys apps subnets.dc.html#K4">K4</a>).</p>
+</div>
+
+<!-- O3 -->
+<div id="O3" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">O3</span><span style="font:500 18px/24px Roboto">Install the public key</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="O3 Install public key" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 12px 0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:500 14px/20px Roboto;color:var(--onSurfaceVariant);padding-left:4px">Step 3 of 7</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Skip</span></div>
+    <div style="margin:0 24px;height:4px;display:flex;gap:4px"><div style="width:43%;background:var(--primary);border-radius:2px"></div><div style="flex:1;background:var(--secondaryContainer);border-radius:2px"></div></div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:20px;padding:32px 24px 0">
+      <div style="display:flex;flex-direction:column;gap:8px"><span style="font:400 28px/36px Roboto">Install the public key</span><span style="font:400 16px/24px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">Add this line to <span style="font-family:'Roboto Mono',monospace;font-size:14px">~/.ssh/authorized_keys</span> for your user on the server.</span></div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font:500 12px/16px Roboto;color:var(--onSurfaceVariant)">Suggested <span style="font-family:'Roboto Mono',monospace">authorized_keys</span> line</span>
+        <div style="border-radius:12px;background:var(--surfaceContainerHighest);padding:12px 4px 12px 16px;display:flex;gap:4px;align-items:flex-start">
+          <span style="flex:1;font:400 13px/20px 'Roboto Mono',monospace;word-break:break-all;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">restrict,port-forwarding ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBHk3Pj8fWm0q9sX2c7Qe1RtLbNf4aYh0uVwKz6JdE5gSx pixel-strongbox@sshovel</span>
+          <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;margin-top:-12px;color:var(--onSurfaceVariant)">expand_more</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <span style="height:32px;display:inline-flex;align-items:center;gap:8px;padding:0 16px 0 8px;border-radius:8px;border:1px solid var(--outlineVariant);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px;color:var(--primary)">content_copy</span>Copy</span>
+          <span style="height:32px;display:inline-flex;align-items:center;gap:8px;padding:0 16px 0 8px;border-radius:8px;border:1px solid var(--outlineVariant);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px;color:var(--primary)">share</span>Share</span>
+          <span style="height:32px;display:inline-flex;align-items:center;gap:8px;padding:0 16px 0 8px;border-radius:8px;border:1px solid var(--outlineVariant);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px;color:var(--primary)">qr_code_2</span>Show QR code</span>
+        </div>
+        <span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty"><span style="font-family:'Roboto Mono',monospace">restrict</span> turns off shell, agent and X11 access for this key; <span style="font-family:'Roboto Mono',monospace">port-forwarding</span> allows only what sshovel needs.</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font:500 12px/16px Roboto;color:var(--onSurfaceVariant)">Or run this on the server</span>
+        <div style="border-radius:12px;background:var(--surfaceContainerHighest);padding:4px 4px 4px 16px;display:flex;gap:4px;align-items:center">
+          <span style="flex:1;min-width:0;font:400 13px/20px 'Roboto Mono',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">echo 'restrict,port-forwarding ecdsa-sha2-nistp256 AAAAE2Vj…' &gt;&gt; ~/.ssh/authorized_keys</span>
+          <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant)">content_copy</span>
+        </div>
+      </div>
+    </div>
+    <div style="flex:none;display:flex;justify-content:flex-end;padding:16px 24px"><span style="height:40px;display:flex;align-items:center;padding:0 24px;border-radius:20px;background:var(--primary);color:var(--onPrimary);font:500 14px/20px Roboto">I’ve added it</span></div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Key block collapsed to 3 lines; expand_more toggles full text (content description “Show full key” / “Collapse key”). Copy confirms with snackbar “Copied”. Show QR code opens <a href="sshovel 4 Keys apps subnets.dc.html#K6">K6</a>.</p>
+</div>
+
+<!-- O4 -->
+<div id="O4" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">O4</span><span style="font:500 18px/24px Roboto">Add your server</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="O4 Add server" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 12px 0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:500 14px/20px Roboto;color:var(--onSurfaceVariant);padding-left:4px">Step 4 of 7</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Skip</span></div>
+    <div style="margin:0 24px;height:4px;display:flex;gap:4px"><div style="width:57%;background:var(--primary);border-radius:2px"></div><div style="flex:1;background:var(--secondaryContainer);border-radius:2px"></div></div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:20px;padding:28px 24px 0">
+      <span style="font:400 28px/36px Roboto">Add your server</span>
+      <div style="position:relative;height:56px;border:1px solid var(--outline);border-radius:4px;display:flex;align-items:center;padding:0 16px;font:400 16px/24px Roboto"><span style="position:absolute;top:-9px;left:12px;padding:0 4px;background:var(--surface);font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Profile name</span>Office</div>
+      <div style="position:relative;height:56px;border:2px solid var(--primary);border-radius:4px;display:flex;align-items:center;padding:0 15px;font:400 16px/24px 'Roboto Mono',monospace"><span style="position:absolute;top:-9px;left:11px;padding:0 4px;background:var(--surface);font:400 12px/16px Roboto;color:var(--primary)">Host</span>jump.corp.example<span style="width:2px;height:20px;background:var(--primary);margin-left:1px"></span></div>
+      <div style="display:grid;grid-template-columns:96px 1fr;gap:12px">
+        <div style="position:relative;height:56px;border:1px solid var(--outline);border-radius:4px;display:flex;align-items:center;padding:0 16px;font:400 16px/24px 'Roboto Mono',monospace"><span style="position:absolute;top:-9px;left:12px;padding:0 4px;background:var(--surface);font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Port</span>22</div>
+        <div style="position:relative;height:56px;border:1px solid var(--outline);border-radius:4px;display:flex;align-items:center;padding:0 16px;font:400 16px/24px 'Roboto Mono',monospace"><span style="position:absolute;top:-9px;left:12px;padding:0 4px;background:var(--surface);font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Username</span>alex</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font:500 14px/20px Roboto">Subnets to route</span>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <span style="height:32px;display:inline-flex;align-items:center;gap:4px;padding:0 4px 0 12px;border-radius:8px;border:1px solid var(--outlineVariant);font:500 13px/20px 'Roboto Mono',monospace">10.20.0.0/16<span class="material-symbols-outlined" style="font-size:18px;color:var(--onSurfaceVariant)">close</span></span>
+          <span style="height:32px;display:inline-flex;align-items:center;gap:4px;padding:0 4px 0 12px;border-radius:8px;border:1px solid var(--outlineVariant);font:500 13px/20px 'Roboto Mono',monospace">10.30.4.0/24<span class="material-symbols-outlined" style="font-size:18px;color:var(--onSurfaceVariant)">close</span></span>
+          <span style="height:32px;display:inline-flex;align-items:center;gap:6px;padding:0 12px 0 8px;border-radius:8px;border:1px solid var(--outlineVariant);color:var(--primary);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">add</span>Add subnet</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="position:relative;height:56px;border:1px solid var(--outline);border-radius:4px;display:flex;align-items:center;padding:0 16px;font:400 16px/24px 'Roboto Mono',monospace"><span style="position:absolute;top:-9px;left:12px;padding:0 4px;background:var(--surface);font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Intranet DNS server</span>10.20.0.53</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font:500 14px/20px Roboto">Domain suffixes</span>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <span style="height:32px;display:inline-flex;align-items:center;gap:4px;padding:0 4px 0 12px;border-radius:8px;border:1px solid var(--outlineVariant);font:500 13px/20px 'Roboto Mono',monospace">corp.example<span class="material-symbols-outlined" style="font-size:18px;color:var(--onSurfaceVariant)">close</span></span>
+          <span style="height:32px;display:inline-flex;align-items:center;gap:4px;padding:0 4px 0 12px;border-radius:8px;border:1px solid var(--outlineVariant);font:500 13px/20px 'Roboto Mono',monospace">internal<span class="material-symbols-outlined" style="font-size:18px;color:var(--onSurfaceVariant)">close</span></span>
+          <span style="height:32px;display:inline-flex;align-items:center;gap:6px;padding:0 12px 0 8px;border-radius:8px;border:1px solid var(--outlineVariant);color:var(--primary);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">add</span>Add suffix</span>
+        </div>
+      </div>
+    </div>
+    <div style="flex:none;display:flex;justify-content:flex-end;padding:16px 24px;border-top:1px solid var(--outlineVariant)"><span style="height:40px;display:flex;align-items:center;padding:0 24px;border-radius:20px;background:var(--primary);color:var(--onPrimary);font:500 14px/20px Roboto">Next</span></div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Condensed version of the profile editor’s Server, Subnets and DNS sections; same validation as <a href="sshovel 3 Profile and security.dc.html#P3">P3</a>. Host has focus (2 dp primary outline). Keyboard type: URI for host, number for port. “Next” disabled until name, host, user and one subnet are valid.</p>
+</div>
+
+<!-- O5 -->
+<div id="O5" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">O5</span><span style="font:500 18px/24px Roboto">Verify the server · first use</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="O5 Verify server" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 12px 0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:500 14px/20px Roboto;color:var(--onSurfaceVariant);padding-left:4px">Step 5 of 7</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Skip</span></div>
+    <div style="margin:0 24px;height:4px;display:flex;gap:4px"><div style="width:71%;background:var(--primary);border-radius:2px"></div><div style="flex:1;background:var(--secondaryContainer);border-radius:2px"></div></div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:20px;padding:32px 24px 0">
+      <div style="display:flex;flex-direction:column;gap:8px"><span style="font:400 28px/36px Roboto">Verify the server</span><span style="font:400 16px/24px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">This is the first connection to <span style="font-family:'Roboto Mono',monospace;font-size:14px">jump.corp.example:22</span>. Confirm it is really your server before trusting it.</span></div>
+      <div style="border-radius:12px;background:var(--surfaceContainerHighest);padding:16px 4px 16px 16px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;gap:8px;padding-right:12px"><span class="material-symbols-outlined" style="font-size:20px;color:var(--onSurfaceVariant)">fingerprint</span><span style="flex:1;font:500 14px/20px Roboto">ECDSA · SHA-256</span></div>
+        <div style="display:flex;align-items:flex-start;gap:4px">
+          <div style="flex:1;display:grid;grid-template-columns:repeat(4,auto);justify-content:start;gap:4px 14px;font:500 17px/26px 'Roboto Mono',monospace;letter-spacing:.5px"><span>nThb</span><span>Rk2m</span><span>XJvF</span><span>3e8p</span><span>Qz1L</span><span>Yw7c</span><span>Dh0K</span><span>sVa4</span><span>Tq9N</span><span>oM6u</span><span>Gf5B</span><span>wE+i</span><span>2rY</span></div>
+          <span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center;color:var(--onSurfaceVariant);margin-top:-10px">content_copy</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant);font-size:20px;margin-top:2px">terminal</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">Compare this with the output of <span style="font-family:'Roboto Mono',monospace;font-size:13px;color:var(--onSurface)">ssh-keygen -lf /etc/ssh/ssh_host_ecdsa_key.pub</span> on the server.</span></div>
+    </div>
+    <div style="flex:none;display:flex;justify-content:space-between;align-items:center;padding:16px 24px"><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Cancel</span><span style="height:40px;display:flex;align-items:center;gap:8px;padding:0 24px 0 16px;border-radius:20px;background:var(--primary);color:var(--onPrimary);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">verified_user</span>Trust this server</span></div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Fingerprint block: base64 SHA-256 split into 4-character groups, 4 per row. TalkBack reads groups character by character (“n, T, h, b …”). Outside onboarding the same content appears as the dialog <a href="sshovel 3 Profile and security.dc.html#S3">S3</a>.</p>
+</div>
+
+<!-- O6a -->
+<div id="O6a" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">O6a</span><span style="font:500 18px/24px Roboto">Test connection · success</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="O6a Test success" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 12px 0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:500 14px/20px Roboto;color:var(--onSurfaceVariant);padding-left:4px">Step 5 of 7</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Skip</span></div>
+    <div style="margin:0 24px;height:4px;display:flex;gap:4px"><div style="width:71%;background:var(--primary);border-radius:2px"></div><div style="flex:1;background:var(--secondaryContainer);border-radius:2px"></div></div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:20px;padding:32px 24px 0">
+      <div style="display:flex;flex-direction:column;gap:8px"><span style="font:400 28px/36px Roboto">Connection works</span><span style="font:400 16px/24px Roboto;color:var(--onSurfaceVariant)">sshovel logged in and reached your intranet DNS.</span></div>
+      <div style="display:flex;flex-direction:column;border-radius:16px;background:var(--surfaceContainerLow);padding:8px 0">
+        <div style="display:flex;align-items:center;gap:16px;padding:10px 16px"><span class="material-symbols-outlined" style="color:var(--stateOn);font-variation-settings:'FILL' 1">check_circle</span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Server reachable</span><span style="font:400 13px/20px 'Roboto Mono',monospace;color:var(--onSurfaceVariant)">jump.corp.example:22 · 38 ms</span></div></div>
+        <div style="display:flex;align-items:center;gap:16px;padding:10px 16px"><span class="material-symbols-outlined" style="color:var(--stateOn);font-variation-settings:'FILL' 1">check_circle</span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Server identity trusted</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">ECDSA, pinned just now</span></div></div>
+        <div style="display:flex;align-items:center;gap:16px;padding:10px 16px"><span class="material-symbols-outlined" style="color:var(--stateOn);font-variation-settings:'FILL' 1">check_circle</span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Key accepted</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">Pixel StrongBox as <span style="font-family:'Roboto Mono',monospace;font-size:13px">alex</span></span></div></div>
+        <div style="display:flex;align-items:center;gap:16px;padding:10px 16px"><span class="material-symbols-outlined" style="color:var(--stateOn);font-variation-settings:'FILL' 1">check_circle</span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Forwarding allowed</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">Opened a test channel to <span style="font-family:'Roboto Mono',monospace;font-size:13px">10.20.0.53:53</span></span></div></div>
+        <div style="display:flex;align-items:center;gap:16px;padding:10px 16px"><span class="material-symbols-outlined" style="color:var(--stateOn);font-variation-settings:'FILL' 1">check_circle</span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Intranet DNS answering</span><span style="font:400 13px/20px 'Roboto Mono',monospace;color:var(--onSurfaceVariant)">10.20.0.53 · 12 ms</span></div></div>
+      </div>
+    </div>
+    <div style="margin:0 16px 8px;min-height:48px;display:flex;align-items:center;padding:0 16px;border-radius:4px;background:var(--inverseSurface);color:var(--inverseOnSurface);font:400 14px/20px Roboto;box-shadow:0 3px 6px rgba(0,0,0,.2)">Server trusted</div>
+    <div style="flex:none;display:flex;justify-content:space-between;align-items:center;padding:8px 24px 16px"><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Test again</span><span style="height:40px;display:flex;align-items:center;padding:0 24px;border-radius:20px;background:var(--primary);color:var(--onPrimary);font:500 14px/20px Roboto">Next</span></div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Test runs automatically after “Trust this server”. While running, each row shows a 24 dp <code>CircularProgressIndicator</code> in place of the icon and the headline reads “Testing connection…”. Checks run in order; the first failure stops the rest.</p>
+</div>
+
+<!-- O6b -->
+<div id="O6b" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">O6b</span><span style="font:500 18px/24px Roboto">Test connection · <code>AUTH_FAILED</code></span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="O6b Test failed" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 12px 0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:500 14px/20px Roboto;color:var(--onSurfaceVariant);padding-left:4px">Step 5 of 7</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Skip</span></div>
+    <div style="margin:0 24px;height:4px;display:flex;gap:4px"><div style="width:71%;background:var(--primary);border-radius:2px"></div><div style="flex:1;background:var(--secondaryContainer);border-radius:2px"></div></div>
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:20px;padding:32px 24px 0">
+      <div style="display:flex;flex-direction:column;gap:8px"><span style="font:400 28px/36px Roboto">Connection failed</span><span style="font:400 16px/24px Roboto;color:var(--onSurfaceVariant)">The server is reachable and trusted, but it refused the key.</span></div>
+      <div style="display:flex;flex-direction:column;border-radius:16px;background:var(--surfaceContainerLow);padding:8px 0">
+        <div style="display:flex;align-items:center;gap:16px;padding:10px 16px"><span class="material-symbols-outlined" style="color:var(--stateOn);font-variation-settings:'FILL' 1">check_circle</span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Server reachable</span><span style="font:400 13px/20px 'Roboto Mono',monospace;color:var(--onSurfaceVariant)">jump.corp.example:22 · 38 ms</span></div></div>
+        <div style="display:flex;align-items:center;gap:16px;padding:10px 16px"><span class="material-symbols-outlined" style="color:var(--stateOn);font-variation-settings:'FILL' 1">check_circle</span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Server identity trusted</span></div></div>
+        <div style="margin:4px 8px;padding:12px 8px;border-radius:12px;background:var(--errorContainer);color:var(--onErrorContainer);display:flex;gap:16px;align-items:flex-start"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;padding-left:0">cancel</span><div style="flex:1;display:flex;flex-direction:column;gap:8px"><span style="font:500 16px/24px Roboto">Key not accepted</span><span style="font:400 14px/20px Roboto;text-wrap:pretty"><span style="font-family:'Roboto Mono',monospace;font-size:13px">alex@jump.corp.example</span> rejected the key “Pixel StrongBox”. Add its public key to <span style="font-family:'Roboto Mono',monospace;font-size:13px">~/.ssh/authorized_keys</span> on the server.</span><span style="align-self:flex-start;height:40px;display:flex;align-items:center;gap:8px;padding:0 20px 0 16px;border-radius:20px;background:var(--error);color:var(--onError);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">key</span>Show public key</span></div></div>
+        <div style="display:flex;align-items:center;gap:16px;padding:10px 16px;color:var(--onSurfaceVariant)"><span class="material-symbols-outlined">radio_button_unchecked</span><span style="font:400 16px/24px Roboto">Forwarding allowed · not tested</span></div>
+        <div style="display:flex;align-items:center;gap:16px;padding:10px 16px;color:var(--onSurfaceVariant)"><span class="material-symbols-outlined">radio_button_unchecked</span><span style="font:400 16px/24px Roboto">Intranet DNS answering · not tested</span></div>
+      </div>
+    </div>
+    <div style="flex:none;display:flex;justify-content:space-between;align-items:center;padding:16px 24px"><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Continue anyway</span><span style="height:40px;display:flex;align-items:center;gap:8px;padding:0 24px 0 16px;border-radius:20px;background:var(--secondaryContainer);color:var(--onSecondaryContainer);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">refresh</span>Test again</span></div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Any §8 error can occupy the failed row, with its own action (e.g. <code>HOST_UNREACHABLE</code> → “Retry”, <code>FORWARDING_DENIED</code> → “View diagnostics”). “Show public key” jumps back to step 3 (O3).</p>
+</div>
+
+<!-- O7 -->
+<div id="O7" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">O7</span><span style="font:500 18px/24px Roboto">Add the tile</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="O7 Add tile" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 12px 0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:500 14px/20px Roboto;color:var(--onSurfaceVariant);padding-left:4px">Step 6 of 7</span><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Skip</span></div>
+    <div style="margin:0 24px;height:4px;display:flex;gap:4px"><div style="width:86%;background:var(--primary);border-radius:2px"></div><div style="flex:1;background:var(--secondaryContainer);border-radius:2px"></div></div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:24px;padding:32px 24px 0">
+      <div style="display:flex;flex-direction:column;gap:8px"><span style="font:400 28px/36px Roboto">Add the Quick Settings tile</span><span style="font:400 16px/24px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">The tile is the fastest way to connect. Tap it to turn the tunnel on or off with your default profile, Office. Long-press it to open sshovel.</span></div>
+      <div style="border-radius:28px;background:var(--surfaceContainerHigh);padding:24px;display:flex;flex-direction:column;gap:12px;align-items:center">
+        <div style="width:100%;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="height:72px;border-radius:36px;background:var(--surfaceContainerHighest);display:flex;align-items:center;gap:12px;padding:0 12px;opacity:.55"><span class="material-symbols-outlined" style="width:48px;height:48px;border-radius:24px;display:grid;place-items:center">wifi</span><span style="font:500 14px/20px Roboto">Internet</span></div>
+          <div style="height:72px;border-radius:36px;background:var(--primary);color:var(--onPrimary);display:flex;align-items:center;gap:12px;padding:0 12px;outline:2px dashed var(--primary);outline-offset:4px"><span style="width:48px;height:48px;border-radius:24px;display:grid;place-items:center;background:var(--onPrimary);color:var(--primary)"><svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg></span><span style="display:flex;flex-direction:column"><span style="font:500 14px/20px Roboto">sshovel</span><span style="font:400 12px/16px Roboto">Office</span></span></div>
+        </div>
+        <span style="font:400 12px/16px Roboto;color:var(--onSurfaceVariant)">Illustration of the tile when On (system-drawn)</span>
+      </div>
+    </div>
+    <div style="flex:none;display:flex;justify-content:space-between;align-items:center;padding:16px 24px"><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Not now</span><span style="height:40px;display:flex;align-items:center;gap:8px;padding:0 24px 0 16px;border-radius:20px;background:var(--primary);color:var(--onPrimary);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">add</span>Add tile</span></div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">“Add tile” calls <code>StatusBarManager.requestAddTileService()</code>. If the tile is already added, this step is skipped automatically. The tile mock is a static drawing, not a component.</p>
+</div>
+
+<!-- O8 -->
+<div id="O8" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">O8</span><span style="font:500 18px/24px Roboto">Tile outcome · added (light) / declined (dark)</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="O8 Tile outcome" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 12px 0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:500 14px/20px Roboto;color:var(--onSurfaceVariant);padding-left:4px">Step 6 of 7</span></div>
+    <div style="margin:0 24px;height:4px;display:flex;gap:4px"><div style="width:86%;background:var(--primary);border-radius:2px"></div><div style="flex:1;background:var(--secondaryContainer);border-radius:2px"></div></div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:24px;padding:32px 24px 0">
+      <sc-if value="{{ t.light }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:8px"><span style="font:400 28px/36px Roboto">Tile added</span><span style="font:400 16px/24px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">Swipe down twice from the top of the screen to find sshovel in Quick Settings.</span></div>
+        <div style="display:flex;gap:16px;align-items:center;padding:16px;border-radius:16px;background:var(--stateOnContainer);color:var(--onStateOnContainer)"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">check_circle</span><span style="font:500 16px/24px Roboto">sshovel is in Quick Settings</span></div>
+      </sc-if>
+      <sc-if value="{{ t.dark }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:8px"><span style="font:400 28px/36px Roboto">Tile not added</span><span style="font:400 16px/24px Roboto;color:var(--onSurfaceVariant);text-wrap:pretty">You can add it any time: swipe down twice, tap Edit, and drag sshovel into your tiles.</span></div>
+        <div style="display:flex;gap:16px;align-items:center;padding:16px;border-radius:16px;background:var(--surfaceContainerHigh)"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">info</span><span style="flex:1;font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">You can still connect from the app or the notification.</span></div>
+        <span style="align-self:flex-start;height:40px;display:flex;align-items:center;gap:8px;padding:0 24px 0 16px;border-radius:20px;border:1px solid var(--outline);color:var(--primary);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">refresh</span>Try again</span>
+      </sc-if>
+    </div>
+    <div style="flex:none;display:flex;justify-content:flex-end;padding:16px 24px"><span style="height:40px;display:flex;align-items:center;padding:0 24px;border-radius:20px;background:var(--primary);color:var(--onPrimary);font:500 14px/20px Roboto">Next</span></div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">Both outcomes exist in both themes; shown split here to save space. Result codes: <code>TILE_ADD_REQUEST_RESULT_TILE_ADDED</code> / <code>ALREADY_ADDED</code> → added; <code>NOT_ADDED</code> → declined. “Try again” is hidden after two declines (the system stops prompting).</p>
+</div>
+
+<!-- O9 -->
+<div id="O9" style="display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:10px;white-space:nowrap"><span style="font:700 12px/16px Roboto;background:#191C20;color:#fff;padding:4px 8px;border-radius:4px">O9</span><span style="font:500 18px/24px Roboto">Done</span></div>
+  <div style="display:flex;gap:24px">
+  <sc-for list="{{ themes }}" as="t" hint-placeholder-count="2">
+  <div data-screen-label="O9 Done" style="{{ t.frame }}">
+    <dc-import name="StatusBar" hint-size="412px,40px"></dc-import>
+    <div style="height:64px;flex:none;display:flex;align-items:center;padding:0 12px 0 4px"><span class="material-symbols-outlined" style="width:48px;height:48px;display:grid;place-items:center">arrow_back</span><span style="flex:1;font:500 14px/20px Roboto;color:var(--onSurfaceVariant);padding-left:4px">Step 7 of 7</span></div>
+    <div style="margin:0 24px;height:4px;display:flex;gap:4px"><div style="width:100%;background:var(--primary);border-radius:2px"></div></div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:24px;padding:32px 24px 0">
+      <div style="width:72px;height:72px;border-radius:20px;background:var(--primaryContainer);color:var(--onPrimaryContainer);display:grid;place-items:center"><svg width="40" height="40" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M8 2h8v2.5h-2.75V11h-2.5V4.5H8z M6 11h12v3c0 4-3 6.5-6 8-3-1.5-6-4-6-8z M12 12.9a1.7 1.7 0 0 0-.95 3.11L10.6 19h2.8l-.45-2.99A1.7 1.7 0 0 0 12 12.9z"></path></svg></div>
+      <div style="display:flex;flex-direction:column;gap:8px"><span style="font:400 28px/36px Roboto">Setup complete</span><span style="font:400 16px/24px Roboto;color:var(--onSurfaceVariant)">The tunnel is ready. Android will ask once for permission to set up a VPN connection.</span></div>
+      <div style="display:flex;flex-direction:column;border-radius:16px;background:var(--surfaceContainerLow);padding:8px 0">
+        <div style="display:flex;align-items:center;gap:16px;padding:10px 16px"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">dns</span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Office</span><span style="font:400 13px/20px 'Roboto Mono',monospace;color:var(--onSurfaceVariant)">alex@jump.corp.example:22</span></div></div>
+        <div style="display:flex;align-items:center;gap:16px;padding:10px 16px"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">lan</span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">2 subnets, 2 domain suffixes</span><span style="font:400 13px/20px 'Roboto Mono',monospace;color:var(--onSurfaceVariant)">10.20.0.0/16, 10.30.4.0/24</span></div></div>
+        <div style="display:flex;align-items:center;gap:16px;padding:10px 16px"><span class="material-symbols-outlined" style="color:var(--onSurfaceVariant)">key</span><div style="flex:1;display:flex;flex-direction:column"><span style="font:400 16px/24px Roboto">Pixel StrongBox</span><span style="font:400 14px/20px Roboto;color:var(--onSurfaceVariant)">StrongBox · accepted by the server</span></div></div>
+      </div>
+    </div>
+    <div style="flex:none;display:flex;justify-content:space-between;align-items:center;padding:16px 24px"><span style="height:40px;display:flex;align-items:center;padding:0 12px;color:var(--primary);font:500 14px/20px Roboto">Go to home</span><span style="height:40px;display:flex;align-items:center;gap:8px;padding:0 24px 0 16px;border-radius:20px;background:var(--primary);color:var(--onPrimary);font:500 14px/20px Roboto"><span class="material-symbols-outlined" style="font-size:18px">power_settings_new</span>Connect now</span></div>
+    <div style="height:24px;flex:none;display:grid;place-items:center"><div style="width:108px;height:4px;border-radius:2px;background:var(--onSurface);opacity:.5"></div></div>
+  </div>
+  </sc-for>
+  </div>
+  <p style="margin:0;max-width:848px;font:400 14px/20px Roboto;color:#43474E">“Connect now” → pre-permission explainer (<a href="sshovel 3 Profile and security.dc.html#V1">V1</a>) if VPN consent is missing, then Home H2 → H3.</p>
+</div>
+
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { t: null };
+  componentDidMount() {
+    const chk = () => { if (window.SSHOVEL) this.setState({ t: window.SSHOVEL.themes.map(x => ({ ...x, light: x.id === 'light', dark: x.id === 'dark' })) }); else this._h = setTimeout(chk, 50); };
+    chk();
+  }
+  componentWillUnmount() { clearTimeout(this._h); }
+  renderVals() { return { themes: this.state.t || [] }; }
+}
+</script>
+</body>
+</html>
