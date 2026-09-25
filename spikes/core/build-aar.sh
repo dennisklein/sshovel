@@ -9,6 +9,11 @@ set -eu
 cd "$(dirname "$0")"
 : "${ANDROID_NDK_HOME:?set ANDROID_NDK_HOME to an NDK r28+ install}"
 out=../android/app/libs/core.aar
+# gomobile bind execs "gobind" from PATH; build the version pinned in go.mod.
+bin=$(mktemp -d)
+trap 'rm -rf "$bin"' EXIT
+go build -o "$bin/gobind" golang.org/x/mobile/cmd/gobind
+PATH="$bin:$PATH"
 mkdir -p "$(dirname "$out")"
 go tool gomobile bind -v \
     -target=android/arm64,android/amd64 \

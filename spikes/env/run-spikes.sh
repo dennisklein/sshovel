@@ -49,7 +49,7 @@ java -version 2>&1 | head -n1
 
 say "SPIKE1 build core.aar + 16 KB alignment"
 /work/spikes/core/build-aar.sh 2>&1 | tee "$OUT/aar-build.log" | grep -E '^(OK|FAIL)' | tee "$OUT/alignment.txt"
-[ -f "$APPDIR/app/libs/core.aar" ] || die "AAR build failed, see aar-build.log"
+[ -f "$APPDIR/app/libs/core.aar" ] || { tail -n 30 "$OUT/aar-build.log"; die "AAR build failed (full log: spikes/out/aar-build.log)"; }
 
 agp=$(curl -fsSL https://dl.google.com/dl/android/maven2/com/android/tools/build/gradle/maven-metadata.xml \
       | grep -oE '<version>[0-9]+\.[0-9]+\.[0-9]+</version>' | sed 's/<[^>]*>//g' | sort -V | tail -n1)
@@ -60,8 +60,10 @@ declare -A FGS=([A]=systemExempted [B]=specialUse [C]=systemExempted [16k]=syste
 declare -A EXPORTED=([A]=true [B]=true [C]=false [16k]=true)
 for v in "${VARIANTS[@]}"; do
     say "Build variant $v (${FGS[$v]}, exported=${EXPORTED[$v]})"
+    rm -f "$APPDIR/app/build/outputs/apk/debug/app-debug.apk"
     (cd "$APPDIR" && ./gradlew --no-daemon -q :app:assembleDebug ${agp:+-PagpVersion=$agp} \
-        -PfgsType="${FGS[$v]}" -PvpnExported="${EXPORTED[$v]}") || die "Gradle build of variant $v failed"
+        -PfgsType="${FGS[$v]}" -PvpnExported="${EXPORTED[$v]}") 2>&1 | tee "$OUT/gradle-$v.log" | tail -n 40
+    [ -f "$APPDIR/app/build/outputs/apk/debug/app-debug.apk" ] || die "Gradle build of variant $v failed (log: spikes/out/gradle-$v.log)"
     cp "$APPDIR/app/build/outputs/apk/debug/app-debug.apk" "$OUT/$v.apk"
 done
 say "SPIKE1 APK alignment"
