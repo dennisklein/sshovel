@@ -56,8 +56,8 @@ agp=$(curl -fsSL https://dl.google.com/dl/android/maven2/com/android/tools/build
 echo "AGP: ${agp:-fallback from gradle.properties}"
 echo "sdk.dir=$ANDROID_HOME" > "$APPDIR/local.properties"
 
-declare -A FGS=([A]=systemExempted [B]=specialUse [C]=systemExempted)
-declare -A EXPORTED=([A]=true [B]=true [C]=false)
+declare -A FGS=([A]=systemExempted [B]=specialUse [C]=systemExempted [16k]=systemExempted)
+declare -A EXPORTED=([A]=true [B]=true [C]=false [16k]=true)
 for v in "${VARIANTS[@]}"; do
     say "Build variant $v (${FGS[$v]}, exported=${EXPORTED[$v]})"
     (cd "$APPDIR" && ./gradlew --no-daemon -q :app:assembleDebug ${agp:+-PagpVersion=$agp} \
@@ -96,9 +96,12 @@ logcat_to() {
 say "Boot emulator"
 timeout 3 bash -c '</dev/tcp/127.0.0.1/2222' && echo "test-env jump host reachable on :2222" \
     || echo "WARNING: jump host not reachable on 127.0.0.1:2222; spike 4 will fail"
-emulator -avd spike -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect \
-    -accel on > "$OUT/emulator.log" 2>&1 &
-wait_boot
+start_emulator() {
+    emulator -avd "$1" -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect \
+        -accel on >> "$OUT/emulator.log" 2>&1 &
+    wait_boot
+}
+start_emulator spike
 adb shell getprop ro.build.fingerprint
 
 # --- Helpers -------------------------------------------------------------------
@@ -232,6 +235,22 @@ for V in "${VARIANTS[@]}"; do
         C) spike1; spike3_always_on ;;
     esac
 done
+
+# SPIKE1 on a 16 KB page-size kernel: a misaligned .so fails to load there.
+if [ -d /root/.android/avd/spike16k.avd ] && [ -f "$OUT/A.apk" ]; then
+    say "SPIKE1 16 KB page-size emulator"
+    adb emu kill >/dev/null 2>&1
+    for _ in $(seq 1 30); do adb devices | grep -q emulator || break; sleep 2; done
+    V=16k; DIR="$OUT/16k"; mkdir -p "$DIR"
+    start_emulator spike16k
+    logcat_to "$DIR/logcat.txt"
+    echo "PAGE_SIZE=$(adb shell getconf PAGE_SIZE | tr -d '\r')" | tee -a "$OUT/alignment.txt"
+    adb install -g "$OUT/A.apk"
+    spike1
+    VARIANTS+=(16k)
+else
+    echo "no 16 KB system image; skipped the 16 KB load test" | tee -a "$OUT/alignment.txt"
+fi
 
 # --- Summary -------------------------------------------------------------------
 

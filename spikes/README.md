@@ -84,6 +84,9 @@ spikes/env/run.sh A          # or a single variant
      plus `direct-tcpip` to the wiki (spike 4)
    - Always-on configured and the emulator rebooted, to see whether the system starts the service
      (spike 3, variants A and C)
+4. if the SDK offers a 16 KB page-size image (`google_apis_ps16k`), boots it and loads the Go
+   library there. A misaligned `.so` fails to load on a 16 KB kernel, so this is the runtime proof
+   for spike 1.
 
 Results land in `spikes/out/`:
 
