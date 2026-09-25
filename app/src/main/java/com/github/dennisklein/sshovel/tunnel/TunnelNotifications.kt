@@ -56,7 +56,7 @@ class TunnelNotifications(private val context: Context) {
                 b.setProgress(0, 0, true)
                 b.addAction(action(R.string.action_cancel, SshovelVpnService.ACTION_DISCONNECT))
             }
-            TunnelState.Disconnecting -> b.setContentTitle(context.getString(R.string.state_disconnecting))
+            TunnelState.Disconnecting -> b.setContentTitle(context.getString(R.string.tunnel_state_disconnecting))
             TunnelState.Off, is TunnelState.NeedsAttention -> b.setContentTitle(name)
         }
         return b.build()

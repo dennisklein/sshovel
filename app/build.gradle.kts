@@ -1,8 +1,11 @@
 // SPDX-FileCopyrightText: 2026 Dennis Klein
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+import com.android.build.api.artifact.SingleArtifact
 import com.mikepenz.aboutlibraries.plugin.StrictMode
 import java.io.ByteArrayOutputStream
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import java.security.MessageDigest
 import java.util.Base64
 import java.util.zip.ZipFile
@@ -16,7 +19,7 @@ plugins {
 }
 
 // Licenses a shipped dependency may use (ARCHITECTURE §12, "Allowed").
-val allowedLicenses = listOf(
+val allowedAndroidLicenses = listOf(
     "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "MIT", "ISC", "Zlib", "MPL-2.0",
     "LGPL-2.1-or-later", "LGPL-3.0-only", "LGPL-3.0-or-later", "GPL-3.0-only", "GPL-3.0-or-later",
     "GPL-2.0-or-later", "OFL-1.1", "Unicode-DFS-2016", "Unicode-3.0",
@@ -24,8 +27,8 @@ val allowedLicenses = listOf(
 // go-licenses reports only these for the Go side.
 val allowedGoLicenses = "Apache-2.0,BSD-2-Clause,BSD-3-Clause,MIT,ISC,MPL-2.0"
 
-val repoDir: Directory = rootProject.layout.projectDirectory
-val coreDir: Directory = repoDir.dir("core")
+val repoRoot: Directory = rootProject.layout.projectDirectory
+val coreRoot: Directory = repoRoot.dir("core")
 val coreAar: RegularFile = layout.projectDirectory.file("libs/core.aar")
 
 // ---- Source link for the About screen (GPL-3.0 §6) --------------------------
@@ -34,7 +37,7 @@ fun git(vararg args: String): Provider<String> =
     providers.exec {
         commandLine("git", *args)
         isIgnoreExitValue = true
-        workingDir = repoDir.asFile
+        workingDir = repoRoot.asFile
     }.standardOutput.asText.map { it.trim() }
 
 val gitTag = git("describe", "--tags", "--exact-match", "HEAD")
@@ -47,8 +50,8 @@ val sourceUrl: Provider<String> = gitTag.zip(gitCommit) { tag, commit ->
 // The debug build's hardcoded profile (M2) logs into test-env with a key
 // generated here, and pins the host key test-env generated on first start.
 
-val testEnvKeys: Directory = repoDir.dir("test-env/keys")
-val debugHostKeyPub = providers.fileContents(repoDir.file("test-env/hostkeys/ssh_host_ed25519_key.pub")).asText
+val testEnvKeys: Directory = repoRoot.dir("test-env/keys")
+val debugHostKeyPub = providers.fileContents(repoRoot.file("test-env/hostkeys/ssh_host_ed25519_key.pub")).asText
 
 /** SHA256 fingerprint of an OpenSSH public key line, as ssh-keygen -l prints it. */
 fun sshFingerprint(pubLine: String): String {
@@ -69,6 +72,10 @@ android {
         versionName = "0.2.0-m2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "SOURCE_URL", "\"${sourceUrl.get()}\"")
+        // core.aar is built for these only (buildGoCore); drop other ABIs'
+        // native libs from dependencies instead of shipping an APK that
+        // installs on 32-bit devices and then can't load libgojni.
+        ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
     }
 
     buildTypes {
@@ -111,7 +118,7 @@ aboutLibraries {
     }
     license {
         strictMode = StrictMode.FAIL
-        allowedLicenses.addAll(this@Build_gradle.allowedLicenses)
+        allowedLicenses.addAll(allowedAndroidLicenses)
     }
 }
 
@@ -142,18 +149,18 @@ dependencies {
 
 // ---- Go core → AAR (IMPLEMENTATION_PLAN §4) ---------------------------------
 
-val buildGoCore by tasks.registering(Exec::class) {
+val buildGoCore = tasks.register<Exec>("buildGoCore") {
     group = "build"
     description = "Builds app/libs/core.aar from core/ with gomobile."
     inputs.files(
-        fileTree(coreDir) {
+        fileTree(coreRoot) {
             include("**/*.go", "go.mod", "go.sum")
             exclude("**/*_test.go", "cmd/**", "internal/testutil/**")
         },
     ).withPropertyName("goSources")
     inputs.property("version", android.defaultConfig.versionName)
     outputs.file(coreAar)
-    workingDir = coreDir.asFile
+    workingDir = coreRoot.asFile
     environment("ANDROID_HOME", androidComponents.sdkComponents.sdkDirectory.get().asFile.absolutePath)
     val ldflags = "-X github.com/dennisklein/sshovel/core/mobile.version=${android.defaultConfig.versionName}"
     // gomobile execs gobind from PATH; `go install` in core/ installs the version pinned in go.mod.
@@ -191,7 +198,7 @@ abstract class VerifyPageAlignment : DefaultTask() {
     }
 
     private fun minLoadAlign(elf: ByteArray): Long {
-        val b = java.nio.ByteBuffer.wrap(elf).order(java.nio.ByteOrder.LITTLE_ENDIAN)
+        val b = ByteBuffer.wrap(elf).order(ByteOrder.LITTLE_ENDIAN)
         require(elf[4].toInt() == 2) { "not a 64-bit ELF" }
         val phoff = b.getLong(0x20)
         val phentsize = b.getShort(0x36).toInt()
@@ -205,15 +212,19 @@ abstract class VerifyPageAlignment : DefaultTask() {
     }
 }
 
-val verifyPageAlignment by tasks.registering(VerifyPageAlignment::class) {
+// core.aar is checked before every build; each variant's APK after it's packaged.
+val verifyCorePageAlignment = tasks.register<VerifyPageAlignment>("verifyCorePageAlignment") {
     group = "verification"
-    description = "Checks that every native library is 16 KB page-aligned."
-    dependsOn(buildGoCore)
-    archives.from(coreAar)
-    archives.from(fileTree(layout.buildDirectory.dir("outputs/apk")) { include("**/*.apk") })
+    description = "Checks that core.aar's native libraries are 16 KB page-aligned."
+    archives.from(buildGoCore.map { coreAar })
 }
+tasks.named("preBuild") { dependsOn(verifyCorePageAlignment) }
 
-tasks.named("preBuild") { dependsOn(verifyPageAlignment) }
+val verifyPageAlignment = tasks.register("verifyPageAlignment") {
+    group = "verification"
+    description = "Checks that every native library in core.aar and the APKs is 16 KB page-aligned."
+    dependsOn(verifyCorePageAlignment)
+}
 
 // ---- Licenses (ARCHITECTURE §12, IMPLEMENTATION_PLAN §4) ---------------------
 
@@ -278,19 +289,19 @@ abstract class CollectGoLicenses @Inject constructor(private val exec: ExecOpera
     }
 }
 
-val collectGoLicenses by tasks.registering(CollectGoLicenses::class) {
+val collectGoLicenses = tasks.register<CollectGoLicenses>("collectGoLicenses") {
     group = "licenses"
     description = "Collects Go dependency licenses (go-licenses) into an app asset."
-    goSources.from(fileTree(coreDir) { include("**/*.go", "go.mod", "go.sum"); exclude("**/*_test.go") })
-    coreDir.set(this@Build_gradle.coreDir)
+    goSources.from(fileTree(coreRoot) { include("**/*.go", "go.mod", "go.sum"); exclude("**/*_test.go") })
+    coreDir.set(coreRoot)
     outputDir.set(layout.buildDirectory.dir("generated/goLicenses/assets"))
     workDir.set(layout.buildDirectory.dir("goLicenses"))
 }
 
-val checkGoLicenses by tasks.registering(Exec::class) {
+val checkGoLicenses = tasks.register<Exec>("checkGoLicenses") {
     group = "licenses"
     description = "Fails if a Go dependency of core/mobile uses a license not on the allowed list."
-    workingDir = coreDir.asFile
+    workingDir = coreRoot.asFile
     environment("GOOS", "android")
     environment("GOARCH", "arm64")
     commandLine(
@@ -299,7 +310,7 @@ val checkGoLicenses by tasks.registering(Exec::class) {
     )
 }
 
-val checkLicenses by tasks.registering {
+val checkLicenses = tasks.register("checkLicenses") {
     group = "licenses"
     description = "Fails on any shipped Android or Go dependency whose license isn't allowed."
     dependsOn(checkGoLicenses)
@@ -333,17 +344,20 @@ abstract class ReuseLint @Inject constructor(private val exec: ExecOperations) :
     }
 }
 
-val reuseLint by tasks.registering(ReuseLint::class) {
+val reuseLint = tasks.register<ReuseLint>("reuseLint") {
     group = "licenses"
     description = "REUSE/SPDX compliance (reuse lint, or a header check if reuse isn't installed)."
-    repoDir.set(this@Build_gradle.repoDir)
+    repoDir.set(repoRoot)
 }
 
 tasks.named("check") { dependsOn(checkLicenses, collectGoLicenses, reuseLint, verifyPageAlignment) }
+// Release builds don't ship without a passing license check (IMPLEMENTATION_PLAN §4);
+// collectGoLicenses already feeds every variant's assets.
+tasks.matching { it.name == "preReleaseBuild" }.configureEach { dependsOn(checkLicenses, reuseLint) }
 
 // ---- Generated assets ---------------------------------------------------------
 
-val debugTestKey by tasks.registering(Exec::class) {
+val debugTestKey = tasks.register<Exec>("debugTestKey") {
     group = "test-env"
     description = "Creates the debug build's test-env client key (test-env/keys/debug_client_key)."
     val key = testEnvKeys.file("debug_client_key").asFile
@@ -357,7 +371,7 @@ val debugTestKey by tasks.registering(Exec::class) {
     )
 }
 
-val debugKeyAsset by tasks.registering(Copy::class) {
+val debugKeyAsset = tasks.register<Copy>("debugKeyAsset") {
     dependsOn(debugTestKey)
     from(testEnvKeys.file("debug_client_key")) { rename { "test_env_client_key" } }
     into(layout.buildDirectory.dir("generated/debugKey/assets"))
@@ -365,6 +379,12 @@ val debugKeyAsset by tasks.registering(Copy::class) {
 
 androidComponents {
     onVariants { variant ->
+        val verifyApk = tasks.register<VerifyPageAlignment>("verify${variant.name.replaceFirstChar { it.uppercase() }}PageAlignment") {
+            group = "verification"
+            description = "Checks that the ${variant.name} APK's native libraries are 16 KB page-aligned."
+            archives.from(variant.artifacts.get(SingleArtifact.APK).map { dir -> dir.asFileTree.matching { include("*.apk") } })
+        }
+        verifyPageAlignment.configure { dependsOn(verifyApk) }
         variant.sources.assets?.addGeneratedSourceDirectory(collectGoLicenses, CollectGoLicenses::outputDir)
         if (variant.buildType == "debug") {
             variant.sources.assets?.addStaticSourceDirectory(

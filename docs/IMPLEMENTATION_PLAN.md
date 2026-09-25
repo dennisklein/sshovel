@@ -53,7 +53,12 @@ Use the latest stable version of each at implementation time. Record exact versi
   (M0 finding); the pin also makes release builds reproducible.
 - **Java package / applicationId:** `com.github.dennisklein.sshovel` (gomobile classes under
   `com.github.dennisklein.sshovel.core`).
-- **Android SDK:** `compileSdk = 36`, `targetSdk = 36`, `minSdk = 36`.
+- **Android SDK:** `compileSdk = 36`, `targetSdk = 36`, `minSdk = 36`. "Latest stable" for AndroidX
+  therefore means the latest that compiles against 36: Compose 1.12 (BOM 2026.08.00+) and Lifecycle
+  2.11 require compileSdk 37, so M2 uses BOM 2026.06.01 (Compose 1.11) and Lifecycle 2.10 (M2
+  finding). `app/lint.xml` silences only those "newer version" warnings.
+- **ABIs:** `arm64-v8a` and `x86_64` only, matching `gomobile bind -target` (§4). The app sets
+  `ndk.abiFilters` so dependencies' 32-bit native libraries aren't packaged either.
 - **NDK:** r28 or newer, which produces 16 KB-aligned ELF by default for C/C++.
 - **JDK:** 17 or newer. Latest stable AGP and Kotlin 2.x, with the Compose compiler Gradle plugin.
 
@@ -117,7 +122,9 @@ PATH="$(go env GOPATH)/bin:$PATH" go tool gomobile bind \
 - Declare the Go sources as task inputs so the task is incremental.
 - Add `app/libs/core.aar` to `.gitignore`.
 - Add a check task `verifyPageAlignment` that fails the build if any `.so` in the AAR/APK has an ELF
-  `LOAD` segment alignment below 16 KB. Use `llvm-objdump -p` from the NDK, or run
+  `LOAD` segment alignment below 16 KB. (M2: `verifyCorePageAlignment` checks `core.aar` before
+  every build; per-variant `verify<Variant>PageAlignment` tasks check the packaged APKs;
+  `verifyPageAlignment` runs them all.) Use `llvm-objdump -p` from the NDK, or run
   `zipalign -c -P 16 -v 4` on the APK. If Go's linker doesn't produce 16 KB alignment by default,
   add `-ldflags="-extldflags=-Wl,-z,max-page-size=16384"`. (M0: with NDK r30 the default output is
   already 16 KB-aligned, so no flag is needed.)

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-FileCopyrightText: 2026 Dennis Klein -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<lint>
+    <!-- minSdk/targetSdk/compileSdk are pinned to 36 (CLAUDE.md), and Compose 1.12+ / Lifecycle 2.11+
+         needs compileSdk 37; see gradle/libs.versions.toml. -->
+    <issue id="OldTargetApi" severity="ignore" />
+    <issue id="GradleDependency">
+        <ignore regexp="compileSdk|androidx.compose:compose-bom|androidx.lifecycle:" />
+    </issue>
+</lint>

@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -147,7 +148,7 @@ private fun StatusCard(ui: HomeUiState, onConnect: () -> Unit, onDisconnect: () 
 private fun Stats(stats: TunnelStats) {
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         StatRow(stringResource(R.string.stat_uptime), formatUptime(stats.uptimeSec))
-        StatRow(stringResource(R.string.stat_connections), stringResource(R.string.stat_connections_value, stats.activeFlows.toInt()))
+        StatRow(stringResource(R.string.stat_connections), pluralStringResource(R.plurals.stat_connections_value, stats.activeFlows.toInt(), stats.activeFlows.toInt()))
         StatRow(stringResource(R.string.stat_data), "${formatBytes(stats.bytesIn)} / ${formatBytes(stats.bytesOut)}")
         StatRow(stringResource(R.string.stat_dns), "${stats.dnsTunneled} / ${stats.dnsDirect}")
     }
@@ -178,12 +179,12 @@ private fun RetryCountdown(nextRetryAtMillis: Long?) {
 @Composable
 private fun stateLabel(state: TunnelState): String = stringResource(
     when (state) {
-        TunnelState.Off -> R.string.state_off
-        is TunnelState.Connecting -> R.string.state_connecting
-        is TunnelState.On -> R.string.state_on
-        is TunnelState.Reconnecting -> R.string.state_reconnecting
-        is TunnelState.NeedsAttention -> R.string.state_needs_attention
-        TunnelState.Disconnecting -> R.string.state_disconnecting
+        TunnelState.Off -> R.string.tunnel_state_off
+        is TunnelState.Connecting -> R.string.tunnel_state_connecting
+        is TunnelState.On -> R.string.tunnel_state_on
+        is TunnelState.Reconnecting -> R.string.tunnel_state_reconnecting
+        is TunnelState.NeedsAttention -> R.string.tunnel_state_needs_attention
+        TunnelState.Disconnecting -> R.string.tunnel_state_disconnecting
     },
 )
 

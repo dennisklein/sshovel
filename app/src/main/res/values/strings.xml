@@ -6,13 +6,14 @@
 <resources>
     <string name="app_name" translatable="false">sshovel</string>
 
-    <!-- State labels -->
-    <string name="state_off">Off</string>
-    <string name="state_connecting">Connecting…</string>
-    <string name="state_on">On</string>
-    <string name="state_reconnecting">Reconnecting…</string>
-    <string name="state_needs_attention">Needs attention</string>
-    <string name="state_disconnecting">Disconnecting…</string>
+    <!-- State labels. The handoff calls these state_*, which collides with private
+         androidx.compose.ui resources (state_on/state_off), hence the tunnel_ prefix. -->
+    <string name="tunnel_state_off">Off</string>
+    <string name="tunnel_state_connecting">Connecting…</string>
+    <string name="tunnel_state_on">On</string>
+    <string name="tunnel_state_reconnecting">Reconnecting…</string>
+    <string name="tunnel_state_needs_attention">Needs attention</string>
+    <string name="tunnel_state_disconnecting">Disconnecting…</string>
 
     <string name="action_connect">Connect</string>
     <string name="action_disconnect">Disconnect</string>
@@ -24,7 +25,7 @@
     <string name="connecting_auth">Authenticating with key “%1$s”</string>
     <string name="connecting_tunnel">Starting tunnel</string>
     <string name="stat_connections">Connections</string>
-    <string name="stat_connections_value">%1$d active</string>
+    <plurals name="stat_connections_value"><item quantity="one">%1$d active</item><item quantity="other">%1$d active</item></plurals>
     <string name="stat_uptime">Uptime</string>
     <string name="stat_data">Data in / out</string>
     <string name="stat_dns">DNS tunneled / direct</string>
