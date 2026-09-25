@@ -15,23 +15,24 @@ Throwaway code for verifying ARCHITECTURE §11 before building on it. It is not 
 | `env/` | Docker toolbox (SDK, NDK, emulator, JDK, Go) plus `run.sh`, which runs every device spike automatically |
 | `../test-env/` | docker compose intranet from IMPLEMENTATION_PLAN §5 |
 
-## Status
+## Status: complete
 
-The spikes were run in a cloud container that has **no KVM** (so no emulator). Its network policy
-also blocks `dl.google.com` (Android SDK, NDK, AGP, AndroidX), the Docker Hub blob CDN, and the
-Alpine CDN. Everything that doesn't need those was verified there. The rest is ready to run with
-the runbook below.
+All six §11 items were verified on 2026-09-25 using `spikes/env/run.sh` on a Linux/KVM host. The
+emulator was API 36 `google_apis` x86_64 (build BE2A.250530.026.F3), with a second
+`google_apis_ps16k` emulator for the 16 KB page-size run. The toolchain was NDK r30
+(30.0.16248370), AGP 9.4.1 and Go 1.26.3. Raw logs, screenshots and `summary.txt` are in
+`spikes/out/`. The decisions are recorded in ARCHITECTURE §7 and §11 on `main`.
 
-| §11 item | Spike | Result |
+| §11 item | Result | Decision |
 |---|---|---|
-| 5. gVisor on gomobile, 16 KB alignment | 1 | **Partial.** The gVisor `@go` branch builds for android/arm64 and android/amd64. A real stack (fdbased NIC, promiscuous + spoofing, default route, TCP forwarder) runs under `go test -race`. `gobind` generates clean Java bindings. **Pending:** `gomobile bind` (needs the NDK), loading on API 36, and the alignment check. |
-| 6. `NewSignerFromSigner` + Kotlin ECDSA signer vs. OpenSSH 9.x | 4 | **Passed with a JVM stand-in.** A JCA `NONEwithECDSA` signer (the same call PlatformBridge makes on AndroidKeyStore) authenticated against stock **OpenSSH 9.6p1** through `crypto.Signer` → `ssh.NewSignerFromSigner`. `direct-tcpip` through it works. **Pending:** the same with a real Keystore key on the emulator. |
-| 1. FGS type | 2 | **Pending (device).** Build variants `-PfgsType=systemExempted` and `-PfgsType=specialUse`. |
-| 2. Tile start path, consent and no consent | 2 | **Pending (device).** |
-| 3. `VpnService` `exported` value | 2/3 | **Pending (device).** Build variants `-PvpnExported=true` and `-PvpnExported=false`. |
-| 4. `DnsResolver.rawQuery` not captured by our VPN | 3 | **Pending (device).** Includes a control query on the VPN network. |
+| 1. FGS type | `systemExempted` and `specialUse` both let `startForeground` succeed from the app, the tile, the consent activity, and an Always-on boot start. | **`systemExempted`**. |
+| 2. Tile start path | `onClick` → `startForegroundService` works with the app's process killed (importance 125 during the click). Without consent: `startActivityAndCollapse` → consent activity → system dialog → the VPN comes up. **Lock screen (PIN):** SystemUI showed the bouncer and never called `onClick`. | Keep `unlockAndRun` for "require unlock"; check the lock screen on a physical device in M5. |
+| 3. `exported` | With `exported="false"` and with `"true"`: the app is listed under Settings → VPN, and Always-on starts the service at boot (`action=android.net.VpnService`). | **`exported="false"`** plus `BIND_VPN_SERVICE`. |
+| 4. `DnsResolver.rawQuery` on the underlying network | With a `0.0.0.0/0` VPN up: answered (rcode 0, 267 ms; 21 ms with strict Private DNS), and **0** DNS packets reached the TUN. The control on the VPN network went into the TUN to `10.99.0.53:53` and timed out. Android also probed TCP/853 on the VPN DNS address. | Confirmed as designed; RST on 853 (§4) is needed. |
+| 5. gVisor on gomobile, 16 KB | The AAR builds with NDK r30. Every `.so` (arm64, x86_64) in the AAR and APK has 16 KB `LOAD` alignment with no extra flags, and `zipalign -P 16` passes. On the 16 KB kernel (`PAGE_SIZE=16384`) the library loads and runs a gVisor stack. | Confirmed. `gomobile bind` needs the pinned `gobind` on `PATH`. |
+| 6. Keystore signer vs OpenSSH | A Keystore P-256 key (`NONEwithECDSA`, 72-byte DER) authenticated as `tester` against **OpenSSH 10.2**, and `direct-tcpip` to `10.77.0.20:80` worked. The emulator has no StrongBox, and the key's `securityLevel` is 0 (software). | Confirmed. The hardware badge comes from `KeyInfo.getSecurityLevel()`. |
 
-## Findings so far
+## Other findings
 
 1. **gVisor `@go` requires Go ≥ 1.26.3** (`go` directive in its go.mod; the toolchain resolved
    to Go 1.26.8). Pinned: `gvisor.dev/gvisor v0.0.0-20260923023802-c84204b5f2fd`.
