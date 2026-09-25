@@ -16,4 +16,4 @@ compose="docker compose -f compose.yaml"
 $compose --profile tools build
 $compose up -d --build jumphost dns wiki
 trap '$compose down' EXIT
-$compose --profile tools run --rm android /work/spikes/env/run-spikes.sh "$@"
+$compose --profile tools run --rm android bash /work/spikes/env/run-spikes.sh "$@"
