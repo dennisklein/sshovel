@@ -19,7 +19,8 @@ milestone report.
 ```bash
 # Go core
 cd core && go test -race ./... && go vet ./... && staticcheck ./...
-cd core && gomobile bind -target=android/arm64,android/amd64 -androidapi 26 -o ../app/libs/core.aar ./mobile
+cd core && go tool gomobile bind -target=android/arm64,android/amd64 -androidapi 26 \
+    -javapkg=com.github.dennisklein.sshovel.core -o ../app/libs/core.aar ./mobile
 
 # Android (buildGoCore runs automatically before preBuild)
 ./gradlew :app:assembleDebug
@@ -29,7 +30,7 @@ cd core && gomobile bind -target=android/arm64,android/amd64 -androidapi 26 -o .
 ./gradlew verifyPageAlignment
 ./gradlew checkLicenses collectGoLicenses reuseLint   # also run by ./gradlew check
 reuse lint                                           # REUSE/SPDX compliance
-cd core && GOOS=android GOARCH=arm64 go-licenses check ./mobile --ignore example.com/sshovel \
+cd core && GOOS=android GOARCH=arm64 go-licenses check ./mobile --ignore github.com/dennisklein/sshovel \
     --allowed_licenses=Apache-2.0,BSD-2-Clause,BSD-3-Clause,MIT,ISC,MPL-2.0
 
 # Fake intranet for manual testing (emulator reaches it at 10.0.2.2:2222)
@@ -51,7 +52,7 @@ docker compose -f test-env/compose.yaml up --build
   milestone report. gVisor comes from its Go branch (`gvisor.dev/gvisor@go`).
 - **Licensing (GPL-3.0-or-later; details in ARCHITECTURE §12):**
   - Every new source file starts with SPDX headers:
-    `SPDX-FileCopyrightText: 2026 <Copyright holder>` and
+    `SPDX-FileCopyrightText: 2026 Dennis Klein` and
     `SPDX-License-Identifier: GPL-3.0-or-later`.
   - Only add dependencies whose license is on the §12 allowed list. Never add proprietary SDKs
     (Play Services, Firebase, analytics, crash reporters). Test-only deps like JUnit (EPL) must stay

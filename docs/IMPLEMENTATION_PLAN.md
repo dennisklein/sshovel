@@ -14,7 +14,7 @@ Design handoff in `docs/design/`.
 ├── CONTRIBUTING.md               DCO sign-off, license notes (M8)
 ├── docs/                         ARCHITECTURE.md, IMPLEMENTATION_PLAN.md, DESIGN_BRIEF.md, design/,
 │                                 THIRD_PARTY.md (copied code + approved license exceptions)
-├── core/                         Go module (module path: example.com/sshovel/core — rename as needed)
+├── core/                         Go module (module path: github.com/dennisklein/sshovel/core)
 │   ├── go.mod
 │   ├── mobile/                   gomobile-facing API only (ARCHITECTURE §8)
 │   ├── engine/                   state machine, reconnect, stats
@@ -42,8 +42,13 @@ Design handoff in `docs/design/`.
 Use the latest stable version of each at implementation time. Record exact versions in
 `libs.versions.toml` and `go.mod`.
 
-- **Go:** latest stable. gVisor tracks recent Go releases.
-- **gomobile:** `go install golang.org/x/mobile/cmd/gomobile@latest && gomobile init`.
+- **Go:** latest stable. gVisor tracks recent Go releases; its `@go` branch needs Go ≥ 1.26.3 (M0).
+- **gomobile:** pinned in `core/go.mod` with the `tool` directive
+  (`go get -tool golang.org/x/mobile/cmd/gomobile golang.org/x/mobile/cmd/gobind`) and run as
+  `go tool gomobile`. Without the pin, `go mod tidy` drops `x/mobile` and `gomobile bind` fails
+  (M0 finding); the pin also makes release builds reproducible.
+- **Java package / applicationId:** `com.github.dennisklein.sshovel` (gomobile classes under
+  `com.github.dennisklein.sshovel.core`).
 - **Android SDK:** `compileSdk = 36`, `targetSdk = 36`, `minSdk = 36`.
 - **NDK:** r28 or newer, which produces 16 KB-aligned ELF by default for C/C++.
 - **JDK:** 17 or newer. Latest stable AGP and Kotlin 2.x, with the Compose compiler Gradle plugin.
@@ -95,10 +100,10 @@ Add a Gradle task `buildGoCore` in `app/build.gradle.kts`, wired as a dependency
 runs:
 
 ```bash
-cd core && gomobile bind \
+cd core && go tool gomobile bind \
   -target=android/arm64,android/amd64 \
   -androidapi 26 \
-  -javapkg=example.sshovel.core \
+  -javapkg=com.github.dennisklein.sshovel.core \
   -o ../app/libs/core.aar ./mobile
 ```
 
@@ -114,14 +119,14 @@ cd core && gomobile bind \
 **License tasks** (wire all of them into `check`, and make release builds depend on them):
 
 - **`collectGoLicenses`**
-  1. Run `GOOS=android GOARCH=arm64 go-licenses save ./mobile --ignore example.com/sshovel --save_path=<build>/go-licenses`
-     and `go-licenses report ./mobile --ignore example.com/sshovel` to produce the Go dependency list.
+  1. Run `GOOS=android GOARCH=arm64 go-licenses save ./mobile --ignore github.com/dennisklein/sshovel --save_path=<build>/go-licenses`
+     and `go-licenses report ./mobile --ignore github.com/dennisklein/sshovel` to produce the Go dependency list.
   2. Add Go's own `$(go env GOROOT)/LICENSE` explicitly.
   3. Convert the result into AboutLibraries-compatible JSON, or a small custom JSON, packaged as an
      app asset so the licenses screen can show Android and Go dependencies together.
 - **`checkLicenses`**
   - Android: AboutLibraries strict mode with the allowed-license list from ARCHITECTURE §12.
-  - Go: `GOOS=android GOARCH=arm64 go-licenses check ./mobile --ignore example.com/sshovel --allowed_licenses=Apache-2.0,BSD-2-Clause,BSD-3-Clause,MIT,ISC,MPL-2.0`.
+  - Go: `GOOS=android GOARCH=arm64 go-licenses check ./mobile --ignore github.com/dennisklein/sshovel --allowed_licenses=Apache-2.0,BSD-2-Clause,BSD-3-Clause,MIT,ISC,MPL-2.0`.
     `--ignore` skips our own GPL module.
   - The task fails on anything unknown.
 - **`reuseLint`:** runs `reuse lint`. If `reuse` isn't installed, fall back to a script that checks
