@@ -147,7 +147,7 @@ Sections (collapsible or separate cards; your call):
 - **Advanced (collapsed):**
   - keepalive interval (seconds)
   - connect timeout
-  - tunnel interface subnet (default `10.99.0.0/24`)
+  - tunnel interface subnet (default `198.18.0.0/24`)
   - MTU
   - "Set as default profile"
 - **Delete profile** (destructive, with confirmation).

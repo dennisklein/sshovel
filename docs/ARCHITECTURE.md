@@ -59,10 +59,10 @@ Configured once per connection, after SSH has authenticated successfully (see §
 Builder()
     .setSession(profile.name)
     .setMtu(profile.mtu)                            // default 1500
-    .addAddress(tunAddr, tunPrefix)                 // default 10.99.0.1/24
+    .addAddress(tunAddr, tunPrefix)                 // default 198.18.0.1/24
     .apply { profile.routes.forEach { addRoute(it.addr, it.prefix) } }
     .apply { profile.excludedRoutes.forEach { excludeRoute(IpPrefix(it)) } }
-    .addDnsServer(dnsVirtualIp)                     // default 10.99.0.53 (inside tun subnet)
+    .addDnsServer(dnsVirtualIp)                     // default 198.18.0.53 (inside tun subnet)
     .apply { profile.searchDomains.forEach { addSearchDomain(it) } }
     .apply { applyAppMode(profile.apps) }           // allowed XOR disallowed, never both
     .setMetered(false)                              // meteredness follows underlying network
@@ -80,8 +80,11 @@ Rules:
 - **Validation** (in `config/`, mirrored in the Kotlin form):
   - CIDRs must be canonical
   - the tun subnet must not overlap any route
-  - the DNS virtual IP must lie inside the tun subnet
+  - the DNS virtual IP must lie inside the tun subnet (not its network, broadcast, or TUN address)
   - routes must not overlap each other; warn and suggest a merge
+- **Default tun subnet** is `198.18.0.0/24` (RFC 2544 benchmarking range). It sits outside the
+  private ranges that intranets route, so the common `10.0.0.0/8` or `172.16.0.0/12` routes don't
+  collide with it (M1: the earlier `10.99.0.0/24` default overlapped the §8 example profile).
 - **Network changes:** call `setUnderlyingNetworks` again whenever the underlying network changes.
 
 ## 4. TCP forwarding (netstack)
@@ -100,9 +103,16 @@ Rules:
 - **Special destination: the DNS virtual IP.**
   - TCP/53 is handled locally by `dnsproxy` (length-prefixed messages).
   - TCP/853 gets an immediate RST, so Android's opportunistic Private DNS falls back to port 53 fast.
+- **Other addresses in the tun subnet** get an immediate RST; nothing lives there.
 - **While Reconnecting:** new SYNs are RST'd immediately, and existing flows are closed when the SSH
   connection dies.
-- **Non-DNS UDP and ICMP are dropped.** Count them in stats as `droppedUdp` / `droppedIcmp`.
+- **Non-DNS UDP is refused:** the UDP forwarder declines it, so gVisor answers with ICMP port
+  unreachable and QUIC falls back to TCP at once instead of timing out. Counted as `droppedUdp`.
+- **ICMP is dropped before gVisor sees it** (a filter on the link endpoint). Because the NIC is
+  promiscuous, gVisor would otherwise answer echo requests for every address, making unreachable
+  hosts look alive. Counted as `droppedIcmp`. Non-IPv4 packets are dropped the same way.
+- **Flow events:** every forwarded connection emits `open` and `close` (with byte counts and
+  duration), or `fail` with its reason, via `Platform.OnFlowEvent`.
 
 ## 5. DNS (split DNS)
 
@@ -139,9 +149,13 @@ Everything else is **direct**.
 response is larger, use `msg.Truncate(size)`, which sets TC. The client then retries over TCP/53, which
 we also serve.
 
-**Diagnostics.** Record `{name, qtype, route, rcode, answers, latencyMs, ts}` in a ring buffer of 500
-entries. If a tunnel-bound answer contains an A record outside all routed subnets, flag it as
+**Diagnostics.** Every answered query emits `{name, qtype, route, rcode, answers, latencyMs, ts,
+resolvedOutsideRoutes, error}` via `Platform.OnDnsEvent`; Kotlin keeps the last 500 in a ring
+buffer. If a tunnel-bound answer contains an A record outside all routed subnets, flag it as
 `resolvedOutsideRoutes`.
+
+**Health.** A failed tunnel-bound query (channel error after the retry, or timeout) raises the
+`DNS_UNREACHABLE` warning; the next successful one clears it.
 
 **Caching.** None in v1. Android's resolver caches per network, so don't add a cache unless profiling shows a need.
 
@@ -154,10 +168,18 @@ entries. If a tunnel-bound answer contains an A record outside all routed subnet
 
 **Dial**
 
+- A host name is resolved with an A query through `Platform.QueryUpstreamDNS`, so the lookup
+  never enters the VPN (during a reconnect the TUN is still up) and doesn't depend on Go's resolver
+  on Android.
 - `net.Dialer{Timeout, KeepAlive: 30s, Control: protect}`. `protect` calls
   `Platform.Protect(fd)` through `syscall.RawConn.Control`. Always protect, even when the server
   IP isn't in a routed subnet.
-- Then `ssh.NewClientConn` → `ssh.NewClient`. Use the library's default algorithms.
+- Then `ssh.NewClientConn` → `ssh.NewClient`. Use the library's default algorithms, except that a
+  pinned host key's algorithm is requested first, so a server with several host keys presents the
+  pinned one. The whole dial (resolve, connect, handshake, auth) is bounded by
+  `connectTimeoutSec`.
+- Progress steps for the Connecting UI: `resolving` → `identity` (TCP connect and key exchange) →
+  `auth` (host key accepted) → `tunnel` (reported by the engine).
 
 **Auth: Keystore key (default)**
 
@@ -196,9 +218,9 @@ entries. If a tunnel-bound answer contains an A record outside all routed subnet
   - no pin → `HOST_KEY_UNVERIFIED`
   - mismatch → `HOST_KEY_MISMATCH`
   - neither error is retried
-- `mobile.FetchHostKey(configJSON)` dials, captures the host key in the callback, and aborts with a
-  sentinel error before authenticating. It returns `{type, fingerprintSHA256, authorizedKeyLine}` for
-  the verification UI.
+- `mobile.FetchHostKey(platform, configJSON)` dials, captures the host key in the callback, and
+  aborts the handshake before authenticating. It returns `{type, fingerprint, line}` (`line` is
+  `"<type> <base64>"`) for the verification UI. It needs no key.
 
 **Keepalive**
 
@@ -214,10 +236,13 @@ entries. If a tunnel-bound answer contains an A record outside all routed subnet
 
 **Route discovery**
 
-- `mobile.DiscoverRoutes(configJSON, privateKey)` opens a session channel and runs
-  `ip -4 route show`, falling back to `netstat -rn`.
-- Parse the output into `{cidr, dev, isDefault, isLinkLocal}` entries.
-- If the server denies exec or the command fails, return `ROUTE_DISCOVERY_UNAVAILABLE`.
+- `mobile.DiscoverRoutes(platform, configJSON, importedKey)` connects with the pinned host key
+  (unpinned → `HOST_KEY_UNVERIFIED`) and runs, until one yields routes: `ip -4 route show`,
+  `netstat -rn` (Linux and BSD/macOS formats), `cat /proc/net/route` (servers without iproute2 or
+  net-tools; byte order detected from the mask).
+- Parse the output into `{cidr, dev, isDefault, isLinkLocal}` entries: canonical, deduplicated,
+  sorted, loopback dropped; `unreachable`/`blackhole`/`local`… routes skipped.
+- If the server denies exec or no command yields routes, return `ROUTE_DISCOVERY_UNAVAILABLE`.
 
 **Recommended `authorized_keys` line** (shown in UI):
 `restrict,port-forwarding ecdsa-sha2-nistp256 AAAA… sshovel@<device>`
@@ -227,14 +252,21 @@ entries. If a tunnel-bound answer contains an A record outside all routed subnet
 ### State machine (Go `engine/`, mirrored as a Kotlin sealed type)
 
 ```
-Off ──connect──► Connecting ──ssh ok──► [TUN established] ──► On
-Connecting ──auth/hostkey error──► NeedsAttention
+Off ──connect──► Connecting ──ssh ok──► SshReady ──AttachTun──► On   (no TUN fd at Start)
+Off ──connect──► Connecting ──ssh ok──────────────────────────► On   (lockdown: TUN fd at Start)
+Connecting ──auth/hostkey/key error──► NeedsAttention
 Connecting ──transient error──► Reconnecting
 On ──keepalive fail / NetworkChanged / conn closed──► Reconnecting ──ok──► On
-Reconnecting ──auth/hostkey error──► NeedsAttention
+Reconnecting ──auth/hostkey/key error──► NeedsAttention ──RetryNow──► Connecting
 any ──disconnect──► Disconnecting ──► Off
 any ──onRevoke()──► NeedsAttention(VPN_REVOKED)
 ```
+
+Permanent errors (never retried automatically): `AUTH_FAILED`, `HOST_KEY_UNVERIFIED`,
+`HOST_KEY_MISMATCH`, `KEY_UNAVAILABLE`, `INTERNAL`. Everything else is `HOST_UNREACHABLE` and
+retried with backoff. `NetworkChanged` during a dial or backoff restarts the dial at once and resets
+the attempt counter; while On it drops the connection (bound to the old network) and redials
+without waiting.
 
 - **Connect SSH before establishing the TUN.** Auth and host-key failures then never disturb
   routing. When Always-on *lockdown* is active, establish the TUN first so the system doesn't
@@ -242,8 +274,9 @@ any ──onRevoke()──► NeedsAttention(VPN_REVOKED)
 - **Stats** come from `Engine.StatsJSON()`, polled every 1 s while the UI or notification is
   visible, otherwise every 10 s.
 
-Stats fields: `uptimeSec`, `bytesIn`, `bytesOut`, `activeFlows`, `dnsTunneled`, `dnsDirect`,
-`droppedUdp`, `droppedIcmp`, `lastError`.
+Stats fields: `uptimeSec` (since the last transition to On; 0 otherwise), `bytesIn` (to apps),
+`bytesOut` (from apps), `activeFlows`, `dnsTunneled`, `dnsDirect`, `droppedUdp`, `droppedIcmp`,
+`lastError` (last error code seen).
 
 ### Kotlin side
 
@@ -308,7 +341,7 @@ type Platform interface {
     Protect(fd int32) bool
     SignDigest(keyAlias string, digest []byte) ([]byte, error) // DER ECDSA signature
     QueryUpstreamDNS(query []byte) ([]byte, error)             // raw DNS wire format
-    OnState(stateJSON string)                                  // {"state":"on","code":"","detail":""}
+    OnState(stateJSON string)                                  // see "State JSON" below
     Log(level int32, component string, message string)
     OnDnsEvent(eventJSON string)
     OnFlowEvent(eventJSON string)
@@ -324,12 +357,41 @@ func (e *Engine) NetworkChanged()
 func (e *Engine) RetryNow()
 func (e *Engine) StatsJSON() string
 
-func FetchHostKey(configJSON string, importedKey []byte) (string, error) // {"type","fingerprint","line"}
-func DiscoverRoutes(configJSON string, importedKey []byte) (string, error) // [{"cidr","dev","isDefault","isLinkLocal"}]
+func FetchHostKey(platform Platform, configJSON string) (string, error) // {"type","fingerprint","line"}
+func DiscoverRoutes(platform Platform, configJSON string, importedKey []byte) (string, error) // [{"cidr","dev","isDefault","isLinkLocal"}]
 func AuthorizedKeyLine(pkixPublicKey []byte, comment string) (string, error)
-func ValidateConfig(configJSON string) string // "" or JSON list of {field, code}
+func ValidateConfig(configJSON string) string // "" or JSON list of {field, code, severity, suggestion}
 func Version() string
 ```
+
+`FetchHostKey` and `DiscoverRoutes` take the `Platform` because they must protect their socket,
+resolve the host on the underlying network, and (for discovery) sign with the Keystore key
+(M1). Every `[]byte importedKey` is zeroed by Go before the call returns.
+
+**Errors.** Every error returned to Kotlin has a message of the form `"CODE: detail"`, where `CODE`
+is one of the codes below. Invalid profiles fail with `INTERNAL: invalid profile: field=CODE, …`.
+
+**State JSON** (`OnState`):
+
+```json
+{
+  "state": "off|connecting|sshReady|on|reconnecting|needsAttention|disconnecting",
+  "code": "HOST_UNREACHABLE",        // needsAttention: the error; reconnecting: last dial error
+  "detail": "…",                     // human-readable detail for diagnostics, not UI copy
+  "step": "resolving|identity|auth|tunnel",           // connecting only
+  "reason": "dialFailed|networkChanged|keepaliveTimeout|connectionClosed", // reconnecting
+  "attempt": 3,                      // reconnecting
+  "nextRetryAt": 1790337601000,      // reconnecting, unix ms; absent while a dial is in progress
+  "warnings": ["FORWARDING_DENIED", "DNS_UNREACHABLE"] // on
+}
+```
+
+`FORWARDING_DENIED` is raised by the first flow the server refuses with `Prohibited` and cleared on
+the next SSH connection. `ROUTE_DISCOVERY_UNAVAILABLE` only comes from `DiscoverRoutes`.
+
+**Validation issues** (`ValidateConfig`): `{"field":"routes[1]","code":"ROUTE_OVERLAP",
+"severity":"warning","suggestion":"10.0.0.0/8"}`. Codes are defined in `core/config/validate.go`;
+only `severity:"error"` blocks saving or connecting.
 
 `Start` may be called with `tunFd = -1`, in which case SSH connects first. Once Kotlin sees the
 state `sshReady`, it establishes the TUN and calls `AttachTun`. This is the normal (non-lockdown)
@@ -354,7 +416,7 @@ ordering from §7.
     "hideAAAA": true
   },
   "apps": { "mode": "all", "packages": [] },
-  "tun": { "cidr": "10.99.0.0/24", "dnsVirtualIp": "10.99.0.53", "mtu": 1500 },
+  "tun": { "cidr": "198.18.0.0/24", "dnsVirtualIp": "198.18.0.53", "mtu": 1500 },
   "keepaliveSec": 20,
   "connectTimeoutSec": 10
 }
@@ -460,10 +522,12 @@ Test-only tooling that isn't shipped in the APK is out of scope: the Docker test
    the app so the in-app screen can display it.
 2. **Per-file notices.** Every source file (Go, Kotlin, Gradle scripts, XML resources, shell) starts
    with SPDX headers:
+   <!-- REUSE-IgnoreStart -->
    ```
    // SPDX-FileCopyrightText: 2026 Dennis Klein
    // SPDX-License-Identifier: GPL-3.0-or-later
    ```
+   <!-- REUSE-IgnoreEnd -->
    Use the comment syntax of each file type. Files that can't carry a header (binary assets,
    generated files) are covered by `REUSE.toml`. The repo follows the REUSE specification and passes
    `reuse lint`.

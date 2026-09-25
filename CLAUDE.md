@@ -19,6 +19,8 @@ milestone report.
 ```bash
 # Go core
 cd core && go test -race ./... && go vet ./... && staticcheck ./...
+# Linux debug CLI against test-env (see test-env/README.md)
+sudo test-env/cli-netns.sh setup && sudo test-env/cli-netns.sh run -profile … -key … up
 # gomobile execs gobind from PATH; go install inside core/ installs the version pinned in go.mod
 cd core && go install golang.org/x/mobile/cmd/gobind && PATH="$(go env GOPATH)/bin:$PATH" \
     go tool gomobile bind -target=android/arm64,android/amd64 -androidapi 26 \
@@ -32,6 +34,8 @@ cd core && go install golang.org/x/mobile/cmd/gobind && PATH="$(go env GOPATH)/b
 ./gradlew verifyPageAlignment
 ./gradlew checkLicenses collectGoLicenses reuseLint   # also run by ./gradlew check
 reuse lint                                           # REUSE/SPDX compliance
+# go-licenses must be built with the core's toolchain:
+#   cd core && GOTOOLCHAIN=go1.26.3 go install github.com/google/go-licenses@v1.6.0
 cd core && GOOS=android GOARCH=arm64 go-licenses check ./mobile --ignore github.com/dennisklein/sshovel \
     --allowed_licenses=Apache-2.0,BSD-2-Clause,BSD-3-Clause,MIT,ISC,MPL-2.0
 
@@ -53,9 +57,11 @@ docker compose -f test-env/compose.yaml up --build
 - **Dependencies.** Use only those listed in IMPLEMENTATION_PLAN §3. Justify any addition in the
   milestone report. gVisor comes from its Go branch (`gvisor.dev/gvisor@go`).
 - **Licensing (GPL-3.0-or-later; details in ARCHITECTURE §12):**
+<!-- REUSE-IgnoreStart -->
   - Every new source file starts with SPDX headers:
     `SPDX-FileCopyrightText: 2026 Dennis Klein` and
     `SPDX-License-Identifier: GPL-3.0-or-later`.
+<!-- REUSE-IgnoreEnd -->
   - Only add dependencies whose license is on the §12 allowed list. Never add proprietary SDKs
     (Play Services, Firebase, analytics, crash reporters). Test-only deps like JUnit (EPL) must stay
     in test configurations.

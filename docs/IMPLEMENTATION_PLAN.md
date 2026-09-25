@@ -10,6 +10,7 @@ Design handoff in `docs/design/`.
 /
 ├── CLAUDE.md
 ├── LICENSE                       verbatim GPL-3.0 text (FSF)
+├── LICENSES/GPL-3.0-or-later.txt byte-identical copy of LICENSE, where REUSE looks for it
 ├── REUSE.toml                    license info for files that can't carry SPDX headers
 ├── CONTRIBUTING.md               DCO sign-off, license notes (M8)
 ├── docs/                         ARCHITECTURE.md, IMPLEMENTATION_PLAN.md, DESIGN_BRIEF.md, design/,
@@ -22,6 +23,8 @@ Design handoff in `docs/design/`.
 │   ├── sshx/                     dial+protect, auth, host key, keepalive, route discovery
 │   ├── dnsproxy/                 split DNS, DoTCP pool, truncation
 │   ├── config/                   profile schema + validation
+│   ├── errcode/                  error/warning codes shared with Kotlin
+│   ├── cmd/sshovel-cli/          Linux debug CLI (TUN) for test-env
 │   └── internal/testutil/        in-process sshd, fake DNS, netstack peer
 ├── app/                          Android application module
 │   └── src/main/java/…/sshovel/
@@ -131,6 +134,9 @@ PATH="$(go env GOPATH)/bin:$PATH" go tool gomobile bind \
   - Go: `GOOS=android GOARCH=arm64 go-licenses check ./mobile --ignore github.com/dennisklein/sshovel --allowed_licenses=Apache-2.0,BSD-2-Clause,BSD-3-Clause,MIT,ISC,MPL-2.0`.
     `--ignore` skips our own GPL module.
   - The task fails on anything unknown.
+- **Tool versions:** build `go-licenses` with the core's Go toolchain
+  (`cd core && GOTOOLCHAIN=go1.26.3 go install github.com/google/go-licenses@v1.6.0`). A binary built
+  with an older Go can't map the newer standard library to modules and fails every package (M1).
 - **`reuseLint`:** runs `reuse lint`. If `reuse` isn't installed, fall back to a script that checks
   for SPDX headers in `*.go`, `*.kt`, `*.kts`, `*.xml`, and `*.sh`.
 - **`SOURCE_URL`:** set `BuildConfig.SOURCE_URL` from the git tag, for example
