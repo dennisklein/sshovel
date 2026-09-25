@@ -405,8 +405,7 @@ building on them:
 
 ## 12. Licensing and compliance
 
-sshovel is licensed **GPL-3.0-or-later**. The copyright holder is a placeholder,
-`<Copyright holder>`, until the owner fills it in.
+sshovel is licensed **GPL-3.0-or-later**. The copyright holder is **Dennis Klein**.
 
 ### Dependency compatibility
 
@@ -437,7 +436,7 @@ Test-only tooling that isn't shipped in the APK is out of scope: the Docker test
 2. **Per-file notices.** Every source file (Go, Kotlin, Gradle scripts, XML resources, shell) starts
    with SPDX headers:
    ```
-   // SPDX-FileCopyrightText: 2026 <Copyright holder>
+   // SPDX-FileCopyrightText: 2026 Dennis Klein
    // SPDX-License-Identifier: GPL-3.0-or-later
    ```
    Use the comment syntax of each file type. Files that can't carry a header (binary assets,
