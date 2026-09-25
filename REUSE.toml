@@ -1,0 +1,20 @@
+# SPDX-FileCopyrightText: 2026 Dennis Klein
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Licensing for files that can't carry an SPDX header (ARCHITECTURE §12 item 2).
+version = 1
+
+# Documentation and the Claude Design handoff (HTML exports, thumbnails,
+# SVG icons, generated Kotlin/XML samples).
+[[annotations]]
+path = ["CLAUDE.md", "docs/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Dennis Klein"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+# Go module files are rewritten by the go command; JSON has no comments.
+[[annotations]]
+path = ["core/go.mod", "core/go.sum", "test-env/*.json"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Dennis Klein"
+SPDX-License-Identifier = "GPL-3.0-or-later"
