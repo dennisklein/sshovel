@@ -1,0 +1,7 @@
+{
+  "name": "test-env",
+  "server": { "host": "192.168.100.1", "port": 2222, "user": "tester" },
+  "auth": { "kind": "imported", "alias": "cli" },
+  "routes": ["10.77.0.0/24"],
+  "dns": { "server": "10.77.0.53", "suffixes": ["corp.test"], "reverseLookups": true, "hideAAAA": true }
+}

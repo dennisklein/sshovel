@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2026 Dennis Klein
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Fake intranet reachable only through the jump host (IMPLEMENTATION_PLAN §5).
+# The Android emulator reaches the jump host at 10.0.2.2:2222.
+services:
+  jumphost:
+    # Host networking for the build only, so package downloads use the host's
+    # resolver (also works with systemd-resolved's 127.0.0.53).
+    build: { context: ./jumphost, network: host }
+    ports: ["2222:22"]
+    volumes:
+      - ./keys:/etc/ssh/keys:ro                 # keys/authorized_keys for user tester
+      - ./hostkeys:/etc/ssh/hostkeys           # delete its contents to rotate the host key
+    networks: [public, intranet]
+  dns:
+    build: { context: ./dns, network: host }
+    networks: { intranet: { ipv4_address: 10.77.0.53 } }
+  wiki:
+    image: nginx:alpine
+    networks: { intranet: { ipv4_address: 10.77.0.20 } }
+networks:
+  public: {}
+  intranet:
+    internal: true
+    ipam: { config: [ { subnet: 10.77.0.0/24 } ] }
