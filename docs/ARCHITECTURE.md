@@ -254,7 +254,13 @@ Stats fields: `uptimeSec`, `bytesIn`, `bytesOut`, `activeFlows`, `dnsTunneled`, 
   - When the system starts it for Always-on (intent action `VpnService.SERVICE_INTERFACE` or null
     intent), connect the default profile.
   - Implements `onRevoke()`.
-  - Posts the ongoing notification and calls `startForeground` (see the M0 spike on service type).
+  - Posts the ongoing notification and calls `startForeground(id, n, FOREGROUND_SERVICE_TYPE_SYSTEM_EXEMPTED)`
+    first thing in `onStartCommand`, before SSH connects or the TUN is established (M0: works from
+    the app, the tile, the consent activity and an Always-on boot start).
+  - Manifest: `android:foregroundServiceType="systemExempted"`,
+    `android:permission="android.permission.BIND_VPN_SERVICE"`, `android:exported="false"`, an
+    intent filter for `android.net.VpnService`, and `<uses-permission>` for `FOREGROUND_SERVICE` and
+    `FOREGROUND_SERVICE_SYSTEM_EXEMPTED`.
   - Passes the TUN fd to Go with `ParcelFileDescriptor.detachFd()`. Go owns and closes it.
 - **`NetworkMonitor`**
   - Uses `ConnectivityManager.registerBestMatchingNetworkCallback` with a request for
@@ -268,7 +274,9 @@ Stats fields: `uptimeSec`, `bytesIn`, `bytesOut`, `activeFlows`, `dnsTunneled`, 
   - Update the tile via `TileService.requestListeningState` whenever the state changes; set label,
     subtitle, and state per `DESIGN_BRIEF.md` §7.
   - `onClick`:
-    1. If "require unlock" is on and `isLocked`, wrap the action in `unlockAndRun { … }`.
+    1. If "require unlock" is on and `isLocked`, wrap the action in `unlockAndRun { … }`. (M0: on the
+       API 36 emulator with a PIN, SystemUI already shows the bouncer and never calls `onClick` while
+       locked; keep the check anyway and verify on a physical device in M5.)
     2. If there's no default profile, open the app.
     3. If `VpnService.prepare(context) != null`, call
        `startActivityAndCollapse(PendingIntent)` to open `VpnConsentActivity`. This activity shows
@@ -386,22 +394,39 @@ Error and warning codes (used in `OnState` and in the UI catalog):
 - If a routed subnet overlaps the local Wi-Fi LAN, local devices in that range become unreachable for
   covered apps. The UI warns about this when the overlap is detectable.
 
-## 11. Platform facts to verify early (Milestone 0)
+## 11. Platform facts (verified in Milestone 0)
 
-These are believed correct but must be confirmed on a real Android 16 device or emulator before
-building on them:
+Verified on 2026-09-25 on the API 36 `google_apis` x86_64 emulator (build BE2A.250530.026.F3), a
+16 KB page-size `google_apis_ps16k` emulator, and stock OpenSSH 10.2 (Alpine) / 9.6 (Ubuntu). Raw
+results and logs are on the `spikes` branch (`spikes/README.md`, `spikes/out/`).
 
-1. **Foreground service type** for the VPN service on API 36: `systemExempted` (documented for VPN
-   apps) vs. `specialUse`. Also check the required permissions and whether `startForeground` from
-   `onStartCommand` works when the service is started from a tile click.
-2. **Tile start path:** starting `SshovelVpnService` from `TileService.onClick` works with the app
-   in the background, both when consent is already granted and when it isn't.
-3. **`VpnService` manifest `exported` value** that keeps the app listed under Settings → VPN for
-   Always-on while staying protected by `BIND_VPN_SERVICE`.
-4. **`DnsResolver.rawQuery` on the underlying `Network`** is not captured by our own VPN.
-5. **gVisor on gomobile:** use gVisor's Go-compatible branch (`go get gvisor.dev/gvisor@go`; the
-   default branch is Bazel-oriented). The `.so` files in `core.aar` must be **16 KB page-aligned**.
-6. **`ssh.NewSignerFromSigner` with a Kotlin-backed ECDSA signer** authenticates against OpenSSH 9.x.
+1. **Foreground service type:** `systemExempted` works. `specialUse` works too, but isn't needed and
+   would need a justification property. `startForeground` from `onStartCommand` succeeds when the
+   service is started by the app, the tile (process killed beforehand), the consent activity, and
+   the system for Always-on at boot.
+2. **Tile start path:** `TileService.onClick` → `startForegroundService` works with the app's process
+   killed (the process runs at importance 125 during the click). Without consent,
+   `startActivityAndCollapse(PendingIntent)` → consent activity → system dialog → start works.
+   **Lock screen:** with a PIN set, SystemUI shows the bouncer and doesn't call `onClick` while
+   locked, so the tile can't connect from a locked, secured phone. "Require unlock" is therefore
+   enforced by the platform on this build. Check on a physical device in M5 (§7 test matrix).
+3. **`exported`:** `android:exported="false"` (plus `BIND_VPN_SERVICE`) keeps the app listed under
+   Settings → VPN, and Always-on still starts the service at boot (`action=android.net.VpnService`).
+   The same holds for `true`; `false` is chosen because nothing but the system needs to bind it.
+4. **`DnsResolver.rawQuery` on the underlying `Network`** isn't captured by our VPN: with a
+   `0.0.0.0/0` VPN up, it answered in 267 ms (21 ms with strict Private DNS, which it follows) and no
+   DNS packet reached the TUN. The control query on the default (VPN) network went into the TUN to
+   the VPN's DNS address and timed out. Android also opened TCP/853 to the VPN DNS address
+   (opportunistic Private DNS probe), which confirms the RST-on-853 rule in §4.
+5. **gVisor on gomobile:** the `@go` branch needs Go ≥ 1.26.3. `gomobile bind` with NDK r30 produces
+   `.so` files with 16 KB `LOAD` alignment by default (no extra linker flags), `zipalign -P 16`
+   passes, and the library loads and runs a gVisor stack on a 16 KB page-size kernel.
+   `gomobile bind` execs `gobind` from `PATH`, so the build installs the version pinned in `go.mod`
+   first.
+6. **`ssh.NewSignerFromSigner` with a Keystore ECDSA P-256 key** (`NONEwithECDSA`, DER signature)
+   authenticates against OpenSSH 10.2, and `direct-tcpip` works through it. The emulator's Keystore
+   reports `SECURITY_LEVEL_SOFTWARE` and no StrongBox, so the hardware-backed badge must come from
+   `KeyInfo.getSecurityLevel()` and may legitimately be absent.
 
 ## 12. Licensing and compliance
 

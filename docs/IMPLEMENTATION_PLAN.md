@@ -100,7 +100,8 @@ Add a Gradle task `buildGoCore` in `app/build.gradle.kts`, wired as a dependency
 runs:
 
 ```bash
-cd core && go tool gomobile bind \
+cd core && go install golang.org/x/mobile/cmd/gobind   # pinned version; gomobile execs it from PATH
+PATH="$(go env GOPATH)/bin:$PATH" go tool gomobile bind \
   -target=android/arm64,android/amd64 \
   -androidapi 26 \
   -javapkg=com.github.dennisklein.sshovel.core \
@@ -114,7 +115,8 @@ cd core && go tool gomobile bind \
 - Add a check task `verifyPageAlignment` that fails the build if any `.so` in the AAR/APK has an ELF
   `LOAD` segment alignment below 16 KB. Use `llvm-objdump -p` from the NDK, or run
   `zipalign -c -P 16 -v 4` on the APK. If Go's linker doesn't produce 16 KB alignment by default,
-  add `-ldflags="-extldflags=-Wl,-z,max-page-size=16384"`.
+  add `-ldflags="-extldflags=-Wl,-z,max-page-size=16384"`. (M0: with NDK r30 the default output is
+  already 16 KB-aligned, so no flag is needed.)
 
 **License tasks** (wire all of them into `check`, and make release builds depend on them):
 
