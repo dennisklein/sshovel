@@ -289,6 +289,11 @@ keep the meaning.
 
 `FORWARDING_DENIED` and `DNS_UNREACHABLE` are warnings shown while On, not stopping errors.
 
+**Reconnecting copy (M1 decision).** While reconnecting, new intranet connections are refused at
+once (ARCHITECTURE §4), not held. The handoff's `reconnect_detail_*` strings end with "Intranet
+connections fail until the tunnel is back." instead of "Intranet traffic is held until the tunnel
+is back."
+
 ## 9. Handoff deliverables (what engineering needs from you)
 
 1. Every screen and state in §5, light and dark, plus the storyboards in §6.
