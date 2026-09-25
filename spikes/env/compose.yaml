@@ -7,7 +7,7 @@ include:
 
 services:
   android:
-    build: .
+    build: { context: ., network: host }
     # Host networking: the emulator's 10.0.2.2 is this container's loopback,
     # which is the host's loopback, where test-env publishes the jump host on 2222.
     network_mode: host
