@@ -142,17 +142,15 @@ A fake intranet reachable only through the jump host:
 # test-env/compose.yaml
 services:
   jumphost:
-    build: ./jumphost            # Alpine + openssh-server; AllowTcpForwarding yes; key-only auth;
+    build: { context: ./jumphost, network: host }
+                                 # Alpine + openssh-server; AllowTcpForwarding yes; key-only auth;
                                  # user "tester"; authorized_keys mounted from ./keys/authorized_keys
     ports: ["2222:22"]
     networks: [public, intranet]
   dns:
-    image: alpine:3
-    command: >
-      sh -c "apk add --no-cache dnsmasq &&
-             dnsmasq -k --no-resolv --log-queries
-             --address=/wiki.corp.test/10.77.0.20
-             --address=/api.corp.test/10.77.0.21"
+    build: { context: ./dns, network: host }
+                                 # Alpine + dnsmasq installed at build time, answering
+                                 # wiki.corp.test → 10.77.0.20, api.corp.test → 10.77.0.21
     networks: { intranet: { ipv4_address: 10.77.0.53 } }
   wiki:
     image: nginx:alpine
@@ -163,6 +161,10 @@ networks:
     internal: true
     ipam: { config: [ { subnet: 10.77.0.0/24 } ] }
 ```
+
+Builds use host networking so package downloads work on hosts with systemd-resolved
+(`127.0.0.53` isn't reachable from the default bridge). The `dns` image installs dnsmasq at build
+time, because at runtime it sits only on the `internal` network, which has no internet access.
 
 Emulator profile for manual testing:
 
