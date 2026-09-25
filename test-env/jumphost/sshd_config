@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2026 <Copyright holder>
+# SPDX-FileCopyrightText: 2026 Dennis Klein
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Stock OpenSSH, key-only, TCP forwarding allowed: the only server-side
 # requirement sshovel has.

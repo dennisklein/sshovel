@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2026 <Copyright holder>
+// SPDX-FileCopyrightText: 2026 Dennis Klein
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 // Package mobile is the M0 spike 1 gomobile surface: it proves that a gVisor

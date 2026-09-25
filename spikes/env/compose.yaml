@@ -1,0 +1,23 @@
+# SPDX-FileCopyrightText: 2026 Dennis Klein
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# test-env plus the Android toolbox. Use ./run.sh rather than calling this directly.
+include:
+  - ../../test-env/compose.yaml
+
+services:
+  android:
+    build: .
+    # Host networking: the emulator's 10.0.2.2 is this container's loopback,
+    # which is the host's loopback, where test-env publishes the jump host on 2222.
+    network_mode: host
+    devices: ["/dev/kvm"]
+    volumes:
+      - ../..:/work
+      - gradle-cache:/root/.gradle
+      - go-cache:/root/go
+    profiles: ["tools"]
+
+volumes:
+  gradle-cache: {}
+  go-cache: {}

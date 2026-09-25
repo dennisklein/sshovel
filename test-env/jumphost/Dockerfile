@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2026 <Copyright holder>
+# SPDX-FileCopyrightText: 2026 Dennis Klein
 # SPDX-License-Identifier: GPL-3.0-or-later
 FROM alpine:3
 RUN apk add --no-cache openssh-server iproute2 \

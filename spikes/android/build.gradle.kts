@@ -1,7 +1,7 @@
-// SPDX-FileCopyrightText: 2026 <Copyright holder>
+// SPDX-FileCopyrightText: 2026 Dennis Klein
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 plugins {
-    // Bump to the latest stable AGP if this version is not available.
-    id("com.android.application") version "9.0.0" apply false
+    // Version comes from agpVersion (settings.gradle.kts).
+    id("com.android.application") apply false
 }

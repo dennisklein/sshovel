@@ -1,7 +1,7 @@
-// SPDX-FileCopyrightText: 2026 <Copyright holder>
+// SPDX-FileCopyrightText: 2026 Dennis Klein
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package example.sshovel.spike;
+package com.github.dennisklein.sshovel.spike;
 
 import android.app.ActivityManager;
 import android.app.Notification;
@@ -26,8 +26,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * was captured by the VPN or went out on the underlying network.
  */
 public class SpikeVpnService extends VpnService {
-    static final String ACTION_START = "example.sshovel.spike.START";
-    static final String ACTION_STOP = "example.sshovel.spike.STOP";
+    static final String ACTION_START = "com.github.dennisklein.sshovel.spike.START";
+    static final String ACTION_STOP = "com.github.dennisklein.sshovel.spike.STOP";
     static final String EXTRA_ORIGIN = "origin";
     static final String EXTRA_ROUTE = "route";
 

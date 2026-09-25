@@ -1,5 +1,5 @@
 #!/bin/sh
-# SPDX-FileCopyrightText: 2026 <Copyright holder>
+# SPDX-FileCopyrightText: 2026 Dennis Klein
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # M0 spike 1: build core.aar with gomobile (pinned via the go.mod tool
@@ -13,6 +13,6 @@ mkdir -p "$(dirname "$out")"
 go tool gomobile bind -v \
     -target=android/arm64,android/amd64 \
     -androidapi 26 \
-    -javapkg=example.sshovel.core \
+    -javapkg=com.github.dennisklein.sshovel.core \
     -o "$out" ./mobile
 ./check-alignment.sh "$out"

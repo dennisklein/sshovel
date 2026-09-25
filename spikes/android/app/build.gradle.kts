@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2026 <Copyright holder>
+// SPDX-FileCopyrightText: 2026 Dennis Klein
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 plugins { id("com.android.application") }
@@ -8,10 +8,10 @@ val vpnExported = providers.gradleProperty("vpnExported").get()
 require(fgsType in setOf("systemExempted", "specialUse")) { "fgsType must be systemExempted or specialUse" }
 
 android {
-    namespace = "example.sshovel.spike"
+    namespace = "com.github.dennisklein.sshovel.spike"
     compileSdk = 36
     defaultConfig {
-        applicationId = "example.sshovel.spike"
+        applicationId = "com.github.dennisklein.sshovel.spike"
         minSdk = 36
         targetSdk = 36
         versionCode = 1

@@ -1,7 +1,7 @@
-// SPDX-FileCopyrightText: 2026 <Copyright holder>
+// SPDX-FileCopyrightText: 2026 Dennis Klein
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package example.sshovel.spike;
+package com.github.dennisklein.sshovel.spike;
 
 import android.util.Log;
 

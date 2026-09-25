@@ -1,5 +1,5 @@
 #!/bin/sh
-# SPDX-FileCopyrightText: 2026 <Copyright holder>
+# SPDX-FileCopyrightText: 2026 Dennis Klein
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Host keys live in a volume so they survive rebuilds; empty it to rotate them
 # (manual test: HOST_KEY_MISMATCH).

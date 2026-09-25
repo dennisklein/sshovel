@@ -1,7 +1,7 @@
-// SPDX-FileCopyrightText: 2026 <Copyright holder>
+// SPDX-FileCopyrightText: 2026 Dennis Klein
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package example.sshovel.spike;
+package com.github.dennisklein.sshovel.spike;
 
 import android.app.Activity;
 import android.app.StatusBarManager;
@@ -44,8 +44,8 @@ import java.security.spec.ECGenParameterSpec;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import example.sshovel.core.mobile.DigestSigner;
-import example.sshovel.core.mobile.Mobile;
+import com.github.dennisklein.sshovel.core.mobile.DigestSigner;
+import com.github.dennisklein.sshovel.core.mobile.Mobile;
 
 /** One screen with a button per M0 check. Results go to the log view and logcat. */
 public class MainActivity extends Activity {
@@ -70,13 +70,7 @@ public class MainActivity extends Activity {
         col.setPadding(32, 96, 32, 96);
 
         section(col, "Spike 1: gomobile AAR with gVisor");
-        button(col, "Go hello (build gVisor stack)", v -> bg.execute(() -> {
-            try {
-                SpikeLog.i("SPIKE1 " + Mobile.hello());
-            } catch (Exception e) {
-                SpikeLog.e("SPIKE1 hello failed", e);
-            }
-        }));
+        button(col, "Go hello (build gVisor stack)", v -> bg.execute(this::hello));
 
         section(col, "Spike 2: VpnService + tile (FGS type " + BuildConfig.FGS_TYPE + ")");
         routeField = field(col, "VPN route (0.0.0.0/0 for spike 3, 10.77.0.0/24 for spike 4)", route(this));
@@ -84,8 +78,7 @@ public class MainActivity extends Activity {
                 new String[] {android.Manifest.permission.POST_NOTIFICATIONS}, 2));
         button(col, "Add tile (requestAddTileService)", v -> addTile());
         button(col, "Start VPN", v -> startVpn());
-        button(col, "Stop VPN", v -> startService(new Intent(this, SpikeVpnService.class)
-                .setAction(SpikeVpnService.ACTION_STOP).putExtra(SpikeVpnService.EXTRA_ORIGIN, "app")));
+        button(col, "Stop VPN", v -> stopVpn());
 
         section(col, "Spike 3: DnsResolver.rawQuery on the underlying network");
         qname = field(col, "Name", "example.com");
@@ -114,6 +107,56 @@ public class MainActivity extends Activity {
         SpikeLog.setListener(line -> main.post(() -> logView.append(line + "\n")));
 
         watchUnderlyingNetwork();
+        // Give the network callback a moment before running an adb command.
+        main.postDelayed(() -> handleCommand(getIntent()), 2000);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleCommand(intent);
+    }
+
+    /**
+     * Automation hook for spikes/env/run-spikes.sh:
+     * {@code adb shell am start -n <pkg>/.MainActivity --es cmd <name> [--es key value ...]}.
+     * Each command does exactly what the matching button does.
+     */
+    private void handleCommand(Intent intent) {
+        String cmd = intent == null ? null : intent.getStringExtra("cmd");
+        if (cmd == null) return;
+        intent.removeExtra("cmd");
+        SpikeLog.i("command " + cmd);
+        setIfPresent(intent, "route", routeField);
+        setIfPresent(intent, "qname", qname);
+        setIfPresent(intent, "host", host);
+        setIfPresent(intent, "port", port);
+        setIfPresent(intent, "user", user);
+        setIfPresent(intent, "probe", probe);
+        switch (cmd) {
+            case "hello" -> bg.execute(this::hello);
+            case "start-vpn" -> startVpn();
+            case "stop-vpn" -> stopVpn();
+            case "dns-underlying" -> dnsQuery(true);
+            case "dns-default" -> dnsQuery(false);
+            case "genkey" -> bg.execute(this::generateKey);
+            case "auth" -> bg.execute(this::testAuth);
+            default -> SpikeLog.i("unknown command " + cmd);
+        }
+    }
+
+    private static void setIfPresent(Intent intent, String key, EditText field) {
+        String v = intent.getStringExtra(key);
+        if (v != null) field.setText(v);
+    }
+
+    private void hello() {
+        try {
+            SpikeLog.i("SPIKE1 " + Mobile.hello());
+        } catch (Exception e) {
+            SpikeLog.e("SPIKE1 hello failed", e);
+        }
     }
 
     @Override
@@ -123,6 +166,11 @@ public class MainActivity extends Activity {
     }
 
     // --- Spike 2 -------------------------------------------------------------
+
+    private void stopVpn() {
+        startService(new Intent(this, SpikeVpnService.class)
+                .setAction(SpikeVpnService.ACTION_STOP).putExtra(SpikeVpnService.EXTRA_ORIGIN, "app"));
+    }
 
     private void startVpn() {
         getSharedPreferences("spike", MODE_PRIVATE).edit()
@@ -262,7 +310,7 @@ public class MainActivity extends Activity {
                     + " (1=TEE, 2=StrongBox, 0=software)");
             byte[] pkix = ks.getCertificate(KEY_ALIAS).getPublicKey().getEncoded();
             String line = Mobile.authorizedKeyLine(pkix, "sshovel@spike");
-            SpikeLog.i("SPIKE4 authorized_keys line:\n" + line);
+            SpikeLog.i("SPIKE4 authorized_keys: " + line);
             main.post(() -> getSystemService(ClipboardManager.class)
                     .setPrimaryClip(ClipData.newPlainText("authorized_keys", line)));
         } catch (Exception e) {

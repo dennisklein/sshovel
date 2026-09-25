@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2026 <Copyright holder>
+# SPDX-FileCopyrightText: 2026 Dennis Klein
 # SPDX-License-Identifier: GPL-3.0-or-later
 # authorized_keys for user "tester". Paste the line sshovel shows, e.g.
 # restrict,port-forwarding ecdsa-sha2-nistp256 AAAA... sshovel@device

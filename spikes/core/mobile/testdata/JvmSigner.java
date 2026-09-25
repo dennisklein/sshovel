@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2026 <Copyright holder>
+// SPDX-FileCopyrightText: 2026 Dennis Klein
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 // Stand-in for the Android Keystore signer in M0 spike 4. It generates an

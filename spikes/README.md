@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2026 <Copyright holder>
+SPDX-FileCopyrightText: 2026 Dennis Klein
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
@@ -11,7 +11,8 @@ Throwaway code for verifying ARCHITECTURE §11 before building on it. It is not 
 | Path | What |
 |---|---|
 | `core/` | Go module. `mobile/` is a gomobile surface covering spike 1 (`Hello`: gVisor stack on an fd) and spike 4 (`TestAuth`: SSH auth with a platform-backed ECDSA signer). `build-aar.sh` builds the AAR; `check-alignment.sh` checks 16 KB alignment. |
-| `android/` | Plain-Java spike app, with no AndroidX so AGP is the only dependency. It has one button per check, the VpnService, the tile and the consent activity. |
+| `android/` | Plain-Java spike app, with no AndroidX so AGP is the only dependency. It has one button per check (also scriptable over adb), the VpnService, the tile and the consent activity. |
+| `env/` | Docker toolbox (SDK, NDK, emulator, JDK, Go) plus `run.sh`, which runs every device spike automatically |
 | `../test-env/` | docker compose intranet from IMPLEMENTATION_PLAN §5 |
 
 ## Status
@@ -55,56 +56,56 @@ the runbook below.
 
 ## Runbook for the device spikes
 
-Prerequisites: Docker, JDK 17+, Go (any recent version; `GOTOOLCHAIN=auto` fetches 1.26.x),
-Android SDK with platform 36, NDK r28+, and an **API 36 emulator** (Google APIs, x86_64).
+Requirements: a **Linux x86_64** machine with virtualization enabled (`/dev/kvm` exists), Docker
+with the compose plugin (v2.20+), about 20 GB of free disk, and internet access. Nothing else is
+needed, since the SDK, NDK, emulator, JDK and Go all live in the container.
 
 ```bash
-export ANDROID_HOME=~/Android/Sdk ANDROID_NDK_HOME=$ANDROID_HOME/ndk/<r28+ version>
-
-# 0. Fake intranet
-docker compose -f test-env/compose.yaml up --build -d
-
-# 1. AAR + alignment (prints OK/FAIL per .so)
-spikes/core/build-aar.sh
-
-# App (default variant: systemExempted, exported=true). Bump AGP in
-# spikes/android/build.gradle.kts if 9.0.0 isn't available.
-cd spikes/android
-echo "sdk.dir=$ANDROID_HOME" > local.properties
-./gradlew :app:installDebug
-../core/check-alignment.sh app/build/outputs/apk/debug/app-debug.apk
-$ANDROID_HOME/build-tools/*/zipalign -c -P 16 -v 4 app/build/outputs/apk/debug/app-debug.apk | tail -1
-
-# Capture everything (leave running)
-adb logcat -s sshovel-spike | tee m0.log
+git checkout spikes
+spikes/env/run.sh            # all variants, ~30-45 min the first time (image build ~15 min)
+spikes/env/run.sh A          # or a single variant
 ```
 
-In the **sshovel spikes** app (every result is a `SPIKEn` line in the log):
+`run.sh` builds the toolbox image (`spikes/env/Dockerfile`) and starts `test-env`. It then runs
+`spikes/env/run-spikes.sh` inside the container, which:
 
-1. **Spike 1:** tap *Go hello*. Expect `gVisor netstack up … android/amd64`.
-2. **Spike 2 (tile):** tap *Allow notifications*, then *Add tile* and accept.
-   - a. First run has no consent yet. Press Home, open Quick Settings and tap the tile. Expect
-     `startActivityAndCollapse … OK`, then the system dialog; accept it. Expect
-     `startForeground OK with type …`.
-   - b. Swipe the app away from Recents. Tap the tile on, then off. Expect
-     `startForegroundService(START) OK` / `startService(STOP) OK`, or a logged exception.
-   - c. Lock the screen and tap the tile from the lock screen.
-   - Repeat a and b after `./gradlew :app:installDebug -PfgsType=specialUse`. To reset consent,
-     uninstall first.
-3. **Spike 3 (Always-on / exported):** open Settings → Network & internet → VPN → *sshovel spikes* ⚙.
-   Is Always-on offered? Turn it on, run `adb reboot`, and look for `onStartCommand … origin=null-intent`
-   (or `action=android.net.VpnService`). Repeat with `-PvpnExported=false`.
-4. **Spike 3 (DNS):** set the route to `0.0.0.0/0` and tap *Start VPN*. The TUN black-holes everything.
-   - *Query via underlying network* should give `answer rcode=0 … DNS packets seen on our TUN during query: 0`.
-   - *Control: query via default network* should time out or fail, with more than 0 DNS packets on the TUN.
-   - Optional: set Private DNS to strict (`dns.google`) and repeat.
-5. **Spike 4 (Keystore):** stop the VPN. Tap *Generate key*, copy the `authorized_keys` line from
-   `m0.log` into `test-env/keys/authorized_keys`, then tap *Test SSH auth*. Expect
-   `SPIKE4 OK: authenticated as tester with ecdsa-sha2-nistp256; server SSH-2.0-OpenSSH_… direct-tcpip to 10.77.0.20:80 OK`,
-   plus the key's `securityLevel`.
+1. builds `core.aar` with `go tool gomobile bind` and checks 16 KB alignment of the AAR and APK
+   (spike 1)
+2. builds three APK variants: **A** `systemExempted` + `exported=true`, **B** `specialUse` +
+   `exported=true`, and **C** `systemExempted` + `exported=false`
+3. boots a headless API 36 emulator (`google_apis`, x86_64) and drives every scenario with no taps
+   needed:
+   - Go hello (spike 1)
+   - tile clicks through `cmd statusbar click-tile`: without consent, with the consent dialog
+     accepted through uiautomator, with the app process killed, and from the lock screen (spike 2)
+   - `DnsResolver.rawQuery` on the underlying vs. the default network while a black-hole VPN is up,
+     also with strict Private DNS (spike 3)
+   - Keystore key generation, writing its line into `test-env/keys/authorized_keys`, and SSH auth
+     plus `direct-tcpip` to the wiki (spike 4)
+   - Always-on configured and the emulator rebooted, to see whether the system starts the service
+     (spike 3, variants A and C)
 
-Send back `m0.log`, the alignment output, and a note of what the system UI did at each step
-(dialogs and crashes). Decisions and ARCHITECTURE updates for items 1–5 follow from those.
+Results land in `spikes/out/`:
+
+- `summary.txt`: every spike log line plus relevant system errors, per variant
+- `alignment.txt`
+- `<variant>/logcat.txt`
+- screenshots
+
+`test-env/keys/authorized_keys` is restored afterwards. To send the results back, commit and push
+them (the APKs are git-ignored):
+
+```bash
+git add spikes/out && git commit -m "M0 spike results" && git push
+```
+
+If you want to click through by hand instead, the app has one button per check. In the container,
+run `emulator -avd spike` without `-no-window`, or install `spikes/out/A.apk` on any API 36 device.
+Watch `adb logcat -s sshovel-spike`.
+
+Caveat: `cmd statusbar click-tile` goes through the same SystemUI click path as a finger tap. Only
+a manual tap on a real device would rule out any difference in background-start exemptions, and
+that's worth a quick check once the real tile exists (M5).
 
 ## Verified here (reproduce)
 

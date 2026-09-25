@@ -1,4 +1,4 @@
-module example.com/sshovel/spikes/core
+module github.com/dennisklein/sshovel/spikes/core
 
 go 1.26.3
 
