@@ -19,7 +19,9 @@ milestone report.
 ```bash
 # Go core
 cd core && go test -race ./... && go vet ./... && staticcheck ./...
-cd core && go tool gomobile bind -target=android/arm64,android/amd64 -androidapi 26 \
+# gomobile execs gobind from PATH; go install inside core/ installs the version pinned in go.mod
+cd core && go install golang.org/x/mobile/cmd/gobind && PATH="$(go env GOPATH)/bin:$PATH" \
+    go tool gomobile bind -target=android/arm64,android/amd64 -androidapi 26 \
     -javapkg=com.github.dennisklein.sshovel.core -o ../app/libs/core.aar ./mobile
 
 # Android (buildGoCore runs automatically before preBuild)
