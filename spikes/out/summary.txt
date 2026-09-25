@@ -1,0 +1,818 @@
+sshovel M0 spike run 2026-09-25T15:38:36Z
+SDK: ndk;30.0.16248370 build-tools;36.1.0 system-images;android-36;google_apis_ps16k;x86_64; AGP: 9.4.1
+
+## Alignment
+OK   core.aar/jni/arm64-v8a/libgojni.so: min LOAD align 0x4000
+OK   core.aar/jni/x86_64/libgojni.so: min LOAD align 0x4000
+OK   A.apk/lib/arm64-v8a/libgojni.so: min LOAD align 0x4000
+OK   A.apk/lib/x86_64/libgojni.so: min LOAD align 0x4000
+Verification successful
+PAGE_SIZE=16384
+
+## Variant A (systemExempted, exported=true)
+15:30:10.808  2975  2975 I sshovel-spike: === A: install systemExempted exported=true
+15:30:12.449  3087  3087 I sshovel-spike: === SPIKE1 load AAR, build gVisor stack
+15:30:13.719  3115  3115 I sshovel-spike: underlying network available: 100
+15:30:13.723  3115  3115 I sshovel-spike: underlying 100 dns=[/10.0.2.3] privateDnsActive=false privateDnsServer=null
+15:30:15.039  3115  3115 I sshovel-spike: command hello
+15:30:15.079  3115  3245 I sshovel-spike: SPIKE1 gVisor netstack up: nic=1 routes=1 go=go1.26.3 android/amd64
+15:30:20.602  3687  3687 I sshovel-spike: === SPIKE2a tile tap, no VPN consent yet, app process killed
+15:30:28.152  4122  4122 I sshovel-spike: SPIKE2 tile onClick locked=false secure=false running=false
+15:30:28.160  4122  4122 I sshovel-spike: SPIKE2 no consent yet -> startActivityAndCollapse(ConsentActivity) OK
+15:30:28.465   684  1510 E AppOps  : java.lang.SecurityException: Specified package "com.github.dennisklein.sshovel.spike" under uid 10107 but it is not
+15:30:33.228  4122  4122 I sshovel-spike: SPIKE2 consent result=granted
+15:30:33.297  4122  4122 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.START origin=consent-activity importance=100 fgsType=systemExempted
+15:30:33.312  4122  4122 I sshovel-spike: SPIKE2 startForeground OK with type systemExempted
+15:30:33.337  4122  4122 I sshovel-spike: VPN up route=0.0.0.0/0 alwaysOn=false lockdown=false
+15:30:33.540  4122  4302 I sshovel-spike: TUN pkt#4 proto=17 dst=10.99.0.53:53
+15:30:33.541  4122  4302 I sshovel-spike: TUN pkt#5 proto=6 dst=172.217.116.4:443
+15:30:33.550  4122  4302 I sshovel-spike: TUN pkt#6 proto=6 dst=10.99.0.53:853
+15:30:33.565  4122  4302 I sshovel-spike: TUN pkt#7 proto=6 dst=142.251.156.119:443
+15:30:33.576  4122  4302 I sshovel-spike: TUN pkt#8 proto=6 dst=172.217.116.4:443
+15:30:33.586  4122  4302 I sshovel-spike: TUN pkt#9 proto=6 dst=172.217.116.4:443
+15:30:33.588  4122  4302 I sshovel-spike: TUN pkt#10 proto=6 dst=172.217.116.4:443
+15:30:33.677  4122  4302 I sshovel-spike: TUN pkt#11 proto=17 dst=10.99.0.53:53
+15:30:33.835  4122  4302 I sshovel-spike: TUN pkt#12 proto=17 dst=10.99.0.53:53
+15:30:34.259  4122  4302 I sshovel-spike: TUN pkt#17 proto=17 dst=10.99.0.53:53
+15:30:34.571  4122  4302 I sshovel-spike: TUN pkt#18 proto=6 dst=10.99.0.53:853
+15:30:34.715  4122  4302 I sshovel-spike: TUN pkt#23 proto=17 dst=10.99.0.53:53
+15:30:34.999  4122  4302 I sshovel-spike: TUN pkt#25 proto=17 dst=10.99.0.53:53
+15:30:35.350  4122  4302 I sshovel-spike: TUN pkt#26 proto=17 dst=10.99.0.53:53
+15:30:35.595  4122  4302 I sshovel-spike: TUN pkt#27 proto=6 dst=10.99.0.53:853
+15:30:35.665  4122  4302 I sshovel-spike: TUN pkt#32 proto=17 dst=10.99.0.53:53
+15:30:35.724  4122  4302 I sshovel-spike: TUN pkt#33 proto=17 dst=10.99.0.53:53
+15:30:36.620  4122  4302 I sshovel-spike: TUN pkt#34 proto=6 dst=10.99.0.53:853
+15:30:37.643  4122  4302 I sshovel-spike: TUN pkt#40 proto=6 dst=10.99.0.53:853
+15:30:37.745  4122  4302 I sshovel-spike: TUN pkt#46 proto=17 dst=10.99.0.53:53
+15:30:38.543  4122  4302 I sshovel-spike: TUN pkt#47 proto=17 dst=10.99.0.53:53
+15:30:38.560  4122  4302 I sshovel-spike: TUN pkt#48 proto=17 dst=10.99.0.53:53
+15:30:38.568  4122  4302 I sshovel-spike: TUN pkt#49 proto=17 dst=10.99.0.53:53
+15:30:38.571  4122  4302 I sshovel-spike: TUN pkt#50 proto=17 dst=10.99.0.53:53
+15:30:38.667  4122  4302 I sshovel-spike: TUN pkt#52 proto=6 dst=10.99.0.53:853
+15:30:38.675  4122  4302 I sshovel-spike: TUN pkt#53 proto=17 dst=10.99.0.53:53
+15:30:38.823  4122  4302 I sshovel-spike: TUN pkt#57 proto=17 dst=10.99.0.53:53
+15:30:39.264  4122  4302 I sshovel-spike: TUN pkt#58 proto=17 dst=10.99.0.53:53
+15:30:40.004  4122  4302 I sshovel-spike: TUN pkt#59 proto=17 dst=10.99.0.53:53
+15:30:40.355  4122  4302 I sshovel-spike: TUN pkt#60 proto=17 dst=10.99.0.53:53
+15:30:40.667  4122  4302 I sshovel-spike: TUN pkt#61 proto=17 dst=10.99.0.53:53
+15:30:40.687  4122  4302 I sshovel-spike: TUN pkt#63 proto=6 dst=10.99.0.53:853
+15:30:41.815  4514  4514 I sshovel-spike: === SPIKE2a tile tap off
+15:30:41.833  4122  4122 I sshovel-spike: SPIKE2 tile onClick locked=false secure=false running=true
+15:30:41.835  4122  4122 I sshovel-spike: SPIKE2 tile -> startService(STOP) OK
+15:30:41.836  4122  4122 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.STOP origin=tile importance=125 fgsType=systemExempted
+15:30:41.836  4122  4122 I sshovel-spike: stopping VPN: user
+15:30:46.894  4659  4659 I sshovel-spike: === SPIKE2b tile tap on, consent granted, app process killed
+15:30:54.151  4695  4695 I sshovel-spike: SPIKE2 tile onClick locked=false secure=false running=false
+15:30:54.166  4695  4695 I sshovel-spike: SPIKE2 tile -> startForegroundService(START) OK
+15:30:54.168  4695  4695 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.START origin=tile importance=125 fgsType=systemExempted
+15:30:54.177  4695  4695 I sshovel-spike: SPIKE2 startForeground OK with type systemExempted
+15:30:54.199  4695  4695 I sshovel-spike: VPN up route=0.0.0.0/0 alwaysOn=false lockdown=false
+15:30:54.253  4695  4712 I sshovel-spike: TUN pkt#4 proto=6 dst=142.251.14.94:443
+15:30:54.260  4695  4712 I sshovel-spike: TUN pkt#5 proto=6 dst=142.251.14.94:443
+15:30:54.268  4695  4712 I sshovel-spike: TUN pkt#6 proto=6 dst=10.99.0.53:853
+15:30:54.270  4695  4712 I sshovel-spike: TUN pkt#7 proto=17 dst=10.99.0.53:53
+15:30:54.270  4695  4712 I sshovel-spike: TUN pkt#8 proto=6 dst=142.251.14.94:443
+15:30:54.358  4695  4712 I sshovel-spike: TUN pkt#10 proto=17 dst=10.99.0.53:53
+15:30:55.275  4695  4712 I sshovel-spike: TUN pkt#14 proto=6 dst=10.99.0.53:853
+15:30:56.299  4695  4712 I sshovel-spike: TUN pkt#15 proto=6 dst=10.99.0.53:853
+15:30:57.323  4695  4712 I sshovel-spike: TUN pkt#19 proto=6 dst=10.99.0.53:853
+15:30:58.348  4695  4712 I sshovel-spike: TUN pkt#22 proto=6 dst=10.99.0.53:853
+15:30:59.273  4695  4712 I sshovel-spike: TUN pkt#25 proto=17 dst=10.99.0.53:53
+15:30:59.360  4695  4712 I sshovel-spike: TUN pkt#26 proto=17 dst=10.99.0.53:53
+15:30:59.371  4695  4712 I sshovel-spike: TUN pkt#29 proto=6 dst=10.99.0.53:853
+15:30:59.748  4733  4733 I sshovel-spike: === SPIKE2b tile tap off, app process killed
+15:31:01.388  4695  4712 I sshovel-spike: TUN pkt#31 proto=6 dst=10.99.0.53:853
+15:31:03.807  4695  4695 I sshovel-spike: SPIKE2 tile onClick locked=false secure=false running=true
+15:31:03.809  4695  4695 I sshovel-spike: SPIKE2 tile -> startService(STOP) OK
+15:31:03.809  4695  4695 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.STOP origin=tile importance=125 fgsType=systemExempted
+15:31:03.809  4695  4695 I sshovel-spike: stopping VPN: user
+15:31:08.853  4779  4779 I sshovel-spike: === SPIKE2c tile tap on from the lock screen
+15:31:33.219  5095  5095 I sshovel-spike: === SPIKE3 DNS: VPN routes 0.0.0.0/0 into a TUN nobody answers
+15:31:33.501  4695  4695 I sshovel-spike: command start-vpn
+15:31:33.551  4695  4695 I sshovel-spike: underlying network available: 100
+15:31:33.554  4695  4695 I sshovel-spike: underlying 100 dns=[/10.0.2.3] privateDnsActive=false privateDnsServer=null
+15:31:33.568  4695  4695 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.START origin=app importance=100 fgsType=systemExempted
+15:31:33.614  4695  4695 I sshovel-spike: SPIKE2 startForeground OK with type systemExempted
+15:31:33.659  4695  4695 I sshovel-spike: VPN up route=0.0.0.0/0 alwaysOn=false lockdown=false
+15:31:33.867  4695  5130 I sshovel-spike: TUN pkt#37 proto=17 dst=10.99.0.53:53
+15:31:33.879  4695  5130 I sshovel-spike: TUN pkt#38 proto=6 dst=10.99.0.53:853
+15:31:33.971  4695  5130 I sshovel-spike: TUN pkt#39 proto=17 dst=10.99.0.53:53
+15:31:34.895  4695  5130 I sshovel-spike: TUN pkt#41 proto=6 dst=10.99.0.53:853
+15:31:35.919  4695  5130 I sshovel-spike: TUN pkt#42 proto=6 dst=10.99.0.53:853
+15:31:36.939  4695  5130 I sshovel-spike: TUN pkt#43 proto=6 dst=10.99.0.53:853
+15:31:37.963  4695  5130 I sshovel-spike: TUN pkt#44 proto=6 dst=10.99.0.53:853
+15:31:38.870  4695  5130 I sshovel-spike: TUN pkt#46 proto=17 dst=10.99.0.53:53
+15:31:38.976  4695  5130 I sshovel-spike: TUN pkt#47 proto=17 dst=10.99.0.53:53
+15:31:38.987  4695  5130 I sshovel-spike: TUN pkt#48 proto=6 dst=10.99.0.53:853
+15:31:41.003  4695  5130 I sshovel-spike: TUN pkt#49 proto=6 dst=10.99.0.53:853
+15:31:41.330  4695  4695 I sshovel-spike: command dns-underlying
+15:31:41.600  4695  5429 I sshovel-spike: SPIKE3 underlying 100: answer rcode=0 answers=2 bytes=61 in 267 ms; DNS packets seen on our TUN during query: 0 (VPN running=true)
+15:31:45.260  4695  5130 I sshovel-spike: TUN pkt#50 proto=6 dst=10.99.0.53:853
+15:31:46.321  4695  5130 I sshovel-spike: TUN pkt#51 proto=17 dst=10.99.0.53:53
+15:31:51.326  4695  5130 I sshovel-spike: TUN pkt#53 proto=17 dst=10.99.0.53:53
+15:31:51.369  4695  4695 I sshovel-spike: command dns-default
+15:31:51.371  4695  5130 I sshovel-spike: TUN pkt#54 proto=17 dst=10.99.0.53:53
+15:31:51.390  4695  5130 I sshovel-spike: TUN pkt#55 proto=17 dst=10.99.0.53:53
+15:31:51.984  4695  5130 I sshovel-spike: TUN pkt#56 proto=17 dst=10.99.0.53:53
+15:31:53.451  4695  5130 I sshovel-spike: TUN pkt#57 proto=6 dst=10.99.0.53:853
+15:31:56.376  4695  5130 I sshovel-spike: TUN pkt#58 proto=17 dst=10.99.0.53:53
+15:31:56.396  4695  5130 I sshovel-spike: TUN pkt#59 proto=17 dst=10.99.0.53:53
+15:31:56.989  4695  5130 I sshovel-spike: TUN pkt#60 proto=17 dst=10.99.0.53:53
+15:31:58.506  4695  5130 I sshovel-spike: TUN pkt#61 proto=17 dst=10.99.0.53:53
+15:32:01.400  4695  5130 I sshovel-spike: TUN pkt#62 proto=17 dst=10.99.0.53:53
+15:32:01.420  4695  5130 I sshovel-spike: TUN pkt#63 proto=17 dst=10.99.0.53:53
+15:32:01.448  4695  5130 I sshovel-spike: TUN pkt#64 proto=17 dst=10.99.0.53:53
+15:32:01.460  4695  4695 I sshovel-spike: underlying 100 dns=[/10.0.2.3] privateDnsActive=true privateDnsServer=dns.google
+15:32:03.101  4695  4695 I sshovel-spike: underlying 100 dns=[/10.0.2.3] privateDnsActive=true privateDnsServer=dns.google
+15:32:03.107  4695  4695 I sshovel-spike: underlying 100 dns=[/10.0.2.3] privateDnsActive=true privateDnsServer=dns.google
+15:32:03.511  4695  5130 I sshovel-spike: TUN pkt#65 proto=17 dst=10.99.0.53:53
+15:32:06.405  4695  5130 I sshovel-spike: TUN pkt#67 proto=17 dst=10.99.0.53:53
+15:32:06.422  4695  5130 I sshovel-spike: TUN pkt#68 proto=17 dst=10.99.0.53:53
+15:32:06.451  4695  5130 I sshovel-spike: TUN pkt#69 proto=17 dst=10.99.0.53:53
+15:32:06.471  4695  4695 I sshovel-spike: command dns-underlying
+15:32:06.495  4695  5429 I sshovel-spike: SPIKE3 underlying 100: answer rcode=0 answers=2 bytes=61 in 21 ms; DNS packets seen on our TUN during query: 0 (VPN running=true)
+15:32:11.456  4695  5130 I sshovel-spike: TUN pkt#70 proto=17 dst=10.99.0.53:53
+15:32:16.462  4695  5130 I sshovel-spike: TUN pkt#71 proto=17 dst=10.99.0.53:53
+15:32:16.504  4695  4695 I sshovel-spike: command dns-default
+15:32:20.710  4695  5429 I sshovel-spike: SPIKE3 default network: error code=1 android.system.ErrnoException: resNetworkResult failed: ETIMEDOUT (Connection timed out) after 4205 ms; DNS packets seen on our TUN: 0
+15:32:22.469  4695  5130 I sshovel-spike: TUN pkt#72 proto=17 dst=10.99.0.53:53
+15:32:26.526  4695  5130 I sshovel-spike: TUN pkt#73 proto=6 dst=10.99.0.53:853
+15:32:26.531  4695  5130 I sshovel-spike: TUN pkt#74 proto=17 dst=10.99.0.53:53
+15:32:26.541  4695  4695 I sshovel-spike: underlying 100 dns=[/10.0.2.3] privateDnsActive=false privateDnsServer=null
+15:32:26.592  4695  4695 I sshovel-spike: command stop-vpn
+15:32:26.594  4695  4695 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.STOP origin=app importance=100 fgsType=systemExempted
+15:32:26.595  4695  4695 I sshovel-spike: stopping VPN: user
+15:32:30.622  4695  4695 I sshovel-spike: command genkey
+15:32:30.626  4695  5429 I sshovel-spike: SPIKE4 StrongBox unavailable, retrying without
+15:32:30.633  4695  5429 I sshovel-spike: SPIKE4 key securityLevel=0 (1=TEE, 2=StrongBox, 0=software)
+15:32:30.660  4695  5429 I sshovel-spike: SPIKE4 authorized_keys: restrict,port-forwarding ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBIc+HCWAGChVx+NHHZsYVTYQ6cKRN8Nuv1GyQJ26iUqXQ8oueNnj5W3Sx8SVP+XaryOAswS2ICZK1JV8pVVGu18= sshovel@spike
+15:32:38.745  4695  4695 I sshovel-spike: command auth
+15:32:39.583  4695  5429 I sshovel-spike: SPIKE4 SignDigest(sshovel-spike-key, 32 bytes) -> DER 72 bytes
+15:32:39.602  4695  5429 I sshovel-spike: SPIKE4 OK: authenticated as tester with ecdsa-sha2-nistp256; server SSH-2.0-OpenSSH_10.2 host key SHA256:Lorq//WeCjy/j7lB52rQSr16Yp0SJVoYYUgmYWiumgk; direct-tcpip to 10.77.0.20:80 OK
+15:32:58.362  4695  4695 I sshovel-spike: underlying network lost: 100
+15:33:23.042  1701  1701 I sshovel-spike: onStartCommand action=android.net.VpnService origin=null importance=300 fgsType=systemExempted
+15:33:23.057  1701  1701 I sshovel-spike: SPIKE2 startForeground OK with type systemExempted
+15:33:23.222  1701  1701 I sshovel-spike: VPN up route=0.0.0.0/0 alwaysOn=true lockdown=false
+15:33:23.380  1701  1833 I sshovel-spike: TUN pkt#4 proto=6 dst=10.99.0.53:853
+15:33:24.393  1701  1833 I sshovel-spike: TUN pkt#7 proto=6 dst=10.99.0.53:853
+15:33:25.071  1701  1833 I sshovel-spike: TUN pkt#8 proto=17 dst=10.99.0.53:53
+15:33:25.418  1701  1833 I sshovel-spike: TUN pkt#9 proto=6 dst=10.99.0.53:853
+15:33:26.457  1701  1833 I sshovel-spike: TUN pkt#10 proto=6 dst=10.99.0.53:853
+15:33:27.462  1701  1833 I sshovel-spike: TUN pkt#12 proto=6 dst=10.99.0.53:853
+15:33:28.492  1701  1833 I sshovel-spike: TUN pkt#13 proto=6 dst=10.99.0.53:853
+15:33:29.599  1701  1833 I sshovel-spike: TUN pkt#14 proto=17 dst=10.99.0.53:53
+15:33:29.905  1701  1833 I sshovel-spike: TUN pkt#15 proto=17 dst=10.99.0.53:53
+15:33:30.058  1701  1833 I sshovel-spike: TUN pkt#16 proto=17 dst=10.99.0.53:53
+15:33:30.502  1701  1833 I sshovel-spike: TUN pkt#17 proto=6 dst=10.99.0.53:853
+15:33:30.529  1701  1833 I sshovel-spike: TUN pkt#18 proto=17 dst=10.99.0.53:53
+15:33:30.908  1701  1833 I sshovel-spike: TUN pkt#19 proto=17 dst=10.99.0.53:53
+15:33:31.930  1701  1833 I sshovel-spike: TUN pkt#20 proto=17 dst=10.99.0.53:53
+15:33:32.174  1701  1833 I sshovel-spike: TUN pkt#21 proto=17 dst=10.99.0.53:53
+15:33:32.250  1701  1833 I sshovel-spike: TUN pkt#22 proto=17 dst=10.99.0.53:53
+15:33:32.339  1701  1833 I sshovel-spike: TUN pkt#23 proto=17 dst=10.99.0.53:53
+15:33:32.383  1701  1833 I sshovel-spike: TUN pkt#24 proto=17 dst=10.99.0.53:53
+15:33:33.568  1701  1833 I sshovel-spike: TUN pkt#25 proto=17 dst=10.99.0.53:53
+15:33:33.838  1701  1833 I sshovel-spike: TUN pkt#26 proto=17 dst=10.99.0.53:53
+15:33:33.954  1701  1833 I sshovel-spike: TUN pkt#27 proto=17 dst=10.99.0.53:53
+15:33:34.117  3262  3262 I sshovel-spike: === SPIKE3 after reboot
+15:33:34.601  1701  1833 I sshovel-spike: TUN pkt#28 proto=17 dst=10.99.0.53:53
+15:33:34.693  1701  1833 I sshovel-spike: TUN pkt#29 proto=6 dst=10.99.0.53:853
+15:33:34.899  1701  1833 I sshovel-spike: TUN pkt#30 proto=17 dst=10.99.0.53:53
+15:33:35.534  1701  1833 I sshovel-spike: TUN pkt#31 proto=17 dst=10.99.0.53:53
+15:33:37.178  1701  1833 I sshovel-spike: TUN pkt#33 proto=17 dst=10.99.0.53:53
+15:33:37.253  1701  1833 I sshovel-spike: TUN pkt#34 proto=17 dst=10.99.0.53:53
+15:33:37.343  1701  1833 I sshovel-spike: TUN pkt#35 proto=17 dst=10.99.0.53:53
+15:33:37.381  1701  1833 I sshovel-spike: TUN pkt#36 proto=17 dst=10.99.0.53:53
+15:33:38.510  1701  1833 I sshovel-spike: TUN pkt#37 proto=17 dst=10.99.0.53:53
+15:33:38.513  1701  1833 I sshovel-spike: TUN pkt#38 proto=17 dst=10.99.0.53:53
+15:33:38.573  1701  1833 I sshovel-spike: TUN pkt#39 proto=17 dst=10.99.0.53:53
+15:33:38.843  1701  1833 I sshovel-spike: TUN pkt#40 proto=17 dst=10.99.0.53:53
+15:33:38.958  1701  1833 I sshovel-spike: TUN pkt#41 proto=17 dst=10.99.0.53:53
+15:33:39.904  1701  1833 I sshovel-spike: TUN pkt#42 proto=17 dst=10.99.0.53:53
+15:33:40.540  1701  1833 I sshovel-spike: TUN pkt#43 proto=17 dst=10.99.0.53:53
+15:33:42.179  1701  1833 I sshovel-spike: TUN pkt#44 proto=17 dst=10.99.0.53:53
+15:33:42.179  1701  1833 I sshovel-spike: TUN pkt#45 proto=17 dst=10.99.0.53:53
+15:33:42.179  1701  1833 I sshovel-spike: TUN pkt#46 proto=17 dst=10.99.0.53:53
+15:33:42.179  1701  1833 I sshovel-spike: TUN pkt#47 proto=17 dst=10.99.0.53:53
+15:33:42.180  1701  1833 I sshovel-spike: TUN pkt#48 proto=17 dst=10.99.0.53:53
+15:33:42.180  1701  1833 I sshovel-spike: TUN pkt#49 proto=17 dst=10.99.0.53:53
+15:33:42.885  1701  1833 I sshovel-spike: TUN pkt#50 proto=6 dst=10.99.0.53:853
+15:33:43.031  1701  1833 I sshovel-spike: TUN pkt#51 proto=17 dst=10.99.0.53:53
+15:33:43.516  1701  1833 I sshovel-spike: TUN pkt#52 proto=17 dst=10.99.0.53:53
+15:33:43.518  1701  1833 I sshovel-spike: TUN pkt#53 proto=17 dst=10.99.0.53:53
+15:33:43.844  1701  1833 I sshovel-spike: TUN pkt#54 proto=17 dst=10.99.0.53:53
+15:33:43.845  1701  1833 I sshovel-spike: TUN pkt#55 proto=17 dst=10.99.0.53:53
+15:33:43.961  1701  1833 I sshovel-spike: TUN pkt#56 proto=17 dst=10.99.0.53:53
+15:33:43.964  1701  1833 I sshovel-spike: TUN pkt#57 proto=17 dst=10.99.0.53:53
+15:33:44.909  1701  1833 I sshovel-spike: TUN pkt#58 proto=17 dst=10.99.0.53:53
+15:33:44.975  1701  1833 I sshovel-spike: TUN pkt#59 proto=17 dst=10.99.0.53:53
+15:33:45.071  1701  1833 I sshovel-spike: TUN pkt#60 proto=17 dst=10.99.0.53:53
+15:33:45.545  1701  1833 I sshovel-spike: TUN pkt#61 proto=17 dst=10.99.0.53:53
+15:33:46.131  1701  1833 I sshovel-spike: TUN pkt#62 proto=17 dst=10.99.0.53:53
+15:33:46.996  1701  1833 I sshovel-spike: TUN pkt#63 proto=17 dst=10.99.0.53:53
+15:33:47.184  1701  1833 I sshovel-spike: TUN pkt#64 proto=17 dst=10.99.0.53:53
+15:33:47.184  1701  1833 I sshovel-spike: TUN pkt#65 proto=17 dst=10.99.0.53:53
+15:33:47.184  1701  1833 I sshovel-spike: TUN pkt#66 proto=17 dst=10.99.0.53:53
+15:33:47.184  1701  1833 I sshovel-spike: TUN pkt#67 proto=17 dst=10.99.0.53:53
+15:33:47.184  1701  1833 I sshovel-spike: TUN pkt#68 proto=17 dst=10.99.0.53:53
+15:33:47.184  1701  1833 I sshovel-spike: TUN pkt#69 proto=17 dst=10.99.0.53:53
+15:33:48.036  1701  1833 I sshovel-spike: TUN pkt#70 proto=17 dst=10.99.0.53:53
+15:33:48.521  1701  1833 I sshovel-spike: TUN pkt#71 proto=17 dst=10.99.0.53:53
+15:33:48.522  1701  1833 I sshovel-spike: TUN pkt#72 proto=17 dst=10.99.0.53:53
+15:33:48.522  1701  1833 I sshovel-spike: TUN pkt#73 proto=17 dst=10.99.0.53:53
+15:33:48.564  1701  1833 I sshovel-spike: TUN pkt#74 proto=17 dst=10.99.0.53:53
+15:33:48.849  1701  1833 I sshovel-spike: TUN pkt#75 proto=17 dst=10.99.0.53:53
+15:33:48.850  1701  1833 I sshovel-spike: TUN pkt#76 proto=17 dst=10.99.0.53:53
+15:33:48.962  1701  1833 I sshovel-spike: TUN pkt#77 proto=17 dst=10.99.0.53:53
+15:33:49.947  1701  1833 I sshovel-spike: TUN pkt#78 proto=17 dst=10.99.0.53:53
+15:33:50.077  1701  1833 I sshovel-spike: TUN pkt#79 proto=17 dst=10.99.0.53:53
+15:33:50.551  1701  1833 I sshovel-spike: TUN pkt#80 proto=17 dst=10.99.0.53:53
+15:33:51.136  1701  1833 I sshovel-spike: TUN pkt#81 proto=17 dst=10.99.0.53:53
+15:33:52.001  1701  1833 I sshovel-spike: TUN pkt#82 proto=17 dst=10.99.0.53:53
+15:33:53.526  1701  1833 I sshovel-spike: TUN pkt#83 proto=17 dst=10.99.0.53:53
+15:33:53.527  1701  1833 I sshovel-spike: TUN pkt#84 proto=17 dst=10.99.0.53:53
+15:33:53.527  1701  1833 I sshovel-spike: TUN pkt#85 proto=17 dst=10.99.0.53:53
+15:33:53.566  1701  1833 I sshovel-spike: TUN pkt#86 proto=17 dst=10.99.0.53:53
+15:33:53.852  1701  1833 I sshovel-spike: TUN pkt#87 proto=17 dst=10.99.0.53:53
+15:33:53.874  1701  1833 I sshovel-spike: TUN pkt#88 proto=17 dst=10.99.0.53:53
+15:33:53.967  1701  1833 I sshovel-spike: TUN pkt#89 proto=17 dst=10.99.0.53:53
+15:33:54.952  1701  1833 I sshovel-spike: TUN pkt#91 proto=17 dst=10.99.0.53:53
+15:33:55.501  1701  1833 I sshovel-spike: TUN pkt#92 proto=17 dst=10.99.0.53:53
+15:33:55.555  1701  1833 I sshovel-spike: TUN pkt#93 proto=17 dst=10.99.0.53:53
+15:33:57.008  1701  1833 I sshovel-spike: TUN pkt#94 proto=17 dst=10.99.0.53:53
+15:33:57.653  1701  1833 I sshovel-spike: TUN pkt#95 proto=17 dst=10.99.0.53:53
+15:33:58.019  1701  1833 I sshovel-spike: TUN pkt#96 proto=17 dst=10.99.0.53:53
+15:33:58.530  1701  1833 I sshovel-spike: TUN pkt#97 proto=17 dst=10.99.0.53:53
+15:33:58.571  1701  1833 I sshovel-spike: TUN pkt#98 proto=17 dst=10.99.0.53:53
+15:33:58.572  1701  1833 I sshovel-spike: TUN pkt#99 proto=17 dst=10.99.0.53:53
+15:33:58.858  1701  1833 I sshovel-spike: TUN pkt#100 proto=17 dst=10.99.0.53:53
+15:33:58.877  1701  1833 I sshovel-spike: TUN pkt#101 proto=17 dst=10.99.0.53:53
+15:33:58.973  1701  1833 I sshovel-spike: TUN pkt#102 proto=17 dst=10.99.0.53:53
+15:33:59.962  1701  1833 I sshovel-spike: TUN pkt#103 proto=17 dst=10.99.0.53:53
+15:34:00.040  1701  1833 I sshovel-spike: TUN pkt#104 proto=17 dst=10.99.0.53:53
+15:34:00.507  1701  1833 I sshovel-spike: TUN pkt#105 proto=17 dst=10.99.0.53:53
+15:34:02.659  1701  1833 I sshovel-spike: TUN pkt#106 proto=17 dst=10.99.0.53:53
+15:34:03.176  1701  1833 I sshovel-spike: TUN pkt#107 proto=17 dst=10.99.0.53:53
+15:34:03.535  1701  1833 I sshovel-spike: TUN pkt#108 proto=17 dst=10.99.0.53:53
+15:34:03.576  1701  1833 I sshovel-spike: TUN pkt#109 proto=17 dst=10.99.0.53:53
+15:34:03.576  1701  1833 I sshovel-spike: TUN pkt#110 proto=17 dst=10.99.0.53:53
+15:34:03.864  1701  1833 I sshovel-spike: TUN pkt#111 proto=17 dst=10.99.0.53:53
+15:34:04.970  1701  1833 I sshovel-spike: TUN pkt#112 proto=17 dst=10.99.0.53:53
+15:34:05.041  1701  1833 I sshovel-spike: TUN pkt#113 proto=17 dst=10.99.0.53:53
+15:34:05.118  1701  1701 I sshovel-spike: underlying network available: 102
+15:34:05.120  1701  1701 I sshovel-spike: underlying 102 dns=[/10.0.2.3] privateDnsActive=false privateDnsServer=null
+15:34:06.043  1701  1833 I sshovel-spike: TUN pkt#114 proto=17 dst=10.99.0.53:53
+15:34:07.054  1701  1701 I sshovel-spike: command stop-vpn
+15:34:07.056  1701  1701 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.STOP origin=app importance=100 fgsType=systemExempted
+15:34:07.056  1701  1701 I sshovel-spike: stopping VPN: user
+15:34:08.945  3498  3498 I sshovel-spike: === SPIKE3 manual start with exported=true
+15:34:08.968  1701  1701 I sshovel-spike: command start-vpn
+15:34:08.980  1701  1701 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.START origin=app importance=100 fgsType=systemExempted
+15:34:08.983  1701  1701 I sshovel-spike: SPIKE2 startForeground OK with type systemExempted
+15:34:08.992  1701  1701 I sshovel-spike: VPN up route=10.77.0.0/24 alwaysOn=true lockdown=false
+15:34:09.034  1701  3509 I sshovel-spike: TUN pkt#118 proto=6 dst=10.99.0.53:853
+15:34:09.047  1701  3509 I sshovel-spike: TUN pkt#119 proto=17 dst=10.99.0.53:53
+15:34:09.837  1701  3509 I sshovel-spike: TUN pkt#122 proto=17 dst=10.99.0.53:53
+15:34:10.015  1701  3509 I sshovel-spike: TUN pkt#123 proto=17 dst=10.99.0.53:53
+15:34:10.057  1701  3509 I sshovel-spike: TUN pkt#124 proto=6 dst=10.99.0.53:853
+15:34:11.077  1701  3509 I sshovel-spike: TUN pkt#125 proto=6 dst=10.99.0.53:853
+15:34:11.416  1701  3509 I sshovel-spike: TUN pkt#126 proto=17 dst=10.99.0.53:53
+15:34:12.101  1701  3509 I sshovel-spike: TUN pkt#127 proto=6 dst=10.99.0.53:853
+15:34:13.125  1701  3509 I sshovel-spike: TUN pkt#129 proto=6 dst=10.99.0.53:853
+15:34:14.052  1701  3509 I sshovel-spike: TUN pkt#130 proto=17 dst=10.99.0.53:53
+15:34:14.150  1701  3509 I sshovel-spike: TUN pkt#131 proto=6 dst=10.99.0.53:853
+15:34:14.843  1701  3509 I sshovel-spike: TUN pkt#132 proto=17 dst=10.99.0.53:53
+15:34:14.897  1701  3509 I sshovel-spike: TUN pkt#133 proto=17 dst=10.99.0.53:53
+15:34:15.020  1701  3509 I sshovel-spike: TUN pkt#134 proto=17 dst=10.99.0.53:53
+15:34:16.165  1701  3509 I sshovel-spike: TUN pkt#135 proto=6 dst=10.99.0.53:853
+15:34:16.421  1701  3509 I sshovel-spike: TUN pkt#136 proto=17 dst=10.99.0.53:53
+15:34:17.024  1701  1701 I sshovel-spike: command stop-vpn
+15:34:17.025  1701  1701 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.STOP origin=app importance=100 fgsType=systemExempted
+15:34:17.026  1701  1701 I sshovel-spike: stopping VPN: user
+
+## Variant B (specialUse, exported=true)
+15:33:23.042  1701  1701 I sshovel-spike: onStartCommand action=android.net.VpnService origin=null importance=300 fgsType=systemExempted
+15:33:23.057  1701  1701 I sshovel-spike: SPIKE2 startForeground OK with type systemExempted
+15:33:23.222  1701  1701 I sshovel-spike: VPN up route=0.0.0.0/0 alwaysOn=true lockdown=false
+15:33:23.380  1701  1833 I sshovel-spike: TUN pkt#4 proto=6 dst=10.99.0.53:853
+15:33:24.393  1701  1833 I sshovel-spike: TUN pkt#7 proto=6 dst=10.99.0.53:853
+15:33:25.071  1701  1833 I sshovel-spike: TUN pkt#8 proto=17 dst=10.99.0.53:53
+15:33:25.418  1701  1833 I sshovel-spike: TUN pkt#9 proto=6 dst=10.99.0.53:853
+15:33:26.457  1701  1833 I sshovel-spike: TUN pkt#10 proto=6 dst=10.99.0.53:853
+15:33:27.462  1701  1833 I sshovel-spike: TUN pkt#12 proto=6 dst=10.99.0.53:853
+15:33:28.492  1701  1833 I sshovel-spike: TUN pkt#13 proto=6 dst=10.99.0.53:853
+15:33:29.599  1701  1833 I sshovel-spike: TUN pkt#14 proto=17 dst=10.99.0.53:53
+15:33:29.905  1701  1833 I sshovel-spike: TUN pkt#15 proto=17 dst=10.99.0.53:53
+15:33:30.058  1701  1833 I sshovel-spike: TUN pkt#16 proto=17 dst=10.99.0.53:53
+15:33:30.502  1701  1833 I sshovel-spike: TUN pkt#17 proto=6 dst=10.99.0.53:853
+15:33:30.529  1701  1833 I sshovel-spike: TUN pkt#18 proto=17 dst=10.99.0.53:53
+15:33:30.908  1701  1833 I sshovel-spike: TUN pkt#19 proto=17 dst=10.99.0.53:53
+15:33:31.930  1701  1833 I sshovel-spike: TUN pkt#20 proto=17 dst=10.99.0.53:53
+15:33:32.174  1701  1833 I sshovel-spike: TUN pkt#21 proto=17 dst=10.99.0.53:53
+15:33:32.250  1701  1833 I sshovel-spike: TUN pkt#22 proto=17 dst=10.99.0.53:53
+15:33:32.339  1701  1833 I sshovel-spike: TUN pkt#23 proto=17 dst=10.99.0.53:53
+15:33:32.383  1701  1833 I sshovel-spike: TUN pkt#24 proto=17 dst=10.99.0.53:53
+15:33:33.568  1701  1833 I sshovel-spike: TUN pkt#25 proto=17 dst=10.99.0.53:53
+15:33:33.838  1701  1833 I sshovel-spike: TUN pkt#26 proto=17 dst=10.99.0.53:53
+15:33:33.954  1701  1833 I sshovel-spike: TUN pkt#27 proto=17 dst=10.99.0.53:53
+15:33:34.117  3262  3262 I sshovel-spike: === SPIKE3 after reboot
+15:33:34.601  1701  1833 I sshovel-spike: TUN pkt#28 proto=17 dst=10.99.0.53:53
+15:33:34.693  1701  1833 I sshovel-spike: TUN pkt#29 proto=6 dst=10.99.0.53:853
+15:33:34.899  1701  1833 I sshovel-spike: TUN pkt#30 proto=17 dst=10.99.0.53:53
+15:33:35.534  1701  1833 I sshovel-spike: TUN pkt#31 proto=17 dst=10.99.0.53:53
+15:33:37.178  1701  1833 I sshovel-spike: TUN pkt#33 proto=17 dst=10.99.0.53:53
+15:33:37.253  1701  1833 I sshovel-spike: TUN pkt#34 proto=17 dst=10.99.0.53:53
+15:33:37.343  1701  1833 I sshovel-spike: TUN pkt#35 proto=17 dst=10.99.0.53:53
+15:33:37.381  1701  1833 I sshovel-spike: TUN pkt#36 proto=17 dst=10.99.0.53:53
+15:33:38.510  1701  1833 I sshovel-spike: TUN pkt#37 proto=17 dst=10.99.0.53:53
+15:33:38.513  1701  1833 I sshovel-spike: TUN pkt#38 proto=17 dst=10.99.0.53:53
+15:33:38.573  1701  1833 I sshovel-spike: TUN pkt#39 proto=17 dst=10.99.0.53:53
+15:33:38.843  1701  1833 I sshovel-spike: TUN pkt#40 proto=17 dst=10.99.0.53:53
+15:33:38.958  1701  1833 I sshovel-spike: TUN pkt#41 proto=17 dst=10.99.0.53:53
+15:33:39.904  1701  1833 I sshovel-spike: TUN pkt#42 proto=17 dst=10.99.0.53:53
+15:33:40.540  1701  1833 I sshovel-spike: TUN pkt#43 proto=17 dst=10.99.0.53:53
+15:33:42.179  1701  1833 I sshovel-spike: TUN pkt#44 proto=17 dst=10.99.0.53:53
+15:33:42.179  1701  1833 I sshovel-spike: TUN pkt#45 proto=17 dst=10.99.0.53:53
+15:33:42.179  1701  1833 I sshovel-spike: TUN pkt#46 proto=17 dst=10.99.0.53:53
+15:33:42.179  1701  1833 I sshovel-spike: TUN pkt#47 proto=17 dst=10.99.0.53:53
+15:33:42.180  1701  1833 I sshovel-spike: TUN pkt#48 proto=17 dst=10.99.0.53:53
+15:33:42.180  1701  1833 I sshovel-spike: TUN pkt#49 proto=17 dst=10.99.0.53:53
+15:33:42.885  1701  1833 I sshovel-spike: TUN pkt#50 proto=6 dst=10.99.0.53:853
+15:33:43.031  1701  1833 I sshovel-spike: TUN pkt#51 proto=17 dst=10.99.0.53:53
+15:33:43.516  1701  1833 I sshovel-spike: TUN pkt#52 proto=17 dst=10.99.0.53:53
+15:33:43.518  1701  1833 I sshovel-spike: TUN pkt#53 proto=17 dst=10.99.0.53:53
+15:33:43.844  1701  1833 I sshovel-spike: TUN pkt#54 proto=17 dst=10.99.0.53:53
+15:33:43.845  1701  1833 I sshovel-spike: TUN pkt#55 proto=17 dst=10.99.0.53:53
+15:33:43.961  1701  1833 I sshovel-spike: TUN pkt#56 proto=17 dst=10.99.0.53:53
+15:33:43.964  1701  1833 I sshovel-spike: TUN pkt#57 proto=17 dst=10.99.0.53:53
+15:33:44.909  1701  1833 I sshovel-spike: TUN pkt#58 proto=17 dst=10.99.0.53:53
+15:33:44.975  1701  1833 I sshovel-spike: TUN pkt#59 proto=17 dst=10.99.0.53:53
+15:33:45.071  1701  1833 I sshovel-spike: TUN pkt#60 proto=17 dst=10.99.0.53:53
+15:33:45.545  1701  1833 I sshovel-spike: TUN pkt#61 proto=17 dst=10.99.0.53:53
+15:33:46.131  1701  1833 I sshovel-spike: TUN pkt#62 proto=17 dst=10.99.0.53:53
+15:33:46.996  1701  1833 I sshovel-spike: TUN pkt#63 proto=17 dst=10.99.0.53:53
+15:33:47.184  1701  1833 I sshovel-spike: TUN pkt#64 proto=17 dst=10.99.0.53:53
+15:33:47.184  1701  1833 I sshovel-spike: TUN pkt#65 proto=17 dst=10.99.0.53:53
+15:33:47.184  1701  1833 I sshovel-spike: TUN pkt#66 proto=17 dst=10.99.0.53:53
+15:33:47.184  1701  1833 I sshovel-spike: TUN pkt#67 proto=17 dst=10.99.0.53:53
+15:33:47.184  1701  1833 I sshovel-spike: TUN pkt#68 proto=17 dst=10.99.0.53:53
+15:33:47.184  1701  1833 I sshovel-spike: TUN pkt#69 proto=17 dst=10.99.0.53:53
+15:33:48.036  1701  1833 I sshovel-spike: TUN pkt#70 proto=17 dst=10.99.0.53:53
+15:33:48.521  1701  1833 I sshovel-spike: TUN pkt#71 proto=17 dst=10.99.0.53:53
+15:33:48.522  1701  1833 I sshovel-spike: TUN pkt#72 proto=17 dst=10.99.0.53:53
+15:33:48.522  1701  1833 I sshovel-spike: TUN pkt#73 proto=17 dst=10.99.0.53:53
+15:33:48.564  1701  1833 I sshovel-spike: TUN pkt#74 proto=17 dst=10.99.0.53:53
+15:33:48.849  1701  1833 I sshovel-spike: TUN pkt#75 proto=17 dst=10.99.0.53:53
+15:33:48.850  1701  1833 I sshovel-spike: TUN pkt#76 proto=17 dst=10.99.0.53:53
+15:33:48.962  1701  1833 I sshovel-spike: TUN pkt#77 proto=17 dst=10.99.0.53:53
+15:33:49.947  1701  1833 I sshovel-spike: TUN pkt#78 proto=17 dst=10.99.0.53:53
+15:33:50.077  1701  1833 I sshovel-spike: TUN pkt#79 proto=17 dst=10.99.0.53:53
+15:33:50.551  1701  1833 I sshovel-spike: TUN pkt#80 proto=17 dst=10.99.0.53:53
+15:33:51.136  1701  1833 I sshovel-spike: TUN pkt#81 proto=17 dst=10.99.0.53:53
+15:33:52.001  1701  1833 I sshovel-spike: TUN pkt#82 proto=17 dst=10.99.0.53:53
+15:33:53.526  1701  1833 I sshovel-spike: TUN pkt#83 proto=17 dst=10.99.0.53:53
+15:33:53.527  1701  1833 I sshovel-spike: TUN pkt#84 proto=17 dst=10.99.0.53:53
+15:33:53.527  1701  1833 I sshovel-spike: TUN pkt#85 proto=17 dst=10.99.0.53:53
+15:33:53.566  1701  1833 I sshovel-spike: TUN pkt#86 proto=17 dst=10.99.0.53:53
+15:33:53.852  1701  1833 I sshovel-spike: TUN pkt#87 proto=17 dst=10.99.0.53:53
+15:33:53.874  1701  1833 I sshovel-spike: TUN pkt#88 proto=17 dst=10.99.0.53:53
+15:33:53.967  1701  1833 I sshovel-spike: TUN pkt#89 proto=17 dst=10.99.0.53:53
+15:33:54.952  1701  1833 I sshovel-spike: TUN pkt#91 proto=17 dst=10.99.0.53:53
+15:33:55.501  1701  1833 I sshovel-spike: TUN pkt#92 proto=17 dst=10.99.0.53:53
+15:33:55.555  1701  1833 I sshovel-spike: TUN pkt#93 proto=17 dst=10.99.0.53:53
+15:33:57.008  1701  1833 I sshovel-spike: TUN pkt#94 proto=17 dst=10.99.0.53:53
+15:33:57.653  1701  1833 I sshovel-spike: TUN pkt#95 proto=17 dst=10.99.0.53:53
+15:33:58.019  1701  1833 I sshovel-spike: TUN pkt#96 proto=17 dst=10.99.0.53:53
+15:33:58.530  1701  1833 I sshovel-spike: TUN pkt#97 proto=17 dst=10.99.0.53:53
+15:33:58.571  1701  1833 I sshovel-spike: TUN pkt#98 proto=17 dst=10.99.0.53:53
+15:33:58.572  1701  1833 I sshovel-spike: TUN pkt#99 proto=17 dst=10.99.0.53:53
+15:33:58.858  1701  1833 I sshovel-spike: TUN pkt#100 proto=17 dst=10.99.0.53:53
+15:33:58.877  1701  1833 I sshovel-spike: TUN pkt#101 proto=17 dst=10.99.0.53:53
+15:33:58.973  1701  1833 I sshovel-spike: TUN pkt#102 proto=17 dst=10.99.0.53:53
+15:33:59.962  1701  1833 I sshovel-spike: TUN pkt#103 proto=17 dst=10.99.0.53:53
+15:34:00.040  1701  1833 I sshovel-spike: TUN pkt#104 proto=17 dst=10.99.0.53:53
+15:34:00.507  1701  1833 I sshovel-spike: TUN pkt#105 proto=17 dst=10.99.0.53:53
+15:34:02.659  1701  1833 I sshovel-spike: TUN pkt#106 proto=17 dst=10.99.0.53:53
+15:34:03.176  1701  1833 I sshovel-spike: TUN pkt#107 proto=17 dst=10.99.0.53:53
+15:34:03.535  1701  1833 I sshovel-spike: TUN pkt#108 proto=17 dst=10.99.0.53:53
+15:34:03.576  1701  1833 I sshovel-spike: TUN pkt#109 proto=17 dst=10.99.0.53:53
+15:34:03.576  1701  1833 I sshovel-spike: TUN pkt#110 proto=17 dst=10.99.0.53:53
+15:34:03.864  1701  1833 I sshovel-spike: TUN pkt#111 proto=17 dst=10.99.0.53:53
+15:34:04.970  1701  1833 I sshovel-spike: TUN pkt#112 proto=17 dst=10.99.0.53:53
+15:34:05.041  1701  1833 I sshovel-spike: TUN pkt#113 proto=17 dst=10.99.0.53:53
+15:34:05.118  1701  1701 I sshovel-spike: underlying network available: 102
+15:34:05.120  1701  1701 I sshovel-spike: underlying 102 dns=[/10.0.2.3] privateDnsActive=false privateDnsServer=null
+15:34:06.043  1701  1833 I sshovel-spike: TUN pkt#114 proto=17 dst=10.99.0.53:53
+15:34:07.054  1701  1701 I sshovel-spike: command stop-vpn
+15:34:07.056  1701  1701 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.STOP origin=app importance=100 fgsType=systemExempted
+15:34:07.056  1701  1701 I sshovel-spike: stopping VPN: user
+15:34:08.945  3498  3498 I sshovel-spike: === SPIKE3 manual start with exported=true
+15:34:08.968  1701  1701 I sshovel-spike: command start-vpn
+15:34:08.980  1701  1701 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.START origin=app importance=100 fgsType=systemExempted
+15:34:08.983  1701  1701 I sshovel-spike: SPIKE2 startForeground OK with type systemExempted
+15:34:08.992  1701  1701 I sshovel-spike: VPN up route=10.77.0.0/24 alwaysOn=true lockdown=false
+15:34:09.034  1701  3509 I sshovel-spike: TUN pkt#118 proto=6 dst=10.99.0.53:853
+15:34:09.047  1701  3509 I sshovel-spike: TUN pkt#119 proto=17 dst=10.99.0.53:53
+15:34:09.837  1701  3509 I sshovel-spike: TUN pkt#122 proto=17 dst=10.99.0.53:53
+15:34:10.015  1701  3509 I sshovel-spike: TUN pkt#123 proto=17 dst=10.99.0.53:53
+15:34:10.057  1701  3509 I sshovel-spike: TUN pkt#124 proto=6 dst=10.99.0.53:853
+15:34:11.077  1701  3509 I sshovel-spike: TUN pkt#125 proto=6 dst=10.99.0.53:853
+15:34:11.416  1701  3509 I sshovel-spike: TUN pkt#126 proto=17 dst=10.99.0.53:53
+15:34:12.101  1701  3509 I sshovel-spike: TUN pkt#127 proto=6 dst=10.99.0.53:853
+15:34:13.125  1701  3509 I sshovel-spike: TUN pkt#129 proto=6 dst=10.99.0.53:853
+15:34:14.052  1701  3509 I sshovel-spike: TUN pkt#130 proto=17 dst=10.99.0.53:53
+15:34:14.150  1701  3509 I sshovel-spike: TUN pkt#131 proto=6 dst=10.99.0.53:853
+15:34:14.843  1701  3509 I sshovel-spike: TUN pkt#132 proto=17 dst=10.99.0.53:53
+15:34:14.897  1701  3509 I sshovel-spike: TUN pkt#133 proto=17 dst=10.99.0.53:53
+15:34:15.020  1701  3509 I sshovel-spike: TUN pkt#134 proto=17 dst=10.99.0.53:53
+15:34:16.165  1701  3509 I sshovel-spike: TUN pkt#135 proto=6 dst=10.99.0.53:853
+15:34:16.421  1701  3509 I sshovel-spike: TUN pkt#136 proto=17 dst=10.99.0.53:53
+15:34:17.024  1701  1701 I sshovel-spike: command stop-vpn
+15:34:17.025  1701  1701 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.STOP origin=app importance=100 fgsType=systemExempted
+15:34:17.026  1701  1701 I sshovel-spike: stopping VPN: user
+15:34:21.056  3569  3569 I sshovel-spike: === B: install specialUse exported=true
+15:34:22.039  3681  3681 I sshovel-spike: === SPIKE1 load AAR, build gVisor stack
+15:34:22.554  3691  3691 I sshovel-spike: underlying network available: 102
+15:34:22.561  3691  3691 I sshovel-spike: underlying 102 dns=[/10.0.2.3] privateDnsActive=false privateDnsServer=null
+15:34:24.442  3691  3691 I sshovel-spike: command hello
+15:34:24.458  3691  3739 I sshovel-spike: SPIKE1 gVisor netstack up: nic=1 routes=1 go=go1.26.3 android/amd64
+15:34:30.123  3759  3759 I sshovel-spike: === SPIKE2a tile tap, no VPN consent yet, app process killed
+15:34:37.277  3777  3777 I sshovel-spike: SPIKE2 tile onClick locked=false secure=false running=false
+15:34:37.281  3777  3777 I sshovel-spike: SPIKE2 no consent yet -> startActivityAndCollapse(ConsentActivity) OK
+15:34:37.449   668  2028 E AppOps  : java.lang.SecurityException: Specified package "com.github.dennisklein.sshovel.spike" under uid 10107 but it is not
+15:34:41.944  3777  3777 I sshovel-spike: SPIKE2 consent result=granted
+15:34:41.978  3777  3777 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.START origin=consent-activity importance=100 fgsType=specialUse
+15:34:41.985  3777  3777 I sshovel-spike: SPIKE2 startForeground OK with type specialUse
+15:34:42.009  3777  3777 I sshovel-spike: VPN up route=0.0.0.0/0 alwaysOn=false lockdown=false
+15:34:42.119  3777  3860 I sshovel-spike: TUN pkt#5 proto=17 dst=10.99.0.53:53
+15:34:42.138  3777  3860 I sshovel-spike: TUN pkt#6 proto=17 dst=10.99.0.53:53
+15:34:42.140  3777  3860 I sshovel-spike: TUN pkt#7 proto=6 dst=10.99.0.53:853
+15:34:42.195  3777  3860 I sshovel-spike: TUN pkt#8 proto=17 dst=10.99.0.53:53
+15:34:43.141  3777  3860 I sshovel-spike: TUN pkt#10 proto=6 dst=10.99.0.53:853
+15:34:44.165  3777  3860 I sshovel-spike: TUN pkt#11 proto=6 dst=10.99.0.53:853
+15:34:45.189  3777  3860 I sshovel-spike: TUN pkt#12 proto=6 dst=10.99.0.53:853
+15:34:46.213  3777  3860 I sshovel-spike: TUN pkt#14 proto=6 dst=10.99.0.53:853
+15:34:47.124  3777  3860 I sshovel-spike: TUN pkt#15 proto=17 dst=10.99.0.53:53
+15:34:47.141  3777  3860 I sshovel-spike: TUN pkt#16 proto=17 dst=10.99.0.53:53
+15:34:47.201  3777  3860 I sshovel-spike: TUN pkt#17 proto=17 dst=10.99.0.53:53
+15:34:47.237  3777  3860 I sshovel-spike: TUN pkt#18 proto=6 dst=10.99.0.53:853
+15:34:49.253  3777  3860 I sshovel-spike: TUN pkt#19 proto=6 dst=10.99.0.53:853
+15:34:50.548  3888  3888 I sshovel-spike: === SPIKE2a tile tap off
+15:34:50.567  3777  3777 I sshovel-spike: SPIKE2 tile onClick locked=false secure=false running=true
+15:34:50.570  3777  3777 I sshovel-spike: SPIKE2 tile -> startService(STOP) OK
+15:34:50.571  3777  3777 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.STOP origin=tile importance=125 fgsType=specialUse
+15:34:50.571  3777  3777 I sshovel-spike: stopping VPN: user
+15:34:55.605  3907  3907 I sshovel-spike: === SPIKE2b tile tap on, consent granted, app process killed
+15:35:02.767  3923  3923 I sshovel-spike: SPIKE2 tile onClick locked=false secure=false running=false
+15:35:02.775  3923  3923 I sshovel-spike: SPIKE2 tile -> startForegroundService(START) OK
+15:35:02.777  3923  3923 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.START origin=tile importance=125 fgsType=specialUse
+15:35:02.780  3923  3923 I sshovel-spike: SPIKE2 startForeground OK with type specialUse
+15:35:02.787  3923  3923 I sshovel-spike: VPN up route=0.0.0.0/0 alwaysOn=false lockdown=false
+15:35:02.846  3923  3940 I sshovel-spike: TUN pkt#4 proto=17 dst=10.99.0.53:53
+15:35:02.852  3923  3940 I sshovel-spike: TUN pkt#5 proto=6 dst=10.99.0.53:853
+15:35:02.858  3923  3940 I sshovel-spike: TUN pkt#6 proto=17 dst=10.99.0.53:53
+15:35:03.877  3923  3940 I sshovel-spike: TUN pkt#9 proto=6 dst=10.99.0.53:853
+15:35:04.901  3923  3940 I sshovel-spike: TUN pkt#10 proto=6 dst=10.99.0.53:853
+15:35:05.925  3923  3940 I sshovel-spike: TUN pkt#11 proto=6 dst=10.99.0.53:853
+15:35:06.949  3923  3940 I sshovel-spike: TUN pkt#12 proto=6 dst=10.99.0.53:853
+15:35:07.852  3923  3940 I sshovel-spike: TUN pkt#14 proto=17 dst=10.99.0.53:53
+15:35:07.863  3923  3940 I sshovel-spike: TUN pkt#15 proto=17 dst=10.99.0.53:53
+15:35:07.973  3923  3940 I sshovel-spike: TUN pkt#16 proto=6 dst=10.99.0.53:853
+15:35:08.408  3961  3961 I sshovel-spike: === SPIKE2b tile tap off, app process killed
+15:35:09.989  3923  3940 I sshovel-spike: TUN pkt#17 proto=6 dst=10.99.0.53:853
+15:35:12.464  3923  3923 I sshovel-spike: SPIKE2 tile onClick locked=false secure=false running=true
+15:35:12.465  3923  3923 I sshovel-spike: SPIKE2 tile -> startService(STOP) OK
+15:35:12.466  3923  3923 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.STOP origin=tile importance=125 fgsType=specialUse
+15:35:12.466  3923  3923 I sshovel-spike: stopping VPN: user
+15:35:17.507  4013  4013 I sshovel-spike: === SPIKE2c tile tap on from the lock screen
+
+## Variant C (systemExempted, exported=false)
+15:33:23.042  1701  1701 I sshovel-spike: onStartCommand action=android.net.VpnService origin=null importance=300 fgsType=systemExempted
+15:33:23.057  1701  1701 I sshovel-spike: SPIKE2 startForeground OK with type systemExempted
+15:33:23.222  1701  1701 I sshovel-spike: VPN up route=0.0.0.0/0 alwaysOn=true lockdown=false
+15:33:23.380  1701  1833 I sshovel-spike: TUN pkt#4 proto=6 dst=10.99.0.53:853
+15:33:24.393  1701  1833 I sshovel-spike: TUN pkt#7 proto=6 dst=10.99.0.53:853
+15:33:25.071  1701  1833 I sshovel-spike: TUN pkt#8 proto=17 dst=10.99.0.53:53
+15:33:25.418  1701  1833 I sshovel-spike: TUN pkt#9 proto=6 dst=10.99.0.53:853
+15:33:26.457  1701  1833 I sshovel-spike: TUN pkt#10 proto=6 dst=10.99.0.53:853
+15:33:27.462  1701  1833 I sshovel-spike: TUN pkt#12 proto=6 dst=10.99.0.53:853
+15:33:28.492  1701  1833 I sshovel-spike: TUN pkt#13 proto=6 dst=10.99.0.53:853
+15:33:29.599  1701  1833 I sshovel-spike: TUN pkt#14 proto=17 dst=10.99.0.53:53
+15:33:29.905  1701  1833 I sshovel-spike: TUN pkt#15 proto=17 dst=10.99.0.53:53
+15:33:30.058  1701  1833 I sshovel-spike: TUN pkt#16 proto=17 dst=10.99.0.53:53
+15:33:30.502  1701  1833 I sshovel-spike: TUN pkt#17 proto=6 dst=10.99.0.53:853
+15:33:30.529  1701  1833 I sshovel-spike: TUN pkt#18 proto=17 dst=10.99.0.53:53
+15:33:30.908  1701  1833 I sshovel-spike: TUN pkt#19 proto=17 dst=10.99.0.53:53
+15:33:31.930  1701  1833 I sshovel-spike: TUN pkt#20 proto=17 dst=10.99.0.53:53
+15:33:32.174  1701  1833 I sshovel-spike: TUN pkt#21 proto=17 dst=10.99.0.53:53
+15:33:32.250  1701  1833 I sshovel-spike: TUN pkt#22 proto=17 dst=10.99.0.53:53
+15:33:32.339  1701  1833 I sshovel-spike: TUN pkt#23 proto=17 dst=10.99.0.53:53
+15:33:32.383  1701  1833 I sshovel-spike: TUN pkt#24 proto=17 dst=10.99.0.53:53
+15:33:33.568  1701  1833 I sshovel-spike: TUN pkt#25 proto=17 dst=10.99.0.53:53
+15:33:33.838  1701  1833 I sshovel-spike: TUN pkt#26 proto=17 dst=10.99.0.53:53
+15:33:33.954  1701  1833 I sshovel-spike: TUN pkt#27 proto=17 dst=10.99.0.53:53
+15:33:34.117  3262  3262 I sshovel-spike: === SPIKE3 after reboot
+15:33:34.601  1701  1833 I sshovel-spike: TUN pkt#28 proto=17 dst=10.99.0.53:53
+15:33:34.693  1701  1833 I sshovel-spike: TUN pkt#29 proto=6 dst=10.99.0.53:853
+15:33:34.899  1701  1833 I sshovel-spike: TUN pkt#30 proto=17 dst=10.99.0.53:53
+15:33:35.534  1701  1833 I sshovel-spike: TUN pkt#31 proto=17 dst=10.99.0.53:53
+15:33:37.178  1701  1833 I sshovel-spike: TUN pkt#33 proto=17 dst=10.99.0.53:53
+15:33:37.253  1701  1833 I sshovel-spike: TUN pkt#34 proto=17 dst=10.99.0.53:53
+15:33:37.343  1701  1833 I sshovel-spike: TUN pkt#35 proto=17 dst=10.99.0.53:53
+15:33:37.381  1701  1833 I sshovel-spike: TUN pkt#36 proto=17 dst=10.99.0.53:53
+15:33:38.510  1701  1833 I sshovel-spike: TUN pkt#37 proto=17 dst=10.99.0.53:53
+15:33:38.513  1701  1833 I sshovel-spike: TUN pkt#38 proto=17 dst=10.99.0.53:53
+15:33:38.573  1701  1833 I sshovel-spike: TUN pkt#39 proto=17 dst=10.99.0.53:53
+15:33:38.843  1701  1833 I sshovel-spike: TUN pkt#40 proto=17 dst=10.99.0.53:53
+15:33:38.958  1701  1833 I sshovel-spike: TUN pkt#41 proto=17 dst=10.99.0.53:53
+15:33:39.904  1701  1833 I sshovel-spike: TUN pkt#42 proto=17 dst=10.99.0.53:53
+15:33:40.540  1701  1833 I sshovel-spike: TUN pkt#43 proto=17 dst=10.99.0.53:53
+15:33:42.179  1701  1833 I sshovel-spike: TUN pkt#44 proto=17 dst=10.99.0.53:53
+15:33:42.179  1701  1833 I sshovel-spike: TUN pkt#45 proto=17 dst=10.99.0.53:53
+15:33:42.179  1701  1833 I sshovel-spike: TUN pkt#46 proto=17 dst=10.99.0.53:53
+15:33:42.179  1701  1833 I sshovel-spike: TUN pkt#47 proto=17 dst=10.99.0.53:53
+15:33:42.180  1701  1833 I sshovel-spike: TUN pkt#48 proto=17 dst=10.99.0.53:53
+15:33:42.180  1701  1833 I sshovel-spike: TUN pkt#49 proto=17 dst=10.99.0.53:53
+15:33:42.885  1701  1833 I sshovel-spike: TUN pkt#50 proto=6 dst=10.99.0.53:853
+15:33:43.031  1701  1833 I sshovel-spike: TUN pkt#51 proto=17 dst=10.99.0.53:53
+15:33:43.516  1701  1833 I sshovel-spike: TUN pkt#52 proto=17 dst=10.99.0.53:53
+15:33:43.518  1701  1833 I sshovel-spike: TUN pkt#53 proto=17 dst=10.99.0.53:53
+15:33:43.844  1701  1833 I sshovel-spike: TUN pkt#54 proto=17 dst=10.99.0.53:53
+15:33:43.845  1701  1833 I sshovel-spike: TUN pkt#55 proto=17 dst=10.99.0.53:53
+15:33:43.961  1701  1833 I sshovel-spike: TUN pkt#56 proto=17 dst=10.99.0.53:53
+15:33:43.964  1701  1833 I sshovel-spike: TUN pkt#57 proto=17 dst=10.99.0.53:53
+15:33:44.909  1701  1833 I sshovel-spike: TUN pkt#58 proto=17 dst=10.99.0.53:53
+15:33:44.975  1701  1833 I sshovel-spike: TUN pkt#59 proto=17 dst=10.99.0.53:53
+15:33:45.071  1701  1833 I sshovel-spike: TUN pkt#60 proto=17 dst=10.99.0.53:53
+15:33:45.545  1701  1833 I sshovel-spike: TUN pkt#61 proto=17 dst=10.99.0.53:53
+15:33:46.131  1701  1833 I sshovel-spike: TUN pkt#62 proto=17 dst=10.99.0.53:53
+15:33:46.996  1701  1833 I sshovel-spike: TUN pkt#63 proto=17 dst=10.99.0.53:53
+15:33:47.184  1701  1833 I sshovel-spike: TUN pkt#64 proto=17 dst=10.99.0.53:53
+15:33:47.184  1701  1833 I sshovel-spike: TUN pkt#65 proto=17 dst=10.99.0.53:53
+15:33:47.184  1701  1833 I sshovel-spike: TUN pkt#66 proto=17 dst=10.99.0.53:53
+15:33:47.184  1701  1833 I sshovel-spike: TUN pkt#67 proto=17 dst=10.99.0.53:53
+15:33:47.184  1701  1833 I sshovel-spike: TUN pkt#68 proto=17 dst=10.99.0.53:53
+15:33:47.184  1701  1833 I sshovel-spike: TUN pkt#69 proto=17 dst=10.99.0.53:53
+15:33:48.036  1701  1833 I sshovel-spike: TUN pkt#70 proto=17 dst=10.99.0.53:53
+15:33:48.521  1701  1833 I sshovel-spike: TUN pkt#71 proto=17 dst=10.99.0.53:53
+15:33:48.522  1701  1833 I sshovel-spike: TUN pkt#72 proto=17 dst=10.99.0.53:53
+15:33:48.522  1701  1833 I sshovel-spike: TUN pkt#73 proto=17 dst=10.99.0.53:53
+15:33:48.564  1701  1833 I sshovel-spike: TUN pkt#74 proto=17 dst=10.99.0.53:53
+15:33:48.849  1701  1833 I sshovel-spike: TUN pkt#75 proto=17 dst=10.99.0.53:53
+15:33:48.850  1701  1833 I sshovel-spike: TUN pkt#76 proto=17 dst=10.99.0.53:53
+15:33:48.962  1701  1833 I sshovel-spike: TUN pkt#77 proto=17 dst=10.99.0.53:53
+15:33:49.947  1701  1833 I sshovel-spike: TUN pkt#78 proto=17 dst=10.99.0.53:53
+15:33:50.077  1701  1833 I sshovel-spike: TUN pkt#79 proto=17 dst=10.99.0.53:53
+15:33:50.551  1701  1833 I sshovel-spike: TUN pkt#80 proto=17 dst=10.99.0.53:53
+15:33:51.136  1701  1833 I sshovel-spike: TUN pkt#81 proto=17 dst=10.99.0.53:53
+15:33:52.001  1701  1833 I sshovel-spike: TUN pkt#82 proto=17 dst=10.99.0.53:53
+15:33:53.526  1701  1833 I sshovel-spike: TUN pkt#83 proto=17 dst=10.99.0.53:53
+15:33:53.527  1701  1833 I sshovel-spike: TUN pkt#84 proto=17 dst=10.99.0.53:53
+15:33:53.527  1701  1833 I sshovel-spike: TUN pkt#85 proto=17 dst=10.99.0.53:53
+15:33:53.566  1701  1833 I sshovel-spike: TUN pkt#86 proto=17 dst=10.99.0.53:53
+15:33:53.852  1701  1833 I sshovel-spike: TUN pkt#87 proto=17 dst=10.99.0.53:53
+15:33:53.874  1701  1833 I sshovel-spike: TUN pkt#88 proto=17 dst=10.99.0.53:53
+15:33:53.967  1701  1833 I sshovel-spike: TUN pkt#89 proto=17 dst=10.99.0.53:53
+15:33:54.952  1701  1833 I sshovel-spike: TUN pkt#91 proto=17 dst=10.99.0.53:53
+15:33:55.501  1701  1833 I sshovel-spike: TUN pkt#92 proto=17 dst=10.99.0.53:53
+15:33:55.555  1701  1833 I sshovel-spike: TUN pkt#93 proto=17 dst=10.99.0.53:53
+15:33:57.008  1701  1833 I sshovel-spike: TUN pkt#94 proto=17 dst=10.99.0.53:53
+15:33:57.653  1701  1833 I sshovel-spike: TUN pkt#95 proto=17 dst=10.99.0.53:53
+15:33:58.019  1701  1833 I sshovel-spike: TUN pkt#96 proto=17 dst=10.99.0.53:53
+15:33:58.530  1701  1833 I sshovel-spike: TUN pkt#97 proto=17 dst=10.99.0.53:53
+15:33:58.571  1701  1833 I sshovel-spike: TUN pkt#98 proto=17 dst=10.99.0.53:53
+15:33:58.572  1701  1833 I sshovel-spike: TUN pkt#99 proto=17 dst=10.99.0.53:53
+15:33:58.858  1701  1833 I sshovel-spike: TUN pkt#100 proto=17 dst=10.99.0.53:53
+15:33:58.877  1701  1833 I sshovel-spike: TUN pkt#101 proto=17 dst=10.99.0.53:53
+15:33:58.973  1701  1833 I sshovel-spike: TUN pkt#102 proto=17 dst=10.99.0.53:53
+15:33:59.962  1701  1833 I sshovel-spike: TUN pkt#103 proto=17 dst=10.99.0.53:53
+15:34:00.040  1701  1833 I sshovel-spike: TUN pkt#104 proto=17 dst=10.99.0.53:53
+15:34:00.507  1701  1833 I sshovel-spike: TUN pkt#105 proto=17 dst=10.99.0.53:53
+15:34:02.659  1701  1833 I sshovel-spike: TUN pkt#106 proto=17 dst=10.99.0.53:53
+15:34:03.176  1701  1833 I sshovel-spike: TUN pkt#107 proto=17 dst=10.99.0.53:53
+15:34:03.535  1701  1833 I sshovel-spike: TUN pkt#108 proto=17 dst=10.99.0.53:53
+15:34:03.576  1701  1833 I sshovel-spike: TUN pkt#109 proto=17 dst=10.99.0.53:53
+15:34:03.576  1701  1833 I sshovel-spike: TUN pkt#110 proto=17 dst=10.99.0.53:53
+15:34:03.864  1701  1833 I sshovel-spike: TUN pkt#111 proto=17 dst=10.99.0.53:53
+15:34:04.970  1701  1833 I sshovel-spike: TUN pkt#112 proto=17 dst=10.99.0.53:53
+15:34:05.041  1701  1833 I sshovel-spike: TUN pkt#113 proto=17 dst=10.99.0.53:53
+15:34:05.118  1701  1701 I sshovel-spike: underlying network available: 102
+15:34:05.120  1701  1701 I sshovel-spike: underlying 102 dns=[/10.0.2.3] privateDnsActive=false privateDnsServer=null
+15:34:06.043  1701  1833 I sshovel-spike: TUN pkt#114 proto=17 dst=10.99.0.53:53
+15:34:07.054  1701  1701 I sshovel-spike: command stop-vpn
+15:34:07.056  1701  1701 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.STOP origin=app importance=100 fgsType=systemExempted
+15:34:07.056  1701  1701 I sshovel-spike: stopping VPN: user
+15:34:08.945  3498  3498 I sshovel-spike: === SPIKE3 manual start with exported=true
+15:34:08.968  1701  1701 I sshovel-spike: command start-vpn
+15:34:08.980  1701  1701 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.START origin=app importance=100 fgsType=systemExempted
+15:34:08.983  1701  1701 I sshovel-spike: SPIKE2 startForeground OK with type systemExempted
+15:34:08.992  1701  1701 I sshovel-spike: VPN up route=10.77.0.0/24 alwaysOn=true lockdown=false
+15:34:09.034  1701  3509 I sshovel-spike: TUN pkt#118 proto=6 dst=10.99.0.53:853
+15:34:09.047  1701  3509 I sshovel-spike: TUN pkt#119 proto=17 dst=10.99.0.53:53
+15:34:09.837  1701  3509 I sshovel-spike: TUN pkt#122 proto=17 dst=10.99.0.53:53
+15:34:10.015  1701  3509 I sshovel-spike: TUN pkt#123 proto=17 dst=10.99.0.53:53
+15:34:10.057  1701  3509 I sshovel-spike: TUN pkt#124 proto=6 dst=10.99.0.53:853
+15:34:11.077  1701  3509 I sshovel-spike: TUN pkt#125 proto=6 dst=10.99.0.53:853
+15:34:11.416  1701  3509 I sshovel-spike: TUN pkt#126 proto=17 dst=10.99.0.53:53
+15:34:12.101  1701  3509 I sshovel-spike: TUN pkt#127 proto=6 dst=10.99.0.53:853
+15:34:13.125  1701  3509 I sshovel-spike: TUN pkt#129 proto=6 dst=10.99.0.53:853
+15:34:14.052  1701  3509 I sshovel-spike: TUN pkt#130 proto=17 dst=10.99.0.53:53
+15:34:14.150  1701  3509 I sshovel-spike: TUN pkt#131 proto=6 dst=10.99.0.53:853
+15:34:14.843  1701  3509 I sshovel-spike: TUN pkt#132 proto=17 dst=10.99.0.53:53
+15:34:14.897  1701  3509 I sshovel-spike: TUN pkt#133 proto=17 dst=10.99.0.53:53
+15:34:15.020  1701  3509 I sshovel-spike: TUN pkt#134 proto=17 dst=10.99.0.53:53
+15:34:16.165  1701  3509 I sshovel-spike: TUN pkt#135 proto=6 dst=10.99.0.53:853
+15:34:16.421  1701  3509 I sshovel-spike: TUN pkt#136 proto=17 dst=10.99.0.53:53
+15:34:17.024  1701  1701 I sshovel-spike: command stop-vpn
+15:34:17.025  1701  1701 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.STOP origin=app importance=100 fgsType=systemExempted
+15:34:17.026  1701  1701 I sshovel-spike: stopping VPN: user
+15:34:21.056  3569  3569 I sshovel-spike: === B: install specialUse exported=true
+15:34:22.039  3681  3681 I sshovel-spike: === SPIKE1 load AAR, build gVisor stack
+15:34:22.554  3691  3691 I sshovel-spike: underlying network available: 102
+15:34:22.561  3691  3691 I sshovel-spike: underlying 102 dns=[/10.0.2.3] privateDnsActive=false privateDnsServer=null
+15:34:24.442  3691  3691 I sshovel-spike: command hello
+15:34:24.458  3691  3739 I sshovel-spike: SPIKE1 gVisor netstack up: nic=1 routes=1 go=go1.26.3 android/amd64
+15:34:30.123  3759  3759 I sshovel-spike: === SPIKE2a tile tap, no VPN consent yet, app process killed
+15:34:37.277  3777  3777 I sshovel-spike: SPIKE2 tile onClick locked=false secure=false running=false
+15:34:37.281  3777  3777 I sshovel-spike: SPIKE2 no consent yet -> startActivityAndCollapse(ConsentActivity) OK
+15:34:37.449   668  2028 E AppOps  : java.lang.SecurityException: Specified package "com.github.dennisklein.sshovel.spike" under uid 10107 but it is not
+15:34:41.944  3777  3777 I sshovel-spike: SPIKE2 consent result=granted
+15:34:41.978  3777  3777 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.START origin=consent-activity importance=100 fgsType=specialUse
+15:34:41.985  3777  3777 I sshovel-spike: SPIKE2 startForeground OK with type specialUse
+15:34:42.009  3777  3777 I sshovel-spike: VPN up route=0.0.0.0/0 alwaysOn=false lockdown=false
+15:34:42.119  3777  3860 I sshovel-spike: TUN pkt#5 proto=17 dst=10.99.0.53:53
+15:34:42.138  3777  3860 I sshovel-spike: TUN pkt#6 proto=17 dst=10.99.0.53:53
+15:34:42.140  3777  3860 I sshovel-spike: TUN pkt#7 proto=6 dst=10.99.0.53:853
+15:34:42.195  3777  3860 I sshovel-spike: TUN pkt#8 proto=17 dst=10.99.0.53:53
+15:34:43.141  3777  3860 I sshovel-spike: TUN pkt#10 proto=6 dst=10.99.0.53:853
+15:34:44.165  3777  3860 I sshovel-spike: TUN pkt#11 proto=6 dst=10.99.0.53:853
+15:34:45.189  3777  3860 I sshovel-spike: TUN pkt#12 proto=6 dst=10.99.0.53:853
+15:34:46.213  3777  3860 I sshovel-spike: TUN pkt#14 proto=6 dst=10.99.0.53:853
+15:34:47.124  3777  3860 I sshovel-spike: TUN pkt#15 proto=17 dst=10.99.0.53:53
+15:34:47.141  3777  3860 I sshovel-spike: TUN pkt#16 proto=17 dst=10.99.0.53:53
+15:34:47.201  3777  3860 I sshovel-spike: TUN pkt#17 proto=17 dst=10.99.0.53:53
+15:34:47.237  3777  3860 I sshovel-spike: TUN pkt#18 proto=6 dst=10.99.0.53:853
+15:34:49.253  3777  3860 I sshovel-spike: TUN pkt#19 proto=6 dst=10.99.0.53:853
+15:34:50.548  3888  3888 I sshovel-spike: === SPIKE2a tile tap off
+15:34:50.567  3777  3777 I sshovel-spike: SPIKE2 tile onClick locked=false secure=false running=true
+15:34:50.570  3777  3777 I sshovel-spike: SPIKE2 tile -> startService(STOP) OK
+15:34:50.571  3777  3777 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.STOP origin=tile importance=125 fgsType=specialUse
+15:34:50.571  3777  3777 I sshovel-spike: stopping VPN: user
+15:34:55.605  3907  3907 I sshovel-spike: === SPIKE2b tile tap on, consent granted, app process killed
+15:35:02.767  3923  3923 I sshovel-spike: SPIKE2 tile onClick locked=false secure=false running=false
+15:35:02.775  3923  3923 I sshovel-spike: SPIKE2 tile -> startForegroundService(START) OK
+15:35:02.777  3923  3923 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.START origin=tile importance=125 fgsType=specialUse
+15:35:02.780  3923  3923 I sshovel-spike: SPIKE2 startForeground OK with type specialUse
+15:35:02.787  3923  3923 I sshovel-spike: VPN up route=0.0.0.0/0 alwaysOn=false lockdown=false
+15:35:02.846  3923  3940 I sshovel-spike: TUN pkt#4 proto=17 dst=10.99.0.53:53
+15:35:02.852  3923  3940 I sshovel-spike: TUN pkt#5 proto=6 dst=10.99.0.53:853
+15:35:02.858  3923  3940 I sshovel-spike: TUN pkt#6 proto=17 dst=10.99.0.53:53
+15:35:03.877  3923  3940 I sshovel-spike: TUN pkt#9 proto=6 dst=10.99.0.53:853
+15:35:04.901  3923  3940 I sshovel-spike: TUN pkt#10 proto=6 dst=10.99.0.53:853
+15:35:05.925  3923  3940 I sshovel-spike: TUN pkt#11 proto=6 dst=10.99.0.53:853
+15:35:06.949  3923  3940 I sshovel-spike: TUN pkt#12 proto=6 dst=10.99.0.53:853
+15:35:07.852  3923  3940 I sshovel-spike: TUN pkt#14 proto=17 dst=10.99.0.53:53
+15:35:07.863  3923  3940 I sshovel-spike: TUN pkt#15 proto=17 dst=10.99.0.53:53
+15:35:07.973  3923  3940 I sshovel-spike: TUN pkt#16 proto=6 dst=10.99.0.53:853
+15:35:08.408  3961  3961 I sshovel-spike: === SPIKE2b tile tap off, app process killed
+15:35:09.989  3923  3940 I sshovel-spike: TUN pkt#17 proto=6 dst=10.99.0.53:853
+15:35:12.464  3923  3923 I sshovel-spike: SPIKE2 tile onClick locked=false secure=false running=true
+15:35:12.465  3923  3923 I sshovel-spike: SPIKE2 tile -> startService(STOP) OK
+15:35:12.466  3923  3923 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.STOP origin=tile importance=125 fgsType=specialUse
+15:35:12.466  3923  3923 I sshovel-spike: stopping VPN: user
+15:35:17.507  4013  4013 I sshovel-spike: === SPIKE2c tile tap on from the lock screen
+15:35:41.724  4159  4159 I sshovel-spike: === C: install systemExempted exported=false
+15:35:42.295  4231  4231 I sshovel-spike: === SPIKE1 load AAR, build gVisor stack
+15:35:42.687  4240  4240 I sshovel-spike: underlying network available: 102
+15:35:42.734  4240  4240 I sshovel-spike: underlying 102 dns=[/10.0.2.3] privateDnsActive=false privateDnsServer=null
+15:35:44.668  4240  4240 I sshovel-spike: command hello
+15:35:44.681  4240  4275 I sshovel-spike: SPIKE1 gVisor netstack up: nic=1 routes=1 go=go1.26.3 android/amd64
+15:35:55.016  4240  4240 I sshovel-spike: underlying network lost: 102
+15:36:20.287  1674  1674 I sshovel-spike: onStartCommand action=android.net.VpnService origin=null importance=300 fgsType=systemExempted
+15:36:20.355  1674  1674 I sshovel-spike: SPIKE2 startForeground OK with type systemExempted
+15:36:20.529  1674  1674 I sshovel-spike: VPN up route=0.0.0.0/0 alwaysOn=true lockdown=false
+15:36:20.846  1674  1883 I sshovel-spike: TUN pkt#4 proto=6 dst=10.99.0.53:853
+15:36:21.871  1674  1883 I sshovel-spike: TUN pkt#7 proto=6 dst=10.99.0.53:853
+15:36:22.895  1674  1883 I sshovel-spike: TUN pkt#8 proto=6 dst=10.99.0.53:853
+15:36:24.022  1674  1883 I sshovel-spike: TUN pkt#9 proto=6 dst=10.99.0.53:853
+15:36:24.951  1674  1883 I sshovel-spike: TUN pkt#11 proto=6 dst=10.99.0.53:853
+15:36:25.783  1674  1883 I sshovel-spike: TUN pkt#12 proto=17 dst=10.99.0.53:53
+15:36:25.966  1674  1883 I sshovel-spike: TUN pkt#13 proto=6 dst=10.99.0.53:853
+15:36:27.616  1674  1883 I sshovel-spike: TUN pkt#14 proto=17 dst=10.99.0.53:53
+15:36:27.779  1674  1883 I sshovel-spike: TUN pkt#15 proto=17 dst=10.99.0.53:53
+15:36:27.982  1674  1883 I sshovel-spike: TUN pkt#16 proto=6 dst=10.99.0.53:853
+15:36:28.225  1674  1883 I sshovel-spike: TUN pkt#17 proto=17 dst=10.99.0.53:53
+15:36:29.236  1674  1883 I sshovel-spike: TUN pkt#18 proto=17 dst=10.99.0.53:53
+15:36:29.410  1674  1883 I sshovel-spike: TUN pkt#19 proto=17 dst=10.99.0.53:53
+15:36:29.439  1674  1883 I sshovel-spike: TUN pkt#20 proto=17 dst=10.99.0.53:53
+15:36:29.616  1674  1883 I sshovel-spike: TUN pkt#21 proto=17 dst=10.99.0.53:53
+15:36:29.635  1674  1883 I sshovel-spike: TUN pkt#22 proto=17 dst=10.99.0.53:53
+15:36:30.162  3083  3083 I sshovel-spike: === SPIKE3 after reboot
+15:36:30.511  1674  1883 I sshovel-spike: TUN pkt#23 proto=17 dst=10.99.0.53:53
+15:36:30.742  1674  1883 I sshovel-spike: TUN pkt#24 proto=17 dst=10.99.0.53:53
+15:36:30.786  1674  1883 I sshovel-spike: TUN pkt#25 proto=17 dst=10.99.0.53:53
+15:36:31.258  1674  1883 I sshovel-spike: TUN pkt#26 proto=17 dst=10.99.0.53:53
+15:36:32.174  1674  1883 I sshovel-spike: TUN pkt#28 proto=6 dst=10.99.0.53:853
+15:36:32.617  1674  1883 I sshovel-spike: TUN pkt#29 proto=17 dst=10.99.0.53:53
+15:36:32.782  1674  1883 I sshovel-spike: TUN pkt#30 proto=17 dst=10.99.0.53:53
+15:36:34.415  1674  1883 I sshovel-spike: TUN pkt#31 proto=17 dst=10.99.0.53:53
+15:36:34.445  1674  1883 I sshovel-spike: TUN pkt#32 proto=17 dst=10.99.0.53:53
+15:36:34.618  1674  1883 I sshovel-spike: TUN pkt#33 proto=17 dst=10.99.0.53:53
+15:36:34.639  1674  1883 I sshovel-spike: TUN pkt#34 proto=17 dst=10.99.0.53:53
+15:36:35.516  1674  1883 I sshovel-spike: TUN pkt#35 proto=17 dst=10.99.0.53:53
+15:36:35.747  1674  1883 I sshovel-spike: TUN pkt#36 proto=17 dst=10.99.0.53:53
+15:36:36.262  1674  1883 I sshovel-spike: TUN pkt#37 proto=17 dst=10.99.0.53:53
+15:36:36.383  1674  1883 I sshovel-spike: TUN pkt#38 proto=17 dst=10.99.0.53:53
+15:36:37.621  1674  1883 I sshovel-spike: TUN pkt#39 proto=17 dst=10.99.0.53:53
+15:36:39.421  1674  1883 I sshovel-spike: TUN pkt#40 proto=17 dst=10.99.0.53:53
+15:36:39.421  1674  1883 I sshovel-spike: TUN pkt#41 proto=17 dst=10.99.0.53:53
+15:36:39.421  1674  1883 I sshovel-spike: TUN pkt#42 proto=17 dst=10.99.0.53:53
+15:36:39.422  1674  1883 I sshovel-spike: TUN pkt#43 proto=17 dst=10.99.0.53:53
+15:36:39.422  1674  1883 I sshovel-spike: TUN pkt#44 proto=17 dst=10.99.0.53:53
+15:36:39.422  1674  1883 I sshovel-spike: TUN pkt#45 proto=17 dst=10.99.0.53:53
+15:36:39.852  1674  1883 I sshovel-spike: TUN pkt#46 proto=17 dst=10.99.0.53:53
+15:36:40.366  1674  1883 I sshovel-spike: TUN pkt#47 proto=6 dst=10.99.0.53:853
+15:36:40.750  1674  1883 I sshovel-spike: TUN pkt#48 proto=17 dst=10.99.0.53:53
+15:36:40.752  1674  1883 I sshovel-spike: TUN pkt#49 proto=17 dst=10.99.0.53:53
+15:36:41.266  1674  1883 I sshovel-spike: TUN pkt#50 proto=17 dst=10.99.0.53:53
+15:36:41.268  1674  1883 I sshovel-spike: TUN pkt#51 proto=17 dst=10.99.0.53:53
+15:36:41.386  1674  1883 I sshovel-spike: TUN pkt#52 proto=17 dst=10.99.0.53:53
+15:36:41.795  1674  1883 I sshovel-spike: TUN pkt#53 proto=17 dst=10.99.0.53:53
+15:36:41.901  1674  1883 I sshovel-spike: TUN pkt#54 proto=17 dst=10.99.0.53:53
+15:36:42.279  1674  1883 I sshovel-spike: TUN pkt#55 proto=17 dst=10.99.0.53:53
+15:36:42.627  1674  1883 I sshovel-spike: TUN pkt#56 proto=17 dst=10.99.0.53:53
+15:36:44.301  1674  1883 I sshovel-spike: TUN pkt#57 proto=17 dst=10.99.0.53:53
+15:36:44.426  1674  1883 I sshovel-spike: TUN pkt#58 proto=17 dst=10.99.0.53:53
+15:36:44.426  1674  1883 I sshovel-spike: TUN pkt#59 proto=17 dst=10.99.0.53:53
+15:36:44.426  1674  1883 I sshovel-spike: TUN pkt#60 proto=17 dst=10.99.0.53:53
+15:36:44.426  1674  1883 I sshovel-spike: TUN pkt#61 proto=17 dst=10.99.0.53:53
+15:36:44.426  1674  1883 I sshovel-spike: TUN pkt#62 proto=17 dst=10.99.0.53:53
+15:36:44.427  1674  1883 I sshovel-spike: TUN pkt#63 proto=17 dst=10.99.0.53:53
+15:36:44.854  1674  1883 I sshovel-spike: TUN pkt#64 proto=17 dst=10.99.0.53:53
+15:36:45.755  1674  1883 I sshovel-spike: TUN pkt#65 proto=17 dst=10.99.0.53:53
+15:36:45.757  1674  1883 I sshovel-spike: TUN pkt#66 proto=17 dst=10.99.0.53:53
+15:36:46.272  1674  1883 I sshovel-spike: TUN pkt#67 proto=17 dst=10.99.0.53:53
+15:36:46.387  1674  1883 I sshovel-spike: TUN pkt#68 proto=17 dst=10.99.0.53:53
+15:36:46.389  1674  1883 I sshovel-spike: TUN pkt#69 proto=17 dst=10.99.0.53:53
+15:36:46.796  1674  1883 I sshovel-spike: TUN pkt#70 proto=17 dst=10.99.0.53:53
+15:36:46.906  1674  1883 I sshovel-spike: TUN pkt#71 proto=17 dst=10.99.0.53:53
+15:36:47.632  1674  1883 I sshovel-spike: TUN pkt#73 proto=17 dst=10.99.0.53:53
+15:36:49.306  1674  1883 I sshovel-spike: TUN pkt#74 proto=17 dst=10.99.0.53:53
+15:36:50.759  1674  1883 I sshovel-spike: TUN pkt#75 proto=17 dst=10.99.0.53:53
+15:36:50.778  1674  1883 I sshovel-spike: TUN pkt#76 proto=17 dst=10.99.0.53:53
+15:36:51.277  1674  1883 I sshovel-spike: TUN pkt#77 proto=17 dst=10.99.0.53:53
+15:36:51.389  1674  1883 I sshovel-spike: TUN pkt#78 proto=17 dst=10.99.0.53:53
+15:36:51.394  1674  1883 I sshovel-spike: TUN pkt#79 proto=17 dst=10.99.0.53:53
+15:36:52.637  1674  1883 I sshovel-spike: TUN pkt#80 proto=17 dst=10.99.0.53:53
+15:36:52.827  1674  1883 I sshovel-spike: TUN pkt#81 proto=17 dst=10.99.0.53:53
+15:36:54.314  1674  1883 I sshovel-spike: TUN pkt#82 proto=17 dst=10.99.0.53:53
+15:36:54.939  1674  1883 I sshovel-spike: TUN pkt#83 proto=17 dst=10.99.0.53:53
+15:36:55.326  1674  1883 I sshovel-spike: TUN pkt#84 proto=17 dst=10.99.0.53:53
+15:36:55.764  1674  1883 I sshovel-spike: TUN pkt#85 proto=17 dst=10.99.0.53:53
+15:36:55.782  1674  1883 I sshovel-spike: TUN pkt#86 proto=17 dst=10.99.0.53:53
+15:36:56.282  1674  1883 I sshovel-spike: TUN pkt#87 proto=17 dst=10.99.0.53:53
+15:36:56.394  1674  1883 I sshovel-spike: TUN pkt#88 proto=17 dst=10.99.0.53:53
+15:36:56.453  1674  1883 I sshovel-spike: TUN pkt#89 proto=17 dst=10.99.0.53:53
+15:36:57.347  1674  1883 I sshovel-spike: TUN pkt#90 proto=17 dst=10.99.0.53:53
+15:36:57.833  1674  1883 I sshovel-spike: TUN pkt#91 proto=17 dst=10.99.0.53:53
+15:36:59.637  1674  1883 I sshovel-spike: TUN pkt#92 proto=17 dst=10.99.0.53:53
+15:36:59.863  1674  1883 I sshovel-spike: TUN pkt#93 proto=17 dst=10.99.0.53:53
+15:36:59.944  1674  1883 I sshovel-spike: TUN pkt#94 proto=17 dst=10.99.0.53:53
+15:37:00.768  1674  1883 I sshovel-spike: TUN pkt#95 proto=17 dst=10.99.0.53:53
+15:37:00.791  1674  1883 I sshovel-spike: TUN pkt#96 proto=17 dst=10.99.0.53:53
+15:37:01.243  1674  1674 I sshovel-spike: underlying network available: 102
+15:37:01.244  1674  1674 I sshovel-spike: underlying 102 dns=[/10.0.2.3] privateDnsActive=false privateDnsServer=null
+15:37:01.400  1674  1883 I sshovel-spike: TUN pkt#97 proto=17 dst=10.99.0.53:53
+15:37:01.459  1674  1883 I sshovel-spike: TUN pkt#98 proto=17 dst=10.99.0.53:53
+15:37:02.352  1674  1883 I sshovel-spike: TUN pkt#99 proto=17 dst=10.99.0.53:53
+15:37:03.152  1674  1674 I sshovel-spike: command stop-vpn
+15:37:03.154  1674  1674 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.STOP origin=app importance=100 fgsType=systemExempted
+15:37:03.154  1674  1674 I sshovel-spike: stopping VPN: user
+15:37:04.983  3489  3489 I sshovel-spike: === SPIKE3 manual start with exported=false
+15:37:05.006  1674  1674 I sshovel-spike: command start-vpn
+15:37:05.018  1674  1674 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.START origin=app importance=100 fgsType=systemExempted
+15:37:05.020  1674  1674 I sshovel-spike: SPIKE2 startForeground OK with type systemExempted
+15:37:05.031  1674  1674 I sshovel-spike: VPN up route=10.77.0.0/24 alwaysOn=true lockdown=false
+15:37:05.079  1674  3501 I sshovel-spike: TUN pkt#103 proto=6 dst=10.99.0.53:853
+15:37:05.092  1674  3501 I sshovel-spike: TUN pkt#104 proto=17 dst=10.99.0.53:53
+15:37:06.094  1674  3501 I sshovel-spike: TUN pkt#107 proto=6 dst=10.99.0.53:853
+15:37:07.118  1674  3501 I sshovel-spike: TUN pkt#108 proto=6 dst=10.99.0.53:853
+15:37:07.744  1674  3501 I sshovel-spike: TUN pkt#109 proto=17 dst=10.99.0.53:53
+15:37:08.142  1674  3501 I sshovel-spike: TUN pkt#110 proto=6 dst=10.99.0.53:853
+15:37:08.867  1674  3501 I sshovel-spike: TUN pkt#112 proto=17 dst=10.99.0.53:53
+15:37:09.166  1674  3501 I sshovel-spike: TUN pkt#113 proto=6 dst=10.99.0.53:853
+15:37:10.097  1674  3501 I sshovel-spike: TUN pkt#114 proto=17 dst=10.99.0.53:53
+15:37:10.190  1674  3501 I sshovel-spike: TUN pkt#115 proto=6 dst=10.99.0.53:853
+15:37:12.206  1674  3501 I sshovel-spike: TUN pkt#116 proto=6 dst=10.99.0.53:853
+15:37:12.749  1674  3501 I sshovel-spike: TUN pkt#117 proto=17 dst=10.99.0.53:53
+15:37:13.057  1674  1674 I sshovel-spike: command stop-vpn
+15:37:13.059  1674  1674 I sshovel-spike: onStartCommand action=com.github.dennisklein.sshovel.spike.STOP origin=app importance=100 fgsType=systemExempted
+15:37:13.059  1674  1674 I sshovel-spike: stopping VPN: user
+15:37:17.073  3545  3545 I sshovel-spike: === SPIKE1 16 KB page-size emulator
+
+## Variant 16k (systemExempted, exported=true)
+15:38:25.958  3265  3265 I sshovel-spike: === SPIKE1 load AAR, build gVisor stack
+15:38:26.881  3287  3287 I sshovel-spike: underlying network available: 100
+15:38:26.889  3287  3287 I sshovel-spike: underlying 100 dns=[/10.0.2.3] privateDnsActive=false privateDnsServer=null
+15:38:28.848  3287  3287 I sshovel-spike: command hello
+15:38:28.870  3287  3497 I sshovel-spike: SPIKE1 gVisor netstack up: nic=1 routes=1 go=go1.26.3 android/amd64

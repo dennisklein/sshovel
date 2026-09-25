@@ -1,0 +1,6 @@
+OK   core.aar/jni/arm64-v8a/libgojni.so: min LOAD align 0x4000
+OK   core.aar/jni/x86_64/libgojni.so: min LOAD align 0x4000
+OK   A.apk/lib/arm64-v8a/libgojni.so: min LOAD align 0x4000
+OK   A.apk/lib/x86_64/libgojni.so: min LOAD align 0x4000
+Verification successful
+PAGE_SIZE=16384

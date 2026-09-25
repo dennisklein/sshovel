@@ -1,0 +1,156 @@
+
+=== Toolchain
+ndk;30.0.16248370 build-tools;36.1.0 system-images;android-36;google_apis_ps16k;x86_64
+openjdk version "21.0.12.1" 2026-08-18
+go version go1.26.3 linux/amd64
+
+=== SPIKE1 build core.aar + 16 KB alignment
+OK   core.aar/jni/arm64-v8a/libgojni.so: min LOAD align 0x4000
+OK   core.aar/jni/x86_64/libgojni.so: min LOAD align 0x4000
+AGP: 9.4.1
+
+=== Build variant A (systemExempted, exported=true)
+Checking the license for package Android SDK Build-Tools 36 in /opt/android-sdk/licenses
+License for package Android SDK Build-Tools 36 accepted.
+Preparing "Install Android SDK Build-Tools 36 v.36.0.0".
+"Install Android SDK Build-Tools 36 v.36.0.0" ready.
+Installing Android SDK Build-Tools 36 in /opt/android-sdk/build-tools/36.0.0
+"Install Android SDK Build-Tools 36 v.36.0.0" complete.
+"Install Android SDK Build-Tools 36 v.36.0.0" finished.
+[=========                              ] 25%                                   
+=== Build variant B (specialUse, exported=true)
+
+=== Build variant C (systemExempted, exported=false)
+
+=== SPIKE1 APK alignment
+OK   A.apk/lib/arm64-v8a/libgojni.so: min LOAD align 0x4000
+OK   A.apk/lib/x86_64/libgojni.so: min LOAD align 0x4000
+Verification successful
+
+=== Boot emulator
+test-env jump host reachable on :2222
+google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys
+
+=== A: install systemExempted exported=true
+Performing Streamed Install
+Success
+
+=== SPIKE1 load AAR, build gVisor stack
+
+=== SPIKE2a tile tap, no VPN consent yet, app process killed
+tap 'android:id/button1' at 894 1524
+-> service running
+VPN CONNECTED extra: VPN:com.github.dennisklein.sshovel.spike} created=2026-09-25T15:30:33.334Z Score(Policies : EVER_EVALUATED&IS_UNMETERED&IS_VPN&EVER_VALIDATED&IS_VALIDATED ; KeepConnected : 0)  created 73353 firstValidated 73541 lastValidated 73541  lp{{InterfaceName: tun0 LinkAddresses: [ 10.99.0.1/24 ] DnsAddresses: [ /10.99.0.53 ] Domains:  MTU: 1500 Routes: [ 0.0.0.0/0 -> 0.0.0.0 tun0 mtu 0
+
+=== SPIKE2a tile tap off
+-> service not running
+-> no VPN network
+
+=== SPIKE2b tile tap on, consent granted, app process killed
+-> service running
+VPN CONNECTED extra: VPN:com.github.dennisklein.sshovel.spike} created=2026-09-25T15:30:54.195Z Score(Policies : EVER_EVALUATED&IS_UNMETERED&IS_VPN&EVER_VALIDATED&IS_VALIDATED ; KeepConnected : 0)  created 94155 firstValidated 94228 lastValidated 94228  lp{{InterfaceName: tun0 LinkAddresses: [ 10.99.0.1/24 ] DnsAddresses: [ /10.99.0.53 ] Domains:  MTU: 1500 Routes: [ 0.0.0.0/0 -> 0.0.0.0 tun0 mtu 0
+
+=== SPIKE2b tile tap off, app process killed
+-> service not running
+-> no VPN network
+
+=== SPIKE2c tile tap on from the lock screen
+Pin set to '1234'
+-> service not running
+-> no VPN network
+-> service not running
+-> no VPN network
+Lock credential cleared
+
+=== SPIKE3 DNS: VPN routes 0.0.0.0/0 into a TUN nobody answers
+Warning: Activity not started, its current task has been brought to the front
+-> service running
+VPN CONNECTED extra: VPN:com.github.dennisklein.sshovel.spike} created=2026-09-25T15:31:33.652Z Score(Policies : EVER_EVALUATED&IS_UNMETERED&IS_VPN&EVER_VALIDATED&IS_VALIDATED ; KeepConnected : 0)  created 133705 firstValidated 133860 lastValidated 133860  lp{{InterfaceName: tun0 LinkAddresses: [ 10.99.0.1/24 ] DnsAddresses: [ /10.99.0.53 ] Domains:  MTU: 1500 Routes: [ 0.0.0.0/0 -> 0.0.0.0 tun0 mtu 0
+
+=== SPIKE3 rawQuery via underlying network (expect answer, 0 TUN packets)
+Warning: Activity not started, intent has been delivered to currently running top-most instance.
+
+=== SPIKE3 control: rawQuery via default network (expect failure, >0 TUN packets)
+Warning: Activity not started, intent has been delivered to currently running top-most instance.
+
+=== SPIKE3 with Private DNS strict (dns.google)
+Warning: Activity not started, intent has been delivered to currently running top-most instance.
+Warning: Activity not started, intent has been delivered to currently running top-most instance.
+Deleted 1 rows
+Warning: Activity not started, intent has been delivered to currently running top-most instance.
+
+=== SPIKE4 Keystore key -> SSH auth against test-env
+Warning: Activity not started, intent has been delivered to currently running top-most instance.
+Warning: Activity not started, intent has been delivered to currently running top-most instance.
+
+=== SPIKE3 Always-on (exported=true): configure, reboot, expect system start
+
+=== SPIKE3 after reboot
+-> service running
+VPN CONNECTED extra: VPN:com.github.dennisklein.sshovel.spike} created=2026-09-25T15:33:23.170Z Score(Policies : EVER_EVALUATED&IS_UNMETERED&IS_VPN&EVER_VALIDATED&IS_VALIDATED ; KeepConnected : 0)  created 22921 firstValidated 23204 lastValidated 23204  lp{{InterfaceName: tun0 LinkAddresses: [ 10.99.0.1/24 ] DnsAddresses: [ /10.99.0.53 ] Domains:  MTU: 1500 Routes: [ 0.0.0.0/0 -> 0.0.0.0 tun0 mtu 0
+Deleted 1 rows
+
+=== SPIKE3 manual start with exported=true
+Warning: Activity not started, intent has been delivered to currently running top-most instance.
+-> service running
+VPN CONNECTED extra: VPN:com.github.dennisklein.sshovel.spike} created=2026-09-25T15:34:08.991Z Score(Policies : EVER_EVALUATED&IS_UNMETERED&IS_VPN&EVER_VALIDATED&IS_VALIDATED ; KeepConnected : 0)  created 68688 firstValidated 68732 lastValidated 68732  lp{{InterfaceName: tun0 LinkAddresses: [ 10.99.0.1/24 ] DnsAddresses: [ /10.99.0.53 ] Domains:  MTU: 1500 Routes: [ 10.77.0.0/24 -> 0.0.0.0 tun0 mtu 0
+Warning: Activity not started, intent has been delivered to currently running top-most instance.
+
+=== B: install specialUse exported=true
+Performing Streamed Install
+Success
+
+=== SPIKE1 load AAR, build gVisor stack
+
+=== SPIKE2a tile tap, no VPN consent yet, app process killed
+tap 'android:id/button1' at 894 1524
+-> service running
+VPN CONNECTED extra: VPN:com.github.dennisklein.sshovel.spike} created=2026-09-25T15:34:42.008Z Score(Policies : EVER_EVALUATED&IS_UNMETERED&IS_VPN&EVER_VALIDATED&IS_VALIDATED ; KeepConnected : 0)  created 101706 firstValidated 101848 lastValidated 101848  lp{{InterfaceName: tun0 LinkAddresses: [ 10.99.0.1/24 ] DnsAddresses: [ /10.99.0.53 ] Domains:  MTU: 1500 Routes: [ 0.0.0.0/0 -> 0.0.0.0 tun0 mtu 0
+
+=== SPIKE2a tile tap off
+-> service not running
+-> no VPN network
+
+=== SPIKE2b tile tap on, consent granted, app process killed
+-> service running
+VPN CONNECTED extra: VPN:com.github.dennisklein.sshovel.spike} created=2026-09-25T15:35:02.786Z Score(Policies : EVER_EVALUATED&IS_UNMETERED&IS_VPN&EVER_VALIDATED&IS_VALIDATED ; KeepConnected : 0)  created 122478 firstValidated 122547 lastValidated 122547  lp{{InterfaceName: tun0 LinkAddresses: [ 10.99.0.1/24 ] DnsAddresses: [ /10.99.0.53 ] Domains:  MTU: 1500 Routes: [ 0.0.0.0/0 -> 0.0.0.0 tun0 mtu 0
+
+=== SPIKE2b tile tap off, app process killed
+-> service not running
+-> no VPN network
+
+=== SPIKE2c tile tap on from the lock screen
+Pin set to '1234'
+-> service not running
+-> no VPN network
+-> service not running
+-> no VPN network
+Lock credential cleared
+
+=== C: install systemExempted exported=false
+Performing Streamed Install
+Success
+
+=== SPIKE1 load AAR, build gVisor stack
+
+=== SPIKE3 Always-on (exported=false): configure, reboot, expect system start
+
+=== SPIKE3 after reboot
+-> service running
+VPN CONNECTED extra: VPN:com.github.dennisklein.sshovel.spike} created=2026-09-25T15:36:20.511Z Score(Policies : EVER_EVALUATED&IS_UNMETERED&IS_VPN&EVER_VALIDATED&IS_VALIDATED ; KeepConnected : 0)  created 22223 firstValidated 22581 lastValidated 22581  lp{{InterfaceName: tun0 LinkAddresses: [ 10.99.0.1/24 ] DnsAddresses: [ /10.99.0.53 ] Domains:  MTU: 1500 Routes: [ 0.0.0.0/0 -> 0.0.0.0 tun0 mtu 0
+Deleted 1 rows
+
+=== SPIKE3 manual start with exported=false
+Warning: Activity not started, intent has been delivered to currently running top-most instance.
+-> service running
+VPN CONNECTED extra: VPN:com.github.dennisklein.sshovel.spike} created=2026-09-25T15:37:05.029Z Score(Policies : EVER_EVALUATED&IS_UNMETERED&IS_VPN&EVER_VALIDATED&IS_VALIDATED ; KeepConnected : 0)  created 66718 firstValidated 66804 lastValidated 66804  lp{{InterfaceName: tun0 LinkAddresses: [ 10.99.0.1/24 ] DnsAddresses: [ /10.99.0.53 ] Domains:  MTU: 1500 Routes: [ 10.77.0.0/24 -> 0.0.0.0 tun0 mtu 0
+Warning: Activity not started, intent has been delivered to currently running top-most instance.
+
+=== SPIKE1 16 KB page-size emulator
+PAGE_SIZE=16384
+Performing Streamed Install
+Success
+
+=== SPIKE1 load AAR, build gVisor stack
+
+=== Done. Results in spikes/out/ (start with summary.txt)

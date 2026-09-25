@@ -1,0 +1,722 @@
+write /tmp/gomobile-work-67434100/src-android-arm64/go.mod
+write /tmp/gomobile-work-67434100/src-android-amd64/go.mod
+go: found github.com/dennisklein/sshovel/spikes/core/mobile in github.com/dennisklein/sshovel/spikes/core v0.0.0-00010101000000-000000000000
+go: downloading golang.org/x/term v0.46.0
+unused cel.dev/expr
+unused cloud.google.com/go
+unused cloud.google.com/go/auth
+unused cloud.google.com/go/auth/oauth2adapt
+unused cloud.google.com/go/compute/metadata
+unused cloud.google.com/go/iam
+unused cloud.google.com/go/monitoring
+unused cloud.google.com/go/storage
+unused github.com/BurntSushi/toml
+unused github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp
+unused github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric
+unused github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping
+unused github.com/Microsoft/go-winio
+unused github.com/Microsoft/hcsshim
+unused github.com/cenkalti/backoff
+unused github.com/cespare/xxhash/v2
+unused github.com/cilium/ebpf
+unused github.com/cncf/xds/go
+unused github.com/containerd/cgroups/v3
+unused github.com/containerd/console
+unused github.com/containerd/containerd/api
+unused github.com/containerd/containerd/v2
+unused github.com/containerd/continuity
+unused github.com/containerd/errdefs
+unused github.com/containerd/errdefs/pkg
+unused github.com/containerd/fifo
+unused github.com/containerd/go-runc
+unused github.com/containerd/log
+unused github.com/containerd/plugin
+unused github.com/containerd/ttrpc
+unused github.com/containerd/typeurl/v2
+unused github.com/coreos/go-systemd/v22
+unused github.com/creack/pty
+unused github.com/davecgh/go-spew
+unused github.com/docker/go-units
+unused github.com/emicklei/go-restful/v3
+unused github.com/envoyproxy/go-control-plane/envoy
+unused github.com/envoyproxy/protoc-gen-validate
+unused github.com/felixge/httpsnoop
+unused github.com/fxamacker/cbor/v2
+unused github.com/go-jose/go-jose/v4
+unused github.com/go-logr/logr
+unused github.com/go-logr/stdr
+unused github.com/go-openapi/jsonpointer
+unused github.com/go-openapi/jsonreference
+unused github.com/go-openapi/swag
+unused github.com/godbus/dbus/v5
+unused github.com/gofrs/flock
+unused github.com/gogo/protobuf
+unused github.com/golang/groupcache
+unused github.com/golang/protobuf
+unused github.com/google/gnostic-models
+unused github.com/google/go-cmp
+unused github.com/google/gofuzz
+unused github.com/google/s2a-go
+unused github.com/google/subcommands
+unused github.com/google/uuid
+unused github.com/googleapis/enterprise-certificate-proxy
+unused github.com/googleapis/gax-go/v2
+unused github.com/josharian/intern
+unused github.com/json-iterator/go
+unused github.com/mailru/easyjson
+unused github.com/mattbaird/jsonpatch
+unused github.com/mdlayher/socket
+unused github.com/mdlayher/vsock
+unused github.com/moby/sys/capability
+unused github.com/moby/sys/mountinfo
+unused github.com/moby/sys/userns
+unused github.com/modern-go/concurrent
+unused github.com/modern-go/reflect2
+unused github.com/mohae/deepcopy
+unused github.com/munnerz/goautoneg
+unused github.com/opencontainers/go-digest
+unused github.com/opencontainers/image-spec
+unused github.com/opencontainers/runtime-spec
+unused github.com/pkg/errors
+unused github.com/planetscale/vtprotobuf
+unused github.com/sirupsen/logrus
+unused github.com/spiffe/go-spiffe/v2
+unused github.com/vishvananda/netlink
+unused github.com/vishvananda/netns
+unused github.com/x448/float16
+unused github.com/yuin/goldmark
+unused go.opencensus.io
+unused go.opentelemetry.io/auto/sdk
+unused go.opentelemetry.io/contrib/detectors/gcp
+unused go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc
+unused go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp
+unused go.opentelemetry.io/otel
+unused go.opentelemetry.io/otel/metric
+unused go.opentelemetry.io/otel/sdk
+unused go.opentelemetry.io/otel/sdk/metric
+unused go.opentelemetry.io/otel/trace
+unused golang.org/x/exp/shiny
+unused golang.org/x/image
+unused golang.org/x/mod
+unused golang.org/x/net
+unused golang.org/x/oauth2
+unused golang.org/x/sync
+unused golang.org/x/telemetry
+unused golang.org/x/term
+unused golang.org/x/text
+unused golang.org/x/tools
+unused golang.org/x/tools/go/expect
+unused golang.org/x/tools/go/packages/packagestest
+unused google.golang.org/api
+unused google.golang.org/genproto
+unused google.golang.org/genproto/googleapis/api
+unused google.golang.org/genproto/googleapis/rpc
+unused google.golang.org/grpc
+unused google.golang.org/protobuf
+unused gopkg.in/evanphx/json-patch.v4
+unused gopkg.in/inf.v0
+unused gopkg.in/yaml.v3
+unused k8s.io/api
+unused k8s.io/apimachinery
+unused k8s.io/client-go
+unused k8s.io/klog/v2
+unused k8s.io/kube-openapi
+unused k8s.io/utils
+unused sigs.k8s.io/json
+unused sigs.k8s.io/structured-merge-diff/v4
+unused sigs.k8s.io/yaml
+internal/goarch
+internal/unsafeheader
+internal/byteorder
+internal/godebugs
+cmp
+internal/goos
+internal/profilerecord
+unicode/utf8
+internal/runtime/pprof/label
+internal/msan
+internal/coverage/rtcov
+math/bits
+internal/asan
+internal/trace/tracev2
+internal/goexperiment
+internal/cpu
+sync/atomic
+internal/abi
+internal/runtime/atomic
+internal/runtime/syscall/linux
+unicode
+internal/runtime/gc
+internal/runtime/sys
+internal/runtime/math
+crypto/internal/fips140/alias
+crypto/internal/constanttime
+crypto/internal/fips140deps/byteorder
+crypto/internal/boring/sig
+unicode/utf16
+vendor/golang.org/x/crypto/cryptobyte/asn1
+internal/nettrace
+internal/strconv
+golang.org/x/crypto/internal/alias
+golang.org/x/crypto/cryptobyte/asn1
+log/internal
+gvisor.dev/gvisor/pkg/gohacks
+go: found github.com/dennisklein/sshovel/spikes/core/mobile in github.com/dennisklein/sshovel/spikes/core v0.0.0-00010101000000-000000000000
+encoding
+golang.org/x/exp/constraints
+container/list
+crypto/internal/fips140/subtle
+gvisor.dev/gvisor/pkg/tcpip/seqnum
+gvisor.dev/gvisor/pkg/bits
+unused cel.dev/expr
+unused cloud.google.com/go
+unused cloud.google.com/go/auth
+unused cloud.google.com/go/auth/oauth2adapt
+unused cloud.google.com/go/compute/metadata
+unused cloud.google.com/go/iam
+unused cloud.google.com/go/monitoring
+unused cloud.google.com/go/storage
+unused github.com/BurntSushi/toml
+unused github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp
+unused github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric
+unused github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping
+unused github.com/Microsoft/go-winio
+unused github.com/Microsoft/hcsshim
+unused github.com/cenkalti/backoff
+unused github.com/cespare/xxhash/v2
+unused github.com/cilium/ebpf
+unused github.com/cncf/xds/go
+unused github.com/containerd/cgroups/v3
+unused github.com/containerd/console
+unused github.com/containerd/containerd/api
+unused github.com/containerd/containerd/v2
+unused github.com/containerd/continuity
+unused github.com/containerd/errdefs
+unused github.com/containerd/errdefs/pkg
+unused github.com/containerd/fifo
+unused github.com/containerd/go-runc
+unused github.com/containerd/log
+unused github.com/containerd/plugin
+unused github.com/containerd/ttrpc
+unused github.com/containerd/typeurl/v2
+unused github.com/coreos/go-systemd/v22
+unused github.com/creack/pty
+unused github.com/davecgh/go-spew
+unused github.com/docker/go-units
+unused github.com/emicklei/go-restful/v3
+unused github.com/envoyproxy/go-control-plane/envoy
+unused github.com/envoyproxy/protoc-gen-validate
+unused github.com/felixge/httpsnoop
+unused github.com/fxamacker/cbor/v2
+unused github.com/go-jose/go-jose/v4
+unused github.com/go-logr/logr
+unused github.com/go-logr/stdr
+unused github.com/go-openapi/jsonpointer
+unused github.com/go-openapi/jsonreference
+unused github.com/go-openapi/swag
+unused github.com/godbus/dbus/v5
+unused github.com/gofrs/flock
+unused github.com/gogo/protobuf
+unused github.com/golang/groupcache
+unused github.com/golang/protobuf
+unused github.com/google/gnostic-models
+unused github.com/google/go-cmp
+unused github.com/google/gofuzz
+unused github.com/google/s2a-go
+unused github.com/google/subcommands
+unused github.com/google/uuid
+unused github.com/googleapis/enterprise-certificate-proxy
+unused github.com/googleapis/gax-go/v2
+unused github.com/josharian/intern
+unused github.com/json-iterator/go
+unused github.com/mailru/easyjson
+unused github.com/mattbaird/jsonpatch
+unused github.com/mdlayher/socket
+unused github.com/mdlayher/vsock
+unused github.com/moby/sys/capability
+unused github.com/moby/sys/mountinfo
+unused github.com/moby/sys/userns
+unused github.com/modern-go/concurrent
+unused github.com/modern-go/reflect2
+unused github.com/mohae/deepcopy
+unused github.com/munnerz/goautoneg
+unused github.com/opencontainers/go-digest
+unused github.com/opencontainers/image-spec
+unused github.com/opencontainers/runtime-spec
+unused github.com/pkg/errors
+unused github.com/planetscale/vtprotobuf
+unused github.com/sirupsen/logrus
+unused github.com/spiffe/go-spiffe/v2
+unused github.com/vishvananda/netlink
+unused github.com/vishvananda/netns
+unused github.com/x448/float16
+unused github.com/yuin/goldmark
+unused go.opencensus.io
+unused go.opentelemetry.io/auto/sdk
+unused go.opentelemetry.io/contrib/detectors/gcp
+unused go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc
+unused go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp
+unused go.opentelemetry.io/otel
+unused go.opentelemetry.io/otel/metric
+unused go.opentelemetry.io/otel/sdk
+unused go.opentelemetry.io/otel/sdk/metric
+unused go.opentelemetry.io/otel/trace
+unused golang.org/x/exp/shiny
+unused golang.org/x/image
+unused golang.org/x/mod
+unused golang.org/x/net
+unused golang.org/x/oauth2
+unused golang.org/x/sync
+unused golang.org/x/telemetry
+unused golang.org/x/term
+unused golang.org/x/text
+unused golang.org/x/tools
+unused golang.org/x/tools/go/expect
+unused golang.org/x/tools/go/packages/packagestest
+unused google.golang.org/api
+unused google.golang.org/genproto
+unused google.golang.org/genproto/googleapis/api
+unused google.golang.org/genproto/googleapis/rpc
+unused google.golang.org/grpc
+unused google.golang.org/protobuf
+unused gopkg.in/evanphx/json-patch.v4
+unused gopkg.in/inf.v0
+unused gopkg.in/yaml.v3
+unused k8s.io/api
+unused k8s.io/apimachinery
+unused k8s.io/client-go
+unused k8s.io/klog/v2
+unused k8s.io/kube-openapi
+unused k8s.io/utils
+unused sigs.k8s.io/json
+unused sigs.k8s.io/structured-merge-diff/v4
+unused sigs.k8s.io/yaml
+internal/chacha8rand
+internal/bytealg
+internal/runtime/gc/scan
+crypto/internal/fips140deps/cpu
+internal/runtime/exithook
+math
+crypto/subtle
+internal/stringslite
+internal/goarch
+internal/unsafeheader
+internal/coverage/rtcov
+internal/godebugs
+internal/goos
+internal/msan
+internal/runtime/pprof/label
+internal/profilerecord
+internal/byteorder
+unicode/utf8
+internal/trace/tracev2
+internal/goexperiment
+math/bits
+internal/asan
+cmp
+internal/cpu
+internal/abi
+internal/runtime/syscall/linux
+internal/runtime/cgroup
+internal/runtime/gc
+sync/atomic
+internal/runtime/math
+crypto/internal/constanttime
+unicode
+crypto/internal/boring/sig
+crypto/internal/fips140deps/byteorder
+crypto/internal/fips140/alias
+unicode/utf16
+vendor/golang.org/x/crypto/cryptobyte/asn1
+internal/nettrace
+internal/race
+internal/synctest
+internal/strconv
+golang.org/x/crypto/internal/alias
+golang.org/x/crypto/cryptobyte/asn1
+encoding
+internal/runtime/maps
+internal/sync
+internal/chacha8rand
+internal/runtime/atomic
+math
+log/internal
+internal/bytealg
+internal/runtime/sys
+crypto/internal/fips140/subtle
+crypto/internal/fips140deps/cpu
+gvisor.dev/gvisor/pkg/gohacks
+golang.org/x/exp/constraints
+gvisor.dev/gvisor/pkg/tcpip/seqnum
+container/list
+gvisor.dev/gvisor/pkg/bits
+crypto/subtle
+internal/runtime/gc/scan
+internal/stringslite
+internal/runtime/exithook
+internal/runtime/cgroup
+internal/race
+internal/synctest
+runtime
+internal/sync
+internal/runtime/maps
+runtime
+iter
+weak
+internal/reflectlite
+sync
+maps
+slices
+errors
+sort
+internal/bisect
+internal/singleflight
+internal/testlog
+crypto/internal/fips140cache
+unique
+strconv
+internal/oserror
+path
+vendor/golang.org/x/net/dns/dnsmessage
+math/rand/v2
+io
+syscall
+internal/godebug
+internal/reflectlite
+sync
+iter
+weak
+golang.org/x/crypto/blowfish
+reflect
+container/heap
+maps
+slices
+net/netip
+hash
+crypto/internal/randutil
+bytes
+strings
+internal/saferio
+encoding/base64
+crypto
+gvisor.dev/gvisor/pkg/tcpip/hash/jenkins
+sort
+errors
+internal/testlog
+crypto/internal/fips140cache
+internal/bisect
+internal/singleflight
+unique
+internal/oserror
+strconv
+path
+io
+math/rand/v2
+vendor/golang.org/x/net/dns/dnsmessage
+syscall
+crypto/internal/fips140deps/godebug
+crypto/internal/impl
+encoding/pem
+math/rand
+time
+internal/syscall/unix
+internal/syscall/execenv
+internal/saferio
+hash
+crypto/internal/randutil
+bytes
+internal/godebug
+strings
+reflect
+crypto/internal/fips140
+encoding/base64
+net/netip
+regexp/syntax
+bufio
+crypto
+crypto/internal/fips140/sha256
+crypto/internal/fips140/sha3
+crypto/internal/fips140/sha512
+golang.org/x/crypto/blowfish
+gvisor.dev/gvisor/pkg/tcpip/hash/jenkins
+container/heap
+runtime/cgo
+crypto/internal/fips140deps/godebug
+math/rand
+runtime/cgo
+crypto/internal/impl
+regexp/syntax
+bufio
+encoding/pem
+crypto/internal/fips140
+crypto/internal/fips140/hmac
+crypto/sha3
+crypto/internal/fips140/sha512
+crypto/internal/fips140/sha3
+crypto/internal/fips140/sha256
+regexp
+crypto/internal/fips140/check
+crypto/internal/fips140hash
+internal/syscall/execenv
+time
+internal/syscall/unix
+crypto/internal/fips140/aes
+crypto/fips140
+crypto/internal/fips140/nistec/fiat
+crypto/internal/fips140/edwards25519/field
+crypto/internal/fips140/bigmod
+crypto/internal/fips140/hmac
+crypto/sha3
+crypto/internal/fips140/edwards25519
+crypto/internal/fips140deps/time
+context
+io/fs
+internal/poll
+crypto/internal/entropy/v1.0.0
+regexp
+crypto/internal/fips140/check
+crypto/internal/fips140hash
+crypto/fips140
+crypto/internal/fips140/nistec/fiat
+crypto/internal/fips140/edwards25519/field
+crypto/internal/fips140/bigmod
+crypto/internal/fips140/aes
+internal/filepathlite
+crypto/internal/fips140/edwards25519
+internal/fmtsort
+encoding/binary
+os
+crypto/internal/fips140/nistec
+crypto/internal/fips140deps/time
+context
+io/fs
+internal/poll
+gvisor.dev/gvisor/pkg/tcpip/checksum
+golang.org/x/crypto/internal/poly1305
+crypto/internal/entropy/v1.0.0
+golang.org/x/sys/unix
+internal/filepathlite
+crypto/internal/fips140/nistec
+encoding/binary
+internal/fmtsort
+os
+fmt
+crypto/internal/sysrand
+path/filepath
+os/signal
+crypto/internal/fips140/drbg
+golang.org/x/crypto/internal/poly1305
+gvisor.dev/gvisor/pkg/tcpip/checksum
+golang.org/x/sys/unix
+crypto/internal/fips140only
+crypto/internal/fips140/ed25519
+crypto/internal/fips140/mlkem
+crypto/internal/fips140/rsa
+crypto/internal/fips140/aes/gcm
+crypto/internal/fips140/ecdsa
+crypto/internal/fips140/ecdh
+crypto/rc4
+crypto/md5
+crypto/mlkem
+crypto/cipher
+encoding/hex
+net/url
+gvisor.dev/gvisor/pkg/state/wire
+log
+github.com/google/btree
+encoding/json
+golang.org/x/time/rate
+math/big
+gvisor.dev/gvisor/pkg/sync
+crypto/internal/boring
+crypto/des
+golang.org/x/crypto/chacha20
+net
+crypto/internal/rand
+crypto/sha512
+crypto/aes
+crypto/sha1
+crypto/hmac
+crypto/sha256
+fmt
+os/signal
+crypto/internal/sysrand
+path/filepath
+golang.org/x/sys/cpu
+golang.org/x/crypto/ssh/internal/bcrypt_pbkdf
+crypto/ecdh
+crypto/internal/fips140/drbg
+gvisor.dev/gvisor/pkg/state
+crypto/internal/fips140only
+crypto/internal/fips140/ecdh
+golang.org/x/crypto/curve25519
+crypto/internal/fips140/ecdsa
+crypto/internal/fips140/ed25519
+crypto/internal/fips140/rsa
+crypto/internal/fips140/aes/gcm
+crypto/internal/fips140/mlkem
+crypto/rc4
+crypto/md5
+gvisor.dev/gvisor/pkg/linewriter
+gvisor.dev/gvisor/pkg/sync/locking
+crypto/cipher
+gvisor.dev/gvisor/pkg/rawfile
+encoding/hex
+net/url
+log
+golang.org/x/time/rate
+encoding/json
+gvisor.dev/gvisor/pkg/sync
+gvisor.dev/gvisor/pkg/state/wire
+github.com/google/btree
+math/big
+crypto/mlkem
+crypto/internal/boring
+golang.org/x/crypto/chacha20
+crypto/des
+crypto/internal/rand
+crypto/sha512
+crypto/aes
+crypto/sha1
+crypto/sha256
+crypto/hmac
+golang.org/x/crypto/ssh/internal/bcrypt_pbkdf
+gvisor.dev/gvisor/pkg/state
+golang.org/x/mobile/internal/mobileinit
+crypto/ecdh
+gvisor.dev/gvisor/pkg/log
+net
+golang.org/x/crypto/curve25519
+crypto/elliptic
+crypto/internal/boring/bbig
+crypto/dsa
+crypto/rand
+encoding/asn1
+gvisor.dev/gvisor/pkg/linewriter
+gvisor.dev/gvisor/pkg/waiter
+gvisor.dev/gvisor/pkg/sleep
+gvisor.dev/gvisor/pkg/sync/locking
+gvisor.dev/gvisor/pkg/tcpip/link/stopfd
+gvisor.dev/gvisor/pkg/rawfile
+gvisor.dev/gvisor/pkg/atomicbitops
+crypto/ed25519
+crypto/rsa
+gvisor.dev/gvisor/pkg/rand
+golang.org/x/mobile/bind/seq
+gvisor.dev/gvisor/pkg/context
+gvisor.dev/gvisor/pkg/refs
+golang.org/x/mobile/internal/mobileinit
+golang.org/x/mobile/bind/java
+gvisor.dev/gvisor/pkg/buffer
+crypto/x509/pkix
+golang.org/x/crypto/cryptobyte
+vendor/golang.org/x/crypto/cryptobyte
+gvisor.dev/gvisor/pkg/log
+crypto/elliptic
+crypto/internal/boring/bbig
+crypto/dsa
+crypto/rand
+encoding/asn1
+golang.org/x/mobile/bind/seq
+gvisor.dev/gvisor/pkg/sleep
+gvisor.dev/gvisor/pkg/tcpip/link/stopfd
+gvisor.dev/gvisor/pkg/waiter
+crypto/ed25519
+crypto/rsa
+gvisor.dev/gvisor/pkg/rand
+crypto/ecdsa
+gvisor.dev/gvisor/pkg/cpuid
+gvisor.dev/gvisor/pkg/context
+gvisor.dev/gvisor/pkg/atomicbitops
+golang.org/x/mobile/bind/java
+gvisor.dev/gvisor/pkg/tcpip
+crypto/x509/pkix
+vendor/golang.org/x/crypto/cryptobyte
+golang.org/x/crypto/cryptobyte
+gvisor.dev/gvisor/pkg/refs
+crypto/x509
+crypto/ecdsa
+gvisor.dev/gvisor/pkg/buffer
+gvisor.dev/gvisor/pkg/tcpip
+gvisor.dev/gvisor/pkg/tcpip/internal/tcp
+gvisor.dev/gvisor/pkg/tcpip/transport
+gvisor.dev/gvisor/pkg/tcpip/header
+crypto/x509
+golang.org/x/crypto/ssh
+gvisor.dev/gvisor/pkg/tcpip/transport
+gvisor.dev/gvisor/pkg/tcpip/internal/tcp
+gvisor.dev/gvisor/pkg/tcpip/header
+golang.org/x/crypto/ssh
+gvisor.dev/gvisor/pkg/tcpip/network/hash
+gvisor.dev/gvisor/pkg/tcpip/ports
+gvisor.dev/gvisor/pkg/tcpip/transport/tcpconntrack
+gvisor.dev/gvisor/pkg/tcpip/stack
+gvisor.dev/gvisor/pkg/tcpip/ports
+gvisor.dev/gvisor/pkg/tcpip/network/hash
+gvisor.dev/gvisor/pkg/tcpip/transport/tcpconntrack
+gvisor.dev/gvisor/pkg/tcpip/stack
+gvisor.dev/gvisor/pkg/tcpip/header/parse
+gvisor.dev/gvisor/pkg/tcpip/network/internal/fragmentation
+gvisor.dev/gvisor/pkg/tcpip/stack/gro
+gvisor.dev/gvisor/pkg/tcpip/network/internal/ip
+gvisor.dev/gvisor/pkg/tcpip/transport/packet
+gvisor.dev/gvisor/pkg/tcpip/transport/internal/network
+gvisor.dev/gvisor/pkg/tcpip/transport/internal/noop
+gvisor.dev/gvisor/pkg/tcpip/network/internal/multicast
+gvisor.dev/gvisor/pkg/tcpip/link/fdbased
+gvisor.dev/gvisor/pkg/tcpip/network/ipv4
+gvisor.dev/gvisor/pkg/tcpip/transport/raw
+gvisor.dev/gvisor/pkg/tcpip/stack/gro
+gvisor.dev/gvisor/pkg/tcpip/header/parse
+gvisor.dev/gvisor/pkg/tcpip/transport/packet
+gvisor.dev/gvisor/pkg/tcpip/transport/internal/network
+gvisor.dev/gvisor/pkg/tcpip/transport/internal/noop
+gvisor.dev/gvisor/pkg/tcpip/network/internal/ip
+gvisor.dev/gvisor/pkg/tcpip/network/internal/multicast
+gvisor.dev/gvisor/pkg/tcpip/network/internal/fragmentation
+gvisor.dev/gvisor/pkg/tcpip/transport/udp
+gvisor.dev/gvisor/pkg/tcpip/transport/tcp
+gvisor.dev/gvisor/pkg/tcpip/link/fdbased
+gvisor.dev/gvisor/pkg/tcpip/transport/raw
+gvisor.dev/gvisor/pkg/tcpip/network/ipv4
+gvisor.dev/gvisor/pkg/tcpip/transport/udp
+gvisor.dev/gvisor/pkg/tcpip/transport/tcp
+github.com/dennisklein/sshovel/spikes/core/mobile
+github.com/dennisklein/sshovel/spikes/core/mobile
+gobind/gobind
+gobind/gobind
+aar: AndroidManifest.xml
+aar: proguard.txt
+aar: classes.jar
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+jar: META-INF/MANIFEST.MF
+jar: com/github/dennisklein/sshovel/core/mobile/DigestSigner.class
+jar: com/github/dennisklein/sshovel/core/mobile/Mobile$proxyDigestSigner.class
+jar: com/github/dennisklein/sshovel/core/mobile/Mobile.class
+jar: go/Seq$GoObject.class
+jar: go/Seq$GoRef.class
+jar: go/Seq$GoRefQueue$1.class
+jar: go/Seq$GoRefQueue.class
+jar: go/Seq$Proxy.class
+jar: go/Seq$Ref.class
+jar: go/Seq$RefMap.class
+jar: go/Seq$RefTracker.class
+jar: go/Seq.class
+jar: go/Universe$proxyerror.class
+jar: go/Universe.class
+jar: go/error.class
+aar: jni/arm64-v8a/libgojni.so
+aar: jni/x86_64/libgojni.so
+aar: R.txt
+aar: res/
+jar: META-INF/MANIFEST.MF
+jar: com/github/dennisklein/sshovel/core/mobile/DigestSigner.java
+jar: com/github/dennisklein/sshovel/core/mobile/Mobile.java
+jar: go/Seq.java
+jar: go/Universe.java
+jar: go/error.java
+OK   core.aar/jni/arm64-v8a/libgojni.so: min LOAD align 0x4000
+OK   core.aar/jni/x86_64/libgojni.so: min LOAD align 0x4000

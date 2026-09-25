@@ -1,0 +1,225 @@
+INFO         | Android emulator version 37.1.11.0 (build_id 15917651) (CL:N/A)
+INFO         | Graphics backend: gfxstream
+INFO         | Found systemPath /opt/android-sdk/system-images/android-36/google_apis/x86_64/
+INFO         | Saving last run QEMU version for the AVD to 2
+INFO         | Guest usage of host flag 'VulkanVirtualQueue' will be ignored.
+INFO         | Guest GLES Driver: Auto (ext controls)
+INFO         | emuglConfig_init: vulkan_mode_selected:swiftshader gles_mode_selected:swiftshader
+INFO         | Checking system compatibility:
+INFO         |   Checking: hasSufficientDiskSpace
+INFO         |      Ok: Disk space requirements to run avd: `spike` are met
+INFO         |   Checking: hasSufficientHwGpu
+INFO         |      Ok: Hardware GPU compatibility checks are not required
+INFO         |   Checking: hasSufficientSystem
+INFO         |      Ok: System requirements to run avd: `spike` are met
+WARNING      | File System is not ext4, disable QuickbootFileBacked feature
+INFO         | Storing crashdata in: /tmp/android-unknown/emu-crash-37.1.11.db, detection is enabled for process: 9886
+INFO         | Initializing gfxstream backend
+INFO         | startOpenglesRendererImpl: gpu info
+INFO         | 
+INFO         | initIcdPaths: ICD set to 'swiftshader', using Swiftshader ICD
+INFO         | Setting ICD filenames for the loader = /opt/android-sdk/emulator/lib64/vulkan/vk_swiftshader_icd.json
+INFO         | SharedLibrary::open for [/opt/android-sdk/emulator/qemu/linux-x86_64/lib64/vulkan/libvulkan.so]
+INFO         | SharedLibrary::open for [/opt/android-sdk/emulator/qemu/linux-x86_64/lib64/vulkan/libvulkan.so.1]
+INFO         | SharedLibrary::open for [/opt/android-sdk/emulator/lib64/vulkan/libvulkan.so]
+INFO         | Added library: /opt/android-sdk/emulator/lib64/vulkan/libvulkan.so
+INFO         | Selecting Vulkan device: SwiftShader Device (Subzero), Version: 1.3.0
+INFO         | Using Vulkan externalMemoryMode: OpaqueFd for VkEmulation
+INFO         | SharedLibrary::open for [libX11]
+WARNING      | Could not open libX11.so, try libX11.so.6
+INFO         | SharedLibrary::open for [libX11.so.6]
+INFO         | SharedLibrary::open for [libX11-xcb]
+WARNING      | Could not open libX11-xcb.so, try libX11-xcb.so.1
+INFO         | SharedLibrary::open for [libX11-xcb.so.1]
+INFO         | Initializing VkEmulation features:
+INFO         |     glInteropSupported: false
+INFO         |     useDeferredCommands: true
+INFO         |     createResourceWithRequirements: true
+INFO         |     useVulkanComposition: false
+INFO         |     useVulkanNativeSwapchain: false
+INFO         |     enable guestRenderDoc: false
+INFO         |     ASTC LDR emulation mode: Gpu
+INFO         |     enable ETC2 emulation: true
+INFO         |     enable Ycbcr emulation: false
+INFO         |     guestVulkanOnly: false
+INFO         |     useDedicatedAllocations: false
+INFO         |     guestVulkanMaxApiVersion: 1.3.0
+INFO         |     enableProtectedMemoryEmulation: false
+INFO         | Graphics Adapter Vendor Google (Google Inc.)
+INFO         | Graphics Adapter Android Emulator OpenGL ES Translator (Google SwiftShader)
+INFO         | Graphics API Version OpenGL ES 3.0 (OpenGL ES 3.0 SwiftShader 4.0.0.1)
+INFO         | Graphics API Extensions GL_OES_EGL_sync GL_OES_EGL_image GL_OES_EGL_image_external GL_OES_depth24 GL_OES_depth32 GL_OES_element_index_uint GL_OES_texture_float GL_OES_texture_float_linear GL_OES_compressed_paletted_texture GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth_texture GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_packed_depth_stencil GL_OES_vertex_half_float GL_OES_standard_derivatives GL_OES_texture_npot GL_OES_rgb8_rgba8 GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_texture_format_BGRA8888 GL_APPLE_texture_format_BGRA8888 
+INFO         | Graphics Device Extensions N/A
+INFO         | Disabling sparse binding feature support
+INFO         | Sending adb public key [QAAAAENtrweVeLpjZCobQOuDk4xc7RJn9lNo0TU9uTUD7hkUtTe5TMU+vsgBbMMivue1Kaiz3hz+WneCZ+j3nSv1Nh0W7pVuGeO0Rlk4rvl1T/psi3zBYeiXRviFQIjVQwdd8Wcx0ajBuEINhU4iam7n0RmrYsEef3/hAnTUpnrz23ntFPCD/j0j3sZ/xtH4ovmNVGmzCuIwZrKbJ9oEDX8rjg93zjyaJ0OTgo+94KtVSwTYu1MnM6vQ7Mf9CMZL/P6vIiSgKtknqm1tpUq2WMqNNcMIv7xN0+zXC14ITdBKGJODNl0j45BD8BjplrA2LC3KjQY8toWzDbDKDKHCYLUiOMaVSuaejbPlYIt70DdDn9hUp6skuxUtRZcUCDiyy76KmZLy0xvyNkx9dv2Xz5Vw6rcZXlDNud2PFRXwdkcpEEAHl50lem+mz9DwH7p00OipNBg8zx7t0jWmAwtZ2r3DhXZQNQP6QGx9fvfKyiE9YtLAJXoegjAVpI8IUnvg99QgkoL2IeryNoWf5tqs0RcnFOkeDYwsLL3s4iDCDukrMAXwtxBbcjEhU6fHTe6owr7jmE2SS89MzfFMByI/aAbx07DwHcSQ2pNbaUvGiVh2c3CMahuD72o07oc0c7JjZvWKN1Fb7aozPOF18DSKxDgBg7dxeRAeb6pJAbmegsuzbRN1VmemPQEAAQA= @unknown]
+INFO         | Userspace boot properties:
+INFO         |   androidboot.boot_devices=pci0000:00/0000:00:03.0 pci0000:00/0000:00:06.0
+INFO         |   androidboot.dalvik.vm.heapsize=576m
+INFO         |   androidboot.debug.hwui.renderer=skiagl
+INFO         |   androidboot.debug.sf.nobootanimation=1
+INFO         |   androidboot.hardware=ranchu
+INFO         |   androidboot.hardware.gltransport=pipe
+INFO         |   androidboot.hardware.vulkan=ranchu
+INFO         |   androidboot.logcat=*:V
+INFO         |   androidboot.opengles.version=196608
+INFO         |   androidboot.qemu=1
+INFO         |   androidboot.qemu.adb.pubkey=QAAAAENtrweVeLpjZCobQOuDk4xc7RJn9lNo0TU9uTUD7hkUtTe5TMU+vsgBbMMivue1Kaiz3hz+WneCZ+j3nSv1Nh0W7pVuGeO0Rlk4rvl1T/psi3zBYeiXRviFQIjVQwdd8Wcx0ajBuEINhU4iam7n0RmrYsEef3/hAnTUpnrz23ntFPCD/j0j3sZ/xtH4ovmNVGmzCuIwZrKbJ9oEDX8rjg93zjyaJ0OTgo+94KtVSwTYu1MnM6vQ7Mf9CMZL/P6vIiSgKtknqm1tpUq2WMqNNcMIv7xN0+zXC14ITdBKGJODNl0j45BD8BjplrA2LC3KjQY8toWzDbDKDKHCYLUiOMaVSuaejbPlYIt70DdDn9hUp6skuxUtRZcUCDiyy76KmZLy0xvyNkx9dv2Xz5Vw6rcZXlDNud2PFRXwdkcpEEAHl50lem+mz9DwH7p00OipNBg8zx7t0jWmAwtZ2r3DhXZQNQP6QGx9fvfKyiE9YtLAJXoegjAVpI8IUnvg99QgkoL2IeryNoWf5tqs0RcnFOkeDYwsLL3s4iDCDukrMAXwtxBbcjEhU6fHTe6owr7jmE2SS89MzfFMByI/aAbx07DwHcSQ2pNbaUvGiVh2c3CMahuD72o07oc0c7JjZvWKN1Fb7aozPOF18DSKxDgBg7dxeRAeb6pJAbmegsuzbRN1VmemPQEAAQA= @unknown
+INFO         |   androidboot.qemu.avd_name=spike
+INFO         |   androidboot.qemu.camera_hq_edge_processing=0
+INFO         |   androidboot.qemu.camera_protocol_ver=1
+INFO         |   androidboot.qemu.cpuvulkan.version=4206592
+INFO         |   androidboot.qemu.gltransport.drawFlushInterval=800
+INFO         |   androidboot.qemu.gltransport.name=pipe
+INFO         |   androidboot.qemu.hwcodec.avcdec=2
+INFO         |   androidboot.qemu.hwcodec.hevcdec=2
+INFO         |   androidboot.qemu.hwcodec.vpxdec=2
+INFO         |   androidboot.qemu.settings.system.screen_off_timeout=2147483647
+INFO         |   androidboot.qemu.skin=1080x2400
+INFO         |   androidboot.qemu.virtiowifi=1
+INFO         |   androidboot.qemu.vsync=60
+INFO         |   androidboot.serialno=EMULATOR37X1X11X0
+INFO         |   androidboot.vbmeta.digest=7466b5c28e6a3e1427b22ed2c317c6c7066294bde838d4d5243cce5d37992bd5
+INFO         |   androidboot.vbmeta.hash_alg=sha256
+INFO         |   androidboot.vbmeta.size=6848
+INFO         |   androidboot.veritymode=enforcing
+WARNING: cannnot unmap ptr 0x7fe2b6a01000 as it is in the protected range from 0x7fe1b6a00000 to 0x7fe2b6c00000
+pc_memory_init: above 4g size: 40000000
+INFO         | Monitoring duration of emulator setup.
+WARNING      | Using fallback path for the emulator registration directory.
+WARNING      | The emulator now requires a signed jwt token for gRPC access! Use the -grpc flag if you really want an open unprotected grpc port
+INFO         | Using security allow list from: /opt/android-sdk/emulator/lib/emulator_access.json
+INFO         | The active JSON Web Key Sets can be found here: /root/.android/avd/running/9886/jwks/8e646867-0fb0-4b68-93d6-12c711fe2674/active.jwk
+INFO         | Scanning /root/.android/avd/running/9886/jwks/8e646867-0fb0-4b68-93d6-12c711fe2674 for jwk keys.
+INFO         | Started GRPC server at 127.0.0.1:8554, security: Local, auth: +token
+WARNING      | Using fallback path for the emulator registration directory.
+INFO         | Advertising in: /root/.android/avd/running/pid_9886.ini
+INFO         | Activated packet streamer for bluetooth emulation
+INFO         | Activated packet streamer for uwb emulation
+INFO         | Successfully initialized netsim WiFi
+INFO         | Setting display: 0 configuration to: 1080x2400, dpi: 420x420 
+INFO         | setDisplayActiveConfig: id:0, 1080x2400
+INFO         | emulatorSetupEnvironment: Environment scene is not required
+USER_INFO    | Emulator is performing a full startup. This may take upto two minutes, or more.
+WARNING      | Failed to process .ini file /root/.android/emu-update-last-check.ini for reading.
+WARNING      | Failed to process .ini file /root/.android/emu-update-last-check.ini for reading.
+INFO         | Boot completed in 43601 ms
+INFO         | Increasing screen off timeout, logcat buffer size to 2M.
+INFO         | Created VkInstance:0x55c9289b0800 for application:'' engine:''.
+INFO         | Destroyed VkInstance:0x55c9289b0800 for application:'' engine:''.
+INFO         | Boot completed in 21556 ms
+INFO         | Increasing screen off timeout, logcat buffer size to 2M.
+INFO         | Boot completed in 20848 ms
+INFO         | Increasing screen off timeout, logcat buffer size to 2M.
+INFO         | Wait for emulator (pid 9886) 20 seconds to shutdown gracefully before kill;you can set environment variable ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL(in seconds) to change the default value (20 seconds)
+
+USER_INFO    | Snapshots have been disabled by the user, save request is ignored.
+INFO         | Saving snapshot 'default_boot' using 1 ms
+ERROR        | stop: Not implemented
+INFO         | removeAll
+WARNING      | Netsim Wifi dns:///localhost:42815 is gone due to Stream removed (CANCELLED)
+INFO         | Android emulator version 37.1.11.0 (build_id 15917651) (CL:N/A)
+INFO         | Graphics backend: gfxstream
+INFO         | Found systemPath /opt/android-sdk/system-images/android-36/google_apis_ps16k/x86_64/
+INFO         | Saving last run QEMU version for the AVD to 2
+INFO         | Guest usage of host flag 'VulkanVirtualQueue' will be ignored.
+INFO         | Guest GLES Driver: Auto (ext controls)
+INFO         | emuglConfig_init: vulkan_mode_selected:swiftshader gles_mode_selected:swiftshader
+INFO         | Checking system compatibility:
+INFO         |   Checking: hasSufficientDiskSpace
+INFO         |      Ok: Disk space requirements to run avd: `spike16k` are met
+INFO         |   Checking: hasSufficientHwGpu
+INFO         |      Ok: Hardware GPU compatibility checks are not required
+INFO         |   Checking: hasSufficientSystem
+INFO         |      Ok: System requirements to run avd: `spike16k` are met
+WARNING      | File System is not ext4, disable QuickbootFileBacked feature
+INFO         | Storing crashdata in: /tmp/android-unknown/emu-crash-37.1.11.db, detection is enabled for process: 11717
+INFO         | Initializing gfxstream backend
+INFO         | startOpenglesRendererImpl: gpu info
+INFO         | 
+INFO         | initIcdPaths: ICD set to 'swiftshader', using Swiftshader ICD
+INFO         | Setting ICD filenames for the loader = /opt/android-sdk/emulator/lib64/vulkan/vk_swiftshader_icd.json
+INFO         | SharedLibrary::open for [/opt/android-sdk/emulator/qemu/linux-x86_64/lib64/vulkan/libvulkan.so]
+INFO         | SharedLibrary::open for [/opt/android-sdk/emulator/qemu/linux-x86_64/lib64/vulkan/libvulkan.so.1]
+INFO         | SharedLibrary::open for [/opt/android-sdk/emulator/lib64/vulkan/libvulkan.so]
+INFO         | Added library: /opt/android-sdk/emulator/lib64/vulkan/libvulkan.so
+INFO         | Selecting Vulkan device: SwiftShader Device (Subzero), Version: 1.3.0
+INFO         | Using Vulkan externalMemoryMode: OpaqueFd for VkEmulation
+INFO         | SharedLibrary::open for [libX11]
+WARNING      | Could not open libX11.so, try libX11.so.6
+INFO         | SharedLibrary::open for [libX11.so.6]
+INFO         | SharedLibrary::open for [libX11-xcb]
+WARNING      | Could not open libX11-xcb.so, try libX11-xcb.so.1
+INFO         | SharedLibrary::open for [libX11-xcb.so.1]
+INFO         | Initializing VkEmulation features:
+INFO         |     glInteropSupported: false
+INFO         |     useDeferredCommands: true
+INFO         |     createResourceWithRequirements: true
+INFO         |     useVulkanComposition: false
+INFO         |     useVulkanNativeSwapchain: false
+INFO         |     enable guestRenderDoc: false
+INFO         |     ASTC LDR emulation mode: Gpu
+INFO         |     enable ETC2 emulation: true
+INFO         |     enable Ycbcr emulation: false
+INFO         |     guestVulkanOnly: false
+INFO         |     useDedicatedAllocations: false
+INFO         |     guestVulkanMaxApiVersion: 1.3.0
+INFO         |     enableProtectedMemoryEmulation: false
+INFO         | Graphics Adapter Vendor Google (Google Inc.)
+INFO         | Graphics Adapter Android Emulator OpenGL ES Translator (Google SwiftShader)
+INFO         | Graphics API Version OpenGL ES 3.0 (OpenGL ES 3.0 SwiftShader 4.0.0.1)
+INFO         | Graphics API Extensions GL_OES_EGL_sync GL_OES_EGL_image GL_OES_EGL_image_external GL_OES_depth24 GL_OES_depth32 GL_OES_element_index_uint GL_OES_texture_float GL_OES_texture_float_linear GL_OES_compressed_paletted_texture GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth_texture GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_packed_depth_stencil GL_OES_vertex_half_float GL_OES_standard_derivatives GL_OES_texture_npot GL_OES_rgb8_rgba8 GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_texture_format_BGRA8888 GL_APPLE_texture_format_BGRA8888 
+INFO         | Graphics Device Extensions N/A
+INFO         | Disabling sparse binding feature support
+INFO         | Sending adb public key [QAAAAENtrweVeLpjZCobQOuDk4xc7RJn9lNo0TU9uTUD7hkUtTe5TMU+vsgBbMMivue1Kaiz3hz+WneCZ+j3nSv1Nh0W7pVuGeO0Rlk4rvl1T/psi3zBYeiXRviFQIjVQwdd8Wcx0ajBuEINhU4iam7n0RmrYsEef3/hAnTUpnrz23ntFPCD/j0j3sZ/xtH4ovmNVGmzCuIwZrKbJ9oEDX8rjg93zjyaJ0OTgo+94KtVSwTYu1MnM6vQ7Mf9CMZL/P6vIiSgKtknqm1tpUq2WMqNNcMIv7xN0+zXC14ITdBKGJODNl0j45BD8BjplrA2LC3KjQY8toWzDbDKDKHCYLUiOMaVSuaejbPlYIt70DdDn9hUp6skuxUtRZcUCDiyy76KmZLy0xvyNkx9dv2Xz5Vw6rcZXlDNud2PFRXwdkcpEEAHl50lem+mz9DwH7p00OipNBg8zx7t0jWmAwtZ2r3DhXZQNQP6QGx9fvfKyiE9YtLAJXoegjAVpI8IUnvg99QgkoL2IeryNoWf5tqs0RcnFOkeDYwsLL3s4iDCDukrMAXwtxBbcjEhU6fHTe6owr7jmE2SS89MzfFMByI/aAbx07DwHcSQ2pNbaUvGiVh2c3CMahuD72o07oc0c7JjZvWKN1Fb7aozPOF18DSKxDgBg7dxeRAeb6pJAbmegsuzbRN1VmemPQEAAQA= @unknown]
+INFO         | Userspace boot properties:
+INFO         |   androidboot.boot_devices=pci0000:00/0000:00:03.0 pci0000:00/0000:00:06.0
+INFO         |   androidboot.dalvik.vm.heapsize=576m
+INFO         |   androidboot.debug.hwui.renderer=skiagl
+INFO         |   androidboot.debug.sf.nobootanimation=1
+INFO         |   androidboot.hardware=ranchu
+INFO         |   androidboot.hardware.gltransport=pipe
+INFO         |   androidboot.hardware.vulkan=ranchu
+INFO         |   androidboot.logcat=*:V
+INFO         |   androidboot.opengles.version=196608
+INFO         |   androidboot.qemu=1
+INFO         |   androidboot.qemu.adb.pubkey=QAAAAENtrweVeLpjZCobQOuDk4xc7RJn9lNo0TU9uTUD7hkUtTe5TMU+vsgBbMMivue1Kaiz3hz+WneCZ+j3nSv1Nh0W7pVuGeO0Rlk4rvl1T/psi3zBYeiXRviFQIjVQwdd8Wcx0ajBuEINhU4iam7n0RmrYsEef3/hAnTUpnrz23ntFPCD/j0j3sZ/xtH4ovmNVGmzCuIwZrKbJ9oEDX8rjg93zjyaJ0OTgo+94KtVSwTYu1MnM6vQ7Mf9CMZL/P6vIiSgKtknqm1tpUq2WMqNNcMIv7xN0+zXC14ITdBKGJODNl0j45BD8BjplrA2LC3KjQY8toWzDbDKDKHCYLUiOMaVSuaejbPlYIt70DdDn9hUp6skuxUtRZcUCDiyy76KmZLy0xvyNkx9dv2Xz5Vw6rcZXlDNud2PFRXwdkcpEEAHl50lem+mz9DwH7p00OipNBg8zx7t0jWmAwtZ2r3DhXZQNQP6QGx9fvfKyiE9YtLAJXoegjAVpI8IUnvg99QgkoL2IeryNoWf5tqs0RcnFOkeDYwsLL3s4iDCDukrMAXwtxBbcjEhU6fHTe6owr7jmE2SS89MzfFMByI/aAbx07DwHcSQ2pNbaUvGiVh2c3CMahuD72o07oc0c7JjZvWKN1Fb7aozPOF18DSKxDgBg7dxeRAeb6pJAbmegsuzbRN1VmemPQEAAQA= @unknown
+INFO         |   androidboot.qemu.avd_name=spike16k
+INFO         |   androidboot.qemu.camera_hq_edge_processing=0
+INFO         |   androidboot.qemu.camera_protocol_ver=1
+INFO         |   androidboot.qemu.cpuvulkan.version=4206592
+INFO         |   androidboot.qemu.gltransport.drawFlushInterval=800
+INFO         |   androidboot.qemu.gltransport.name=pipe
+INFO         |   androidboot.qemu.hwcodec.avcdec=2
+INFO         |   androidboot.qemu.hwcodec.hevcdec=2
+INFO         |   androidboot.qemu.hwcodec.vpxdec=2
+INFO         |   androidboot.qemu.settings.system.screen_off_timeout=2147483647
+INFO         |   androidboot.qemu.skin=1080x2400
+INFO         |   androidboot.qemu.virtiowifi=1
+INFO         |   androidboot.qemu.vsync=60
+INFO         |   androidboot.serialno=EMULATOR37X1X11X0
+INFO         |   androidboot.vbmeta.digest=0e65503c1130973d10b38ccd0b42e95ab1aefbb25871d4214d896c339e128f52
+INFO         |   androidboot.vbmeta.hash_alg=sha256
+INFO         |   androidboot.vbmeta.size=6848
+INFO         |   androidboot.veritymode=enforcing
+WARNING: cannnot unmap ptr 0x7fcfafc01000 as it is in the protected range from 0x7fceafc00000 to 0x7fcfafe00000
+pc_memory_init: above 4g size: 40000000
+INFO         | Monitoring duration of emulator setup.
+WARNING      | Using fallback path for the emulator registration directory.
+WARNING      | The emulator now requires a signed jwt token for gRPC access! Use the -grpc flag if you really want an open unprotected grpc port
+INFO         | Using security allow list from: /opt/android-sdk/emulator/lib/emulator_access.json
+INFO         | The active JSON Web Key Sets can be found here: /root/.android/avd/running/11717/jwks/919dfdf7-f403-4a60-9028-05bb4d70e61b/active.jwk
+INFO         | Scanning /root/.android/avd/running/11717/jwks/919dfdf7-f403-4a60-9028-05bb4d70e61b for jwk keys.
+INFO         | Started GRPC server at 127.0.0.1:8554, security: Local, auth: +token
+WARNING      | Using fallback path for the emulator registration directory.
+INFO         | Advertising in: /root/.android/avd/running/pid_11717.ini
+INFO         | Activated packet streamer for uwb emulation
+INFO         | Successfully initialized netsim WiFi
+INFO         | Activated packet streamer for bluetooth emulation
+INFO         | Setting display: 0 configuration to: 1080x2400, dpi: 420x420 
+INFO         | setDisplayActiveConfig: id:0, 1080x2400
+INFO         | emulatorSetupEnvironment: Environment scene is not required
+USER_INFO    | Emulator is performing a full startup. This may take upto two minutes, or more.
+INFO         | Boot completed in 53391 ms
+INFO         | Increasing screen off timeout, logcat buffer size to 2M.
+INFO         | Wait for emulator (pid 11717) 20 seconds to shutdown gracefully before kill;you can set environment variable ANDROID_EMULATOR_WAIT_TIME_BEFORE_KILL(in seconds) to change the default value (20 seconds)
+
