@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-FileCopyrightText: 2026 Dennis Klein -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Copy from the design handoff (docs/design/project/handoff/strings.xml) and DESIGN_BRIEF §8.
+     Strings are added as their screens are built. -->
+<resources>
+    <string name="app_name" translatable="false">sshovel</string>
+
+    <!-- State labels -->
+    <string name="state_off">Off</string>
+    <string name="state_connecting">Connecting…</string>
+    <string name="state_on">On</string>
+    <string name="state_reconnecting">Reconnecting…</string>
+    <string name="state_needs_attention">Needs attention</string>
+    <string name="state_disconnecting">Disconnecting…</string>
+
+    <string name="action_connect">Connect</string>
+    <string name="action_disconnect">Disconnect</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_retry_now">Retry now</string>
+    <string name="action_retry">Retry</string>
+    <string name="connecting_resolving">Resolving %1$s</string>
+    <string name="connecting_identity">Checking server identity</string>
+    <string name="connecting_auth">Authenticating with key “%1$s”</string>
+    <string name="connecting_tunnel">Starting tunnel</string>
+    <string name="stat_connections">Connections</string>
+    <string name="stat_connections_value">%1$d active</string>
+    <string name="stat_uptime">Uptime</string>
+    <string name="stat_data">Data in / out</string>
+    <string name="stat_dns">DNS tunneled / direct</string>
+    <string name="reconnect_next">Next retry in %1$d s</string>
+    <plurals name="profile_subnets"><item quantity="one">%d subnet</item><item quantity="other">%d subnets</item></plurals>
+    <plurals name="active_connections"><item quantity="one">%d active connection</item><item quantity="other">%d active connections</item></plurals>
+    <string name="home_no_profile">No profile yet. Profiles arrive with setup in a later version.</string>
+
+    <!-- Notifications -->
+    <string name="channel_status">Tunnel status</string>
+    <string name="channel_problems">Problems</string>
+    <string name="notif_connecting">Connecting to %1$s</string>
+    <string name="notif_on">Connected to %1$s</string>
+    <string name="notif_on_text">%1$s · %2$s</string>
+    <string name="notif_on_warning">Connected to %1$s · 1 warning</string>
+    <string name="notif_reconnecting">Reconnecting to %1$s</string>
+
+    <!-- Error catalog (DESIGN_BRIEF §8) -->
+    <string name="err_auth_title">Key not accepted</string>
+    <string name="err_auth_body">%1$s rejected the key “%2$s”. Add its public key to ~/.ssh/authorized_keys on the server.</string>
+    <string name="err_unreachable_title">Can’t reach server</string>
+    <string name="err_unreachable_body">No response from %1$s. Check the address and that you’re online.</string>
+    <string name="err_unverified_title">Verify server first</string>
+    <string name="err_unverified_body">This server’s identity hasn’t been confirmed yet.</string>
+    <string name="err_mismatch_title">Server identity changed</string>
+    <string name="err_mismatch_body">The host key for %1$s doesn’t match the one you trusted. The connection was blocked.</string>
+    <string name="err_forwarding_title">Forwarding not allowed</string>
+    <string name="err_forwarding_body">The server refused to forward connections. Ask the admin to enable AllowTcpForwarding.</string>
+    <string name="err_dns_title">Intranet DNS not answering</string>
+    <string name="err_dns_body">%1$s isn’t answering through the tunnel. Intranet names won’t resolve.</string>
+    <string name="err_network_title">No network</string>
+    <string name="err_network_body">sshovel will reconnect when you’re back online.</string>
+    <string name="err_revoked_title">Disconnected by another VPN</string>
+    <string name="err_revoked_body">Android allows one VPN at a time, and another app took over.</string>
+    <string name="err_permission_title">VPN permission needed</string>
+    <string name="err_permission_body">Android needs your permission before sshovel can route traffic.</string>
+    <string name="err_key_unavailable_title">Key unavailable</string>
+    <string name="err_key_unavailable_body">The key “%1$s” can’t be used. It may have been deleted or invalidated by a security change.</string>
+    <string name="err_internal_title">Something went wrong</string>
+    <string name="err_internal_body">sshovel stopped because of an internal error. Details are in Diagnostics.</string>
+</resources>

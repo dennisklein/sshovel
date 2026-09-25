@@ -36,6 +36,7 @@ Design handoff in `docs/design/`.
 │       ├── diagnostics/          ring buffers, export
 │       └── AppContainer.kt       manual DI
 ├── test-env/                     docker compose intranet (§5)
+├── tools/android-env/            Docker toolbox (SDK, NDK, emulator) + scripted milestone acceptance
 ├── gradle/libs.versions.toml
 └── settings.gradle.kts, build.gradle.kts
 ```
@@ -173,6 +174,12 @@ networks:
 Builds use host networking so package downloads work on hosts with systemd-resolved
 (`127.0.0.53` isn't reachable from the default bridge). The `dns` image installs dnsmasq at build
 time, because at runtime it sits only on the `internal` network, which has no internet access.
+
+Debug builds carry a hardcoded profile for this environment (M2, removed from the UI's reach once
+profiles exist in M6). The build generates the client key (`:app:debugTestKey` →
+`test-env/keys/debug_client_key`, authorized through `debug_authorized_keys`, both gitignored) and
+pins the host key test-env created on first start (`test-env/hostkeys/`), so start test-env once
+before building. Deleting `test-env/hostkeys/` rotates the host key; rebuild to pin the new one.
 
 Emulator profile for manual testing:
 

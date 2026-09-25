@@ -4,3 +4,6 @@ hostkeys/
 cli-profile.json
 cli_key
 cli_key.pub
+keys/debug_client_key
+keys/debug_client_key.pub
+keys/debug_authorized_keys

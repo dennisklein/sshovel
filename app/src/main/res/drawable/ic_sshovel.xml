@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-FileCopyrightText: 2026 Dennis Klein -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Tile and notification icon (design handoff icons/ic_sshovel.svg). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+    <path android:fillColor="#FF000000" android:fillType="evenOdd" android:pathData="M8,2h8v2.5h-2.75V11h-2.5V4.5H8z M6,11h12v3c0,4 -3,6.5 -6,8 -3,-1.5 -6,-4 -6,-8z M12,12.9a1.7,1.7 0,0 0,-0.95 3.11L10.6,19h2.8l-0.45,-2.99A1.7,1.7 0,0 0,12 12.9z" />
+</vector>

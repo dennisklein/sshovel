@@ -41,6 +41,9 @@ cd core && GOOS=android GOARCH=arm64 go-licenses check ./mobile --ignore github.
 
 # Fake intranet for manual testing (emulator reaches it at 10.0.2.2:2222)
 docker compose -f test-env/compose.yaml up --build
+# Toolbox (SDK, NDK, emulator, go-licenses, reuse) + test-env + milestone acceptance on the emulator
+tools/android-env/run.sh m2        # results in tools/android-env/out/summary.txt
+tools/android-env/run.sh shell     # interactive shell in the toolbox
 ```
 
 ## Rules
