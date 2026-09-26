@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-FileCopyrightText: 2026 Dennis Klein -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Debug only: lets the adb fetch command (DebugCommands) use plain HTTP. -->
+    <application android:networkSecurityConfig="@xml/debug_network_security_config" />
+</manifest>

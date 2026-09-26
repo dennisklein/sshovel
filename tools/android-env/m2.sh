@@ -77,6 +77,8 @@ adb shell input keyevent KEYCODE_WAKEUP; adb shell wm dismiss-keyguard; adb shel
 for s in window_animation_scale transition_animation_scale animator_duration_scale; do adb shell settings put global $s 0; done
 adb shell getprop ro.build.fingerprint | tee "$OUT/device.txt"
 
+# adb root restarts adbd, which kills a running `adb logcat`; do it once, now.
+adb root >/dev/null 2>&1; sleep 2; adb wait-for-device
 adb logcat -c
 adb logcat -v time > "$OUT/logcat.txt" 2>/dev/null &
 LOGCAT_PID=$!
@@ -102,7 +104,9 @@ fetch() {
     mark "$1"; app fetch url "$2"
     wait_log "$1" "sshovel/Debug.*fetch $2 ->" 40 | sed 's/.*fetch /fetch /' || echo "fetch $2 -> no result"
 }
-median_ms() { grep -o '[0-9]*ms' | tr -d ms | sort -n | awk '{a[NR]=$1} END {print (NR ? a[int((NR+1)/2)] : -1)}'; }
+# ok_count <file>: fetches that got the 204; median_ms reads only those.
+ok_count() { grep -c -- '-> 204 ' "$1"; }
+median_ms() { grep -- '-> 204 ' | grep -o '[0-9]*ms' | tr -d ms | sort -n | awk '{a[NR]=$1} END {print (NR ? a[int((NR+1)/2)] : -1)}'; }
 
 say "Install"
 adb install -r -g "$APK" || die "install failed"
@@ -130,7 +134,9 @@ say "Public site while connected (5 fetches)"
 for i in 1 2 3 4 5; do fetch "pub-during-$i" "$PUBLIC"; done | tee "$OUT/public-during.txt"
 during=$(median_ms < "$OUT/public-during.txt")
 echo "median before=${before}ms during=${during}ms"
-if [ "$during" -ge 0 ] && [ "$before" -ge 0 ] && [ "$during" -le $(( before * 2 + 50 )) ]; then
+if [ "$(ok_count "$OUT/public-before.txt")" -lt 5 ] || [ "$(ok_count "$OUT/public-during.txt")" -lt 5 ]; then
+    result FAIL "public fetches failed ($(ok_count "$OUT/public-before.txt")/5 before, $(ok_count "$OUT/public-during.txt")/5 connected got 204; see public-*.txt)"
+elif [ "$during" -le $(( before * 2 + 50 )) ]; then
     result PASS "public sites unaffected (median ${before}ms before, ${during}ms connected; not routed into the TUN)"
 else
     result FAIL "public fetch slower or failing (median ${before}ms before, ${during}ms connected)"
@@ -138,14 +144,20 @@ fi
 
 say "Chrome"
 if adb shell pm list packages | grep -q com.android.chrome; then
-    adb root >/dev/null 2>&1; sleep 2
+    adb shell pm grant com.android.chrome android.permission.POST_NOTIFICATIONS 2>/dev/null || true
     adb shell 'echo "chrome --disable-fre --no-default-browser-check --no-first-run" > /data/local/tmp/chrome-command-line'
     adb shell am set-debug-app --persistent com.android.chrome
     adb shell am start -a android.intent.action.VIEW -d http://wiki.corp.test/ com.android.chrome >/dev/null
-    sleep 10; shot 3-chrome-wiki
-    adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
-    if adb exec-out cat /sdcard/ui.xml | grep -q "Welcome to nginx"; then result PASS "Chrome loads http://wiki.corp.test/ (3-chrome-wiki.png)"
-    else result FAIL "Chrome page doesn't show the wiki (see 3-chrome-wiki.png)"; fi
+    seen=
+    for _ in $(seq 1 10); do
+        sleep 3
+        adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
+        adb exec-out cat /sdcard/ui.xml > "$OUT/chrome-ui.xml"
+        grep -q "Welcome to nginx" "$OUT/chrome-ui.xml" && { seen=1; break; }
+    done
+    shot 3-chrome-wiki
+    if [ -n "$seen" ]; then result PASS "Chrome loads http://wiki.corp.test/ (3-chrome-wiki.png)"
+    else result FAIL "Chrome page doesn't show the wiki (see 3-chrome-wiki.png, chrome-ui.xml)"; fi
     adb shell am start -n "$PKG/.ui.MainActivity" >/dev/null
 else
     result SKIP "Chrome not installed on this image; the app's own fetch covers wiki.corp.test"
