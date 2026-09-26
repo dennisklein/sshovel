@@ -43,11 +43,13 @@ RUN curl -fsSL -o /tmp/ct.zip \
 # ";" (ndk;28.2.x). Normalize to ";" for matching, try both when installing.
 # The app compiles against API 37 (platform 37.0) and runs on API 36 and up.
 ARG COMPILE_PLATFORM="platforms;android-37.0"
+# Must match android.buildToolsVersion in app/build.gradle.kts.
+ARG BUILD_TOOLS="build-tools;36.1.0"
 ARG SYSTEM_IMAGE="system-images;android-36;google_apis;x86_64"
 RUN set -eux; \
     list=$(sdkmanager --list 2>/dev/null | awk '{print $1}' | tr '/' ';' | sort -u); \
     ndk=$(echo "$list" | grep -E '^ndk;[0-9]+\.[0-9]+\.[0-9]+$' | sort -t';' -k2 -V | tail -n1 || true); \
-    bt=$(echo "$list" | grep -E '^build-tools;36\.[0-9]+\.[0-9]+$' | sort -t';' -k2 -V | tail -n1 || true); \
+    bt=$(echo "$list" | grep -Fx "$BUILD_TOOLS" || true); \
     if [ -z "$ndk" ] || [ -z "$bt" ] || ! echo "$list" | grep -Fxq "$SYSTEM_IMAGE" \
             || ! echo "$list" | grep -Fxq "$COMPILE_PLATFORM"; then \
         echo "Package lookup failed (ndk='$ndk' build-tools='$bt'). Available:"; \

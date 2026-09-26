@@ -63,6 +63,9 @@ fun sshFingerprint(pubLine: String): String {
 android {
     namespace = "com.github.dennisklein.sshovel"
     compileSdk = 37
+    // Pinned so the toolbox image (tools/android-env/Dockerfile) already has it
+    // and AGP doesn't download its own default on every run.
+    buildToolsVersion = "36.1.0"
 
     defaultConfig {
         applicationId = "com.github.dennisklein.sshovel"

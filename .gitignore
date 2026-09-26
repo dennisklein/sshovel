@@ -8,3 +8,7 @@ build/
 local.properties
 *.apk
 /tools/android-env/out/
+/spikes/
+# M0 spikes: a separate checkout inside this one. Its own build output
+# isn't covered by the patterns above, and reuse lint would flag it.
+/spikes/
