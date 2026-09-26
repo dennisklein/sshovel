@@ -37,6 +37,9 @@ class PlatformBridge(
         val net = network.current.value ?: throw IOException("no underlying network")
         val answer = CompletableFuture<ByteArray>()
         val cancel = CancellationSignal()
+        // Deprecated in API 37 in favour of DnsResolver(Context, Looper), which
+        // doesn't exist on API 36 (minSdk).
+        @Suppress("DEPRECATION")
         DnsResolver.getInstance().rawQuery(
             net, query, DnsResolver.FLAG_EMPTY, dnsExecutor, cancel,
             object : DnsResolver.Callback<ByteArray> {

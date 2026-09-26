@@ -88,7 +88,7 @@ tools/android-env/run.sh shell     # interactive shell in the toolbox
   - Run `go test -race`.
   - Don't mock gVisor or x/crypto/ssh; use the real ones in-process.
 - **Android specifics:**
-  - minSdk/targetSdk/compileSdk 36.
+  - minSdk/targetSdk 36, compileSdk 37.
   - Protect the SSH socket via `Platform.Protect`.
   - Use `DnsResolver.rawQuery` on the underlying network for direct DNS.
   - Never call `addAllowedApplication` and `addDisallowedApplication` on the same builder.

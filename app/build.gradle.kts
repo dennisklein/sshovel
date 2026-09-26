@@ -62,7 +62,7 @@ fun sshFingerprint(pubLine: String): String {
 
 android {
     namespace = "com.github.dennisklein.sshovel"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.github.dennisklein.sshovel"
@@ -327,6 +327,22 @@ abstract class ReuseLint @Inject constructor(private val exec: ExecOperations) :
         val root = repoDir.get().asFile
         val hasReuse = System.getenv("PATH").orEmpty().split(File.pathSeparator).any { File(it, "reuse").canExecute() }
         if (hasReuse) {
+            // reuse needs git to skip ignored files (build outputs, keys). If git
+            // refuses the repo, e.g. "dubious ownership" in a container, say so
+            // instead of listing every build output as unlicensed.
+            val git = exec.exec {
+                commandLine("git", "rev-parse", "--git-dir")
+                workingDir = root
+                isIgnoreExitValue = true
+                standardOutput = ByteArrayOutputStream()
+                errorOutput = ByteArrayOutputStream()
+            }
+            if (git.exitValue != 0) {
+                throw GradleException(
+                    "reuseLint: git can't read ${root.path}; if it's owned by another user, run " +
+                        "git config --global --add safe.directory ${root.path}",
+                )
+            }
             exec.exec { commandLine("reuse", "lint"); workingDir = root }
             return
         }

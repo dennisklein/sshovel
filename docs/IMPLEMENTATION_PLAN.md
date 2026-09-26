@@ -53,10 +53,10 @@ Use the latest stable version of each at implementation time. Record exact versi
   (M0 finding); the pin also makes release builds reproducible.
 - **Java package / applicationId:** `com.github.dennisklein.sshovel` (gomobile classes under
   `com.github.dennisklein.sshovel.core`).
-- **Android SDK:** `compileSdk = 36`, `targetSdk = 36`, `minSdk = 36`. "Latest stable" for AndroidX
-  therefore means the latest that compiles against 36: Compose 1.12 (BOM 2026.08.00+) and Lifecycle
-  2.11 require compileSdk 37, so M2 uses BOM 2026.06.01 (Compose 1.11) and Lifecycle 2.10 (M2
-  finding). `app/lint.xml` silences only those "newer version" warnings.
+- **Android SDK:** `compileSdk = 37`, `targetSdk = 36`, `minSdk = 36`. compileSdk only sets which
+  API headers the build sees; it doesn't change where the app installs or how it behaves at runtime.
+  It was 36 until M2, when Compose 1.12 (BOM 2026.08.00+) and Lifecycle 2.11 turned out to require
+  37. Lint's `NewApi` check still guards against calling API 37-only methods on 36 devices.
 - **ABIs:** `arm64-v8a` and `x86_64` only, matching `gomobile bind -target` (§4). The app sets
   `ndk.abiFilters` so dependencies' 32-bit native libraries aren't packaged either.
 - **NDK:** r28 or newer, which produces 16 KB-aligned ELF by default for C/C++.

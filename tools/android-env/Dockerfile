@@ -41,17 +41,20 @@ RUN curl -fsSL -o /tmp/ct.zip \
 
 # Newer sdkmanager prints package paths with "/" (ndk/28.2.x), older ones with
 # ";" (ndk;28.2.x). Normalize to ";" for matching, try both when installing.
+# The app compiles against API 37 (platform 37.0) and runs on API 36 and up.
+ARG COMPILE_PLATFORM="platforms;android-37.0"
 ARG SYSTEM_IMAGE="system-images;android-36;google_apis;x86_64"
 RUN set -eux; \
     list=$(sdkmanager --list 2>/dev/null | awk '{print $1}' | tr '/' ';' | sort -u); \
     ndk=$(echo "$list" | grep -E '^ndk;[0-9]+\.[0-9]+\.[0-9]+$' | sort -t';' -k2 -V | tail -n1 || true); \
     bt=$(echo "$list" | grep -E '^build-tools;36\.[0-9]+\.[0-9]+$' | sort -t';' -k2 -V | tail -n1 || true); \
-    if [ -z "$ndk" ] || [ -z "$bt" ] || ! echo "$list" | grep -Fxq "$SYSTEM_IMAGE"; then \
+    if [ -z "$ndk" ] || [ -z "$bt" ] || ! echo "$list" | grep -Fxq "$SYSTEM_IMAGE" \
+            || ! echo "$list" | grep -Fxq "$COMPILE_PLATFORM"; then \
         echo "Package lookup failed (ndk='$ndk' build-tools='$bt'). Available:"; \
-        echo "$list" | grep -E '^(ndk|build-tools|platforms|system-images;android-36);' ; exit 1; \
+        echo "$list" | grep -E '^(ndk|build-tools|platforms|system-images;android-3[67]);' ; exit 1; \
     fi; \
     major=${ndk#ndk;}; major=${major%%.*}; [ "$major" -ge 28 ]; \
-    pkgs="platform-tools emulator platforms;android-36 $bt $ndk $SYSTEM_IMAGE"; \
+    pkgs="platform-tools emulator $COMPILE_PLATFORM $bt $ndk $SYSTEM_IMAGE"; \
     sdkmanager --install $pkgs || sdkmanager --install $(echo "$pkgs" | tr ';' '/'); \
     ln -s "$(ls -d "$ANDROID_HOME"/ndk/* | sort -V | tail -n1)" /opt/ndk; \
     echo "$ndk $bt" > /opt/sdk-versions
@@ -60,5 +63,10 @@ ENV ANDROID_NDK_HOME=/opt/ndk
 RUN set -eux; \
     echo no | avdmanager create avd -n sshovel -k "$SYSTEM_IMAGE" -d pixel_7; \
     printf 'hw.ramSize=4096\ndisk.dataPartition.size=6G\nhw.keyboard=yes\n' >> /root/.android/avd/sshovel.avd/config.ini
+
+# /work is a bind mount owned by the host user, but the toolbox runs as root.
+# Without this git refuses the repo ("dubious ownership"), so reuse lint no
+# longer honours .gitignore and SOURCE_URL loses the commit hash.
+RUN git config --system --add safe.directory /work
 
 WORKDIR /work
