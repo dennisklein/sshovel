@@ -204,8 +204,16 @@ buffer. If a tunnel-bound answer contains an A record outside all routed subnets
 
 **Auth: imported key**
 
-- Formats: OpenSSH private key (Ed25519, ECDSA, RSA). PEM PKCS#1/PKCS#8 is optional.
-- Kotlin stores the key bytes encrypted with an AES-256-GCM Keystore key (`ImportedKeyVault`). The
+- Formats: OpenSSH private key (Ed25519, ECDSA, RSA 2048+), and PEM PKCS#1/PKCS#8. PuTTY `.ppk`
+  files are recognized and rejected with `KEY_PUTTY` (the UI explains how to convert them).
+- Import (M3): Kotlin passes the file bytes and the passphrase to `mobile.ImportKey` as `[]byte`
+  arguments, which Go zeroes. Go decrypts the key if needed and returns it re-encoded as an
+  **unencrypted OpenSSH private key**, plus its type, fingerprint, and `authorized_keys` line.
+  This is the one place key bytes cross back from Go to Kotlin. Kotlin immediately encrypts them
+  into the vault, zeroes its copy, and calls `ImportedKey.Clear()` to zero Go's copy. Errors:
+  `KEY_PASSPHRASE` (encrypted key, passphrase missing or wrong), `KEY_UNSUPPORTED`, `KEY_PUTTY`.
+- Kotlin stores the key bytes encrypted with an AES-256-GCM Keystore key (`ImportedKeyVault`, one
+  file per key in `noBackupFilesDir/vault`; the entry id is the GCM associated data). The
   passphrase is used only once at import. The key is re-encrypted without a passphrase under the
   Keystore key, because the tile can't prompt for one.
 - At connect, the decrypted bytes are passed to `Engine.Start` as a separate `[]byte` argument
@@ -360,6 +368,15 @@ func (e *Engine) StatsJSON() string
 func FetchHostKey(platform Platform, configJSON string) (string, error) // {"type","fingerprint","line"}
 func DiscoverRoutes(platform Platform, configJSON string, importedKey []byte) (string, error) // [{"cidr","dev","isDefault","isLinkLocal"}]
 func AuthorizedKeyLine(pkixPublicKey []byte, comment string) (string, error)
+func ImportKey(key, passphrase []byte, comment string) (*ImportedKey, error) // zeroes key and passphrase
+
+type ImportedKey struct { // M3
+    Key            []byte // unencrypted OpenSSH private key; Kotlin encrypts it, then calls Clear
+    Type           string
+    Fingerprint    string
+    AuthorizedLine string
+}
+func (k *ImportedKey) Clear()
 func ValidateConfig(configJSON string) string // "" or JSON list of {field, code, severity, suggestion}
 func Version() string
 ```
@@ -382,7 +399,11 @@ is one of the codes below. Invalid profiles fail with `INTERNAL: invalid profile
   "reason": "dialFailed|networkChanged|keepaliveTimeout|connectionClosed", // reconnecting
   "attempt": 3,                      // reconnecting
   "nextRetryAt": 1790337601000,      // reconnecting, unix ms; absent while a dial is in progress
-  "warnings": ["FORWARDING_DENIED", "DNS_UNREACHABLE"] // on
+  "warnings": ["FORWARDING_DENIED", "DNS_UNREACHABLE"], // on
+  "hostKey": {"type": "ssh-ed25519", "fingerprint": "SHA256:…", "line": "ssh-ed25519 AAAA…"}
+                                     // needsAttention with HOST_KEY_UNVERIFIED / HOST_KEY_MISMATCH:
+                                     // the key the server presented (mismatch screen, M3); never
+                                     // pinned automatically
 }
 ```
 
@@ -430,12 +451,18 @@ Error and warning codes (used in `OnState` and in the UI catalog):
 - **Errors:** `AUTH_FAILED`, `HOST_UNREACHABLE`, `HOST_KEY_UNVERIFIED`, `HOST_KEY_MISMATCH`,
   `NETWORK_LOST`, `VPN_REVOKED`, `VPN_PERMISSION`, `KEY_UNAVAILABLE`, `INTERNAL`.
 - **Warnings:** `FORWARDING_DENIED`, `DNS_UNREACHABLE`, `ROUTE_DISCOVERY_UNAVAILABLE`.
+- **Key import** (`ImportKey` only, never a state code): `KEY_PASSPHRASE`, `KEY_UNSUPPORTED`,
+  `KEY_PUTTY`.
 
 ## 9. Security model
 
 - **Keystore keys** are non-exportable and hardware-backed where available. The app shows whether
   they are.
-- **Imported keys** exist in plaintext only in memory, briefly, during connect and route discovery.
+- **Imported keys** exist in plaintext only in memory, briefly, during import, connect, and route
+  discovery.
+- **Host key pins** change only by "Trust this server" on an unpinned profile and "Forget pinned
+  key" in the profile editor. `ProfileRepository.save` keeps the stored pin, and
+  `trustHostKey` refuses to replace an existing one.
 - **Host keys** are pinned. A mismatch is a hard failure with no one-tap override.
 - **Logging:**
   - Never log private key material, passphrases, or full config JSON.

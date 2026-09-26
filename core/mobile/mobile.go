@@ -220,6 +220,30 @@ func AuthorizedKeyLine(pkixPublicKey []byte, comment string) (string, error) {
 	return sshx.AuthorizedKeyLine(pkixPublicKey, comment)
 }
 
+// ImportedKey is the result of ImportKey. Kotlin encrypts Key into the vault
+// and then calls Clear.
+type ImportedKey struct {
+	Key            []byte // unencrypted OpenSSH private key
+	Type           string // e.g. ssh-ed25519
+	Fingerprint    string // SHA256:…
+	AuthorizedLine string // recommended authorized_keys line
+}
+
+// Clear zeroes the Go copy of the key.
+func (k *ImportedKey) Clear() { clear(k.Key) }
+
+// ImportKey parses an OpenSSH or PEM private key (Ed25519, ECDSA, RSA 2048+),
+// decrypts it with passphrase if needed, and returns it re-encoded without a
+// passphrase. key and passphrase are zeroed. Errors: KEY_PASSPHRASE,
+// KEY_UNSUPPORTED, KEY_PUTTY.
+func ImportKey(key, passphrase []byte, comment string) (*ImportedKey, error) {
+	k, err := sshx.ImportKey(key, passphrase, comment)
+	if err != nil {
+		return nil, err
+	}
+	return &ImportedKey{Key: k.Key, Type: k.Type, Fingerprint: k.Fingerprint, AuthorizedLine: k.AuthorizedLine}, nil
+}
+
 // ValidateConfig returns "" for a valid profile, or a JSON list of
 // {"field","code","severity","suggestion"}. Warnings alone (severity
 // "warning") don't make a profile unusable.

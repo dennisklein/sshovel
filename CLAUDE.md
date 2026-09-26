@@ -52,7 +52,8 @@ tools/android-env/run.sh shell     # interactive shell in the toolbox
   screenshots). Don't start the next milestone unprompted.
 - **Secrets.** Never log, persist in plaintext, or put into config JSON any private key bytes,
   passphrases, or Keystore material. Imported key bytes cross the Go boundary only as the dedicated
-  `[]byte` argument, and are zeroed after parsing.
+  `[]byte` argument, and are zeroed after parsing. The one exception is `mobile.ImportKey`'s
+  result, the passphrase-free key, which goes straight into the vault and is zeroed on both sides.
 - **Host keys.** Never add a code path that accepts a changed host key without an explicit user
   action in the profile editor.
 - **gomobile boundary.** `core/mobile` exposes only gomobile-safe types. Complex data crosses as

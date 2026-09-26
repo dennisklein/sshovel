@@ -281,6 +281,11 @@ change in speed. Switching the emulator between Wi-Fi and cellular reconnects au
 - Replacing the jump host's host key produces `HOST_KEY_MISMATCH`, and the tunnel never comes up.
 - Instrumented tests cover the vault's encrypt/decrypt round trip.
 
+Run it with `tools/android-env/run.sh m3`. To replace the host key, the script deletes the files
+in `test-env/hostkeys/`; the jump host regenerates them and reloads sshd (M3). The M3 UI for host
+keys is minimal: a "Verify server" dialog and trusted/received fingerprints on Home. M6 replaces
+it with the handoff's S3/S4 screens.
+
 ### M4 — Split DNS and routing options
 
 Upstream DNS via `PlatformBridge.QueryUpstreamDNS`, search domains, excluded routes, app

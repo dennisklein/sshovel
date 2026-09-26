@@ -61,6 +61,7 @@ class SshovelVpnService : android.net.VpnService() {
 
     override fun onCreate() {
         super.onCreate()
+        running = this
         app = application as SshovelApplication
         notifications = TunnelNotifications(this)
         lastNetwork = network.current.value
@@ -107,12 +108,13 @@ class SshovelVpnService : android.net.VpnService() {
         scope.launch { session?.let { end(it, TunnelState.Off, keepService = true) } }
         worker.execute { scope.cancel() }
         worker.shutdown()
+        if (running === this) running = null
         super.onDestroy()
     }
 
     // ---- worker thread ---------------------------------------------------------
 
-    private fun connect(profileId: String) {
+    private suspend fun connect(profileId: String) {
         val profile = app.container.profiles.profile(profileId)
             ?: return fail(null, TunnelState.NeedsAttention(Codes.INTERNAL, "unknown profile"))
         session?.let {
@@ -124,13 +126,17 @@ class SshovelVpnService : android.net.VpnService() {
         controller.onProfile(profile)
         report(TunnelState.Connecting("resolving"))
         lateinit var s: Session
-        val bridge = PlatformBridge(this, network) { json -> scope.launch { onEngineStatus(s, json) } }
+        val bridge = PlatformBridge(::protect, network, app.container.keys) { json -> scope.launch { onEngineStatus(s, json) } }
         s = Session(profile, Mobile.newEngine(bridge), bridge)
         session = s
 
         val key = if (profile.auth.kind == Auth.IMPORTED) {
-            app.container.profiles.importedKey(profile)
-                ?: return fail(s, TunnelState.NeedsAttention(Codes.KEY_UNAVAILABLE, "imported key missing"))
+            try {
+                app.container.keys.importedKey(profile)
+            } catch (e: Exception) {
+                Log.e(TAG, "vault entry unreadable", e)
+                null
+            } ?: return fail(s, TunnelState.NeedsAttention(Codes.KEY_UNAVAILABLE, "imported key missing or unreadable"))
         } else {
             null
         }
@@ -267,6 +273,14 @@ class SshovelVpnService : android.net.VpnService() {
 
     companion object {
         private const val TAG = "sshovel/Service"
+
+        @Volatile private var running: SshovelVpnService? = null
+
+        /**
+         * Protects [fd] from the VPN if the tunnel service is running (e.g. FetchHostKey while
+         * connected). Without a running service there's no VPN of ours to bypass.
+         */
+        fun protectIfRunning(fd: Int): Boolean = running?.protect(fd) ?: true
         private const val STATS_INTERVAL_MS = 1000L
         const val ACTION_CONNECT = "com.github.dennisklein.sshovel.CONNECT"
         const val ACTION_DISCONNECT = "com.github.dennisklein.sshovel.DISCONNECT"

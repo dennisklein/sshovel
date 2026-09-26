@@ -31,10 +31,10 @@ fun formatUptime(seconds: Long): String {
 }
 
 /** Title and body for an error code (DESIGN_BRIEF §8). */
-fun errorText(context: Context, code: String, profile: Profile?): Pair<String, String> {
+fun errorText(context: Context, code: String, profile: Profile?, keyName: String? = null): Pair<String, String> {
     val host = profile?.let { "${it.server.host}:${it.server.port}" } ?: ""
     val userHost = profile?.let { "${it.server.user}@${it.server.host}" } ?: ""
-    val key = profile?.auth?.alias ?: ""
+    val key = keyName ?: profile?.auth?.alias ?: ""
     fun s(id: Int, vararg args: Any) = context.getString(id, *args)
     return when (code) {
         Codes.AUTH_FAILED -> s(R.string.err_auth_title) to s(R.string.err_auth_body, userHost, key)

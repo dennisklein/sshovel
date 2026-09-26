@@ -14,7 +14,8 @@ SPDX-License-Identifier: GPL-3.0-or-later
 | `dns` (dnsmasq): `wiki.corp.test` → `10.77.0.20`, `api.corp.test` → `10.77.0.21` | `10.77.0.53:53` | only the jump host |
 
 Keys allowed to log in go into `keys/authorized_keys` (one per line; sshd reads the file on
-every login). Empty `hostkeys/` and restart to rotate the host key (`HOST_KEY_MISMATCH` test).
+every login). To rotate the host key (`HOST_KEY_MISMATCH` test), delete the files in `hostkeys/`:
+the jump host generates new ones within a second and reloads sshd, no restart needed.
 
 ## Android emulator
 

@@ -137,6 +137,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.datastore)
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     // tools/android-env/m2.sh proves checkLicenses fails on a forbidden license
@@ -148,6 +149,10 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
+
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
 }
 
 // ---- Go core → AAR (IMPLEMENTATION_PLAN §4) ---------------------------------

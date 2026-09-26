@@ -9,5 +9,5 @@ import android.content.Intent
 /** Release builds ignore debug commands. */
 object DebugCommands {
     @Suppress("UNUSED_PARAMETER")
-    fun handle(activity: Activity, intent: Intent?, connect: () -> Unit) = Unit
+    fun handle(activity: Activity, intent: Intent?, connect: (String?) -> Unit) = Unit
 }

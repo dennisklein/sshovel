@@ -372,6 +372,14 @@ func TestNoRetryOnPermanentErrors(t *testing.T) {
 			if st.Code != string(tc.code) {
 				t.Fatalf("code %s, want %s", st.Code, tc.code)
 			}
+			// Host key errors carry the key the server presented; nothing else does.
+			hostKeyErr := tc.code == errcode.HostKeyUnverified || tc.code == errcode.HostKeyMismatch
+			if hostKeyErr && (st.HostKey == nil || st.HostKey.Fingerprint != ssh.FingerprintSHA256(f.srv.HostSigner.PublicKey())) {
+				t.Errorf("hostKey %+v", st.HostKey)
+			}
+			if !hostKeyErr && st.HostKey != nil {
+				t.Errorf("unexpected hostKey %+v", st.HostKey)
+			}
 			// Give a buggy engine time to retry, then check it didn't.
 			time.Sleep(100 * time.Millisecond)
 			f.clock.Advance(time.Hour)

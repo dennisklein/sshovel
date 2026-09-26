@@ -7,3 +7,4 @@ cli_key.pub
 keys/debug_client_key
 keys/debug_client_key.pub
 keys/debug_authorized_keys
+keys/acceptance_authorized_keys

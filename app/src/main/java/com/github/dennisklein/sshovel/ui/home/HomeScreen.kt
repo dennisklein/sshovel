@@ -21,6 +21,8 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -41,12 +43,16 @@ import androidx.compose.ui.unit.dp
 import com.github.dennisklein.sshovel.R
 import com.github.dennisklein.sshovel.data.Auth
 import com.github.dennisklein.sshovel.data.Dns
+import com.github.dennisklein.sshovel.data.HostKey
+import com.github.dennisklein.sshovel.data.HostKeyInfo
 import com.github.dennisklein.sshovel.data.Profile
 import com.github.dennisklein.sshovel.data.Server
 import com.github.dennisklein.sshovel.tunnel.Codes
 import com.github.dennisklein.sshovel.tunnel.TunnelState
 import com.github.dennisklein.sshovel.tunnel.TunnelStats
 import com.github.dennisklein.sshovel.ui.format.errorText
+import com.github.dennisklein.sshovel.ui.hostkey.HostKeyDialog
+import com.github.dennisklein.sshovel.ui.hostkey.HostKeyMismatch
 import com.github.dennisklein.sshovel.ui.format.formatBytes
 import com.github.dennisklein.sshovel.ui.format.formatUptime
 import com.github.dennisklein.sshovel.ui.theme.LocalStateColors
@@ -58,15 +64,24 @@ import kotlinx.coroutines.delay
  * M2 skeleton: state, profile, and the connect control. The full home screen from the design
  * handoff (status hero, profile list) replaces this in M6.
  */
+/** What the home screen can ask for; the defaults keep previews short. */
+data class HomeActions(
+    val onConnect: () -> Unit = {},
+    val onDisconnect: () -> Unit = {},
+    val onRetryNow: () -> Unit = {},
+    val onVerify: () -> Unit = {},
+    val onTrust: () -> Unit = {},
+    val onCancelVerify: () -> Unit = {},
+    val onDismissError: () -> Unit = {},
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(
-    ui: HomeUiState,
-    onConnect: () -> Unit,
-    onDisconnect: () -> Unit,
-    onRetryNow: () -> Unit,
-) {
-    Scaffold(topBar = { TopAppBar(title = { Text(stringResource(R.string.app_name)) }) }) { padding ->
+fun HomeScreen(ui: HomeUiState, actions: HomeActions, snackbar: SnackbarHostState = remember { SnackbarHostState() }) {
+    Scaffold(
+        topBar = { TopAppBar(title = { Text(stringResource(R.string.app_name)) }) },
+        snackbarHost = { SnackbarHost(snackbar) },
+    ) { padding ->
         Column(
             Modifier
                 .fillMaxSize()
@@ -78,14 +93,18 @@ fun HomeScreen(
             if (ui.profile == null) {
                 Text(stringResource(R.string.home_no_profile), style = MaterialTheme.typography.bodyLarge)
             } else {
-                StatusCard(ui, onConnect, onDisconnect, onRetryNow)
+                StatusCard(ui, actions)
             }
         }
     }
+    ui.verify?.let { HostKeyDialog(it, actions.onTrust, actions.onCancelVerify) }
 }
 
 @Composable
-private fun StatusCard(ui: HomeUiState, onConnect: () -> Unit, onDisconnect: () -> Unit, onRetryNow: () -> Unit) {
+private fun StatusCard(ui: HomeUiState, actions: HomeActions) {
+    val onConnect = actions.onConnect
+    val onDisconnect = actions.onDisconnect
+    val onRetryNow = actions.onRetryNow
     val profile = ui.profile ?: return
     val stateColors = LocalStateColors.current
     val container = when (ui.state) {
@@ -133,10 +152,18 @@ private fun StatusCard(ui: HomeUiState, onConnect: () -> Unit, onDisconnect: () 
                     }
                 }
                 is TunnelState.NeedsAttention -> {
-                    val (title, body) = errorText(LocalContext.current, s.code, profile)
+                    val (title, body) = errorText(LocalContext.current, s.code, profile, ui.keyName)
                     Text(title, style = MaterialTheme.typography.titleMedium)
                     Text(body, style = MaterialTheme.typography.bodyMedium)
-                    Button(onConnect) { Text(stringResource(R.string.action_retry)) }
+                    when (s.code) {
+                        Codes.HOST_KEY_UNVERIFIED -> Button(actions.onVerify) { Text(stringResource(R.string.verify_server)) }
+                        // No way to accept a changed key here (DESIGN_BRIEF §5.5).
+                        Codes.HOST_KEY_MISMATCH -> {
+                            HostKeyMismatch(profile.hostKey, s.receivedHostKey)
+                            Button(actions.onDismissError) { Text(stringResource(R.string.action_disconnect)) }
+                        }
+                        else -> Button(onConnect) { Text(stringResource(R.string.action_retry)) }
+                    }
                 }
                 TunnelState.Disconnecting -> LinearProgressIndicator(Modifier.fillMaxWidth())
             }
@@ -201,13 +228,14 @@ private fun connectingStep(step: String, profile: Profile): String = when (step)
 private val previewProfile = Profile(
     id = "p", name = "Office", server = Server("jump.example.com", 22, "alice"),
     auth = Auth(Auth.KEYSTORE, "sshovel-key-1"), routes = listOf("10.0.0.0/8", "172.16.0.0/12"),
+    hostKey = HostKey("ecdsa-sha2-nistp256", "SHA256:nThbRk2mXJvF3e8pQz1LYw7cDh0KsVa4Tq9NoM6uGf5", "2026-03-12T10:00:00Z"),
     dns = Dns(server = "10.1.0.53", suffixes = listOf("corp.example")),
 )
 private val previewStats = TunnelStats(uptimeSec = 3725, bytesIn = 12_400_000, bytesOut = 850_000, activeFlows = 12, dnsTunneled = 41, dnsDirect = 230)
 
 @Composable
 private fun PreviewState(state: TunnelState) = SshovelTheme(dynamicColor = false) {
-    HomeScreen(HomeUiState(state, previewProfile, previewStats), {}, {}, {})
+    HomeScreen(HomeUiState(state, previewProfile, previewStats, keyName = "Pixel 9"), HomeActions())
 }
 
 @Preview(name = "Off") @Preview(name = "Off dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
@@ -227,7 +255,15 @@ private fun PreviewState(state: TunnelState) = SshovelTheme(dynamicColor = false
 @Composable private fun PreviewAuthFailed() = PreviewState(TunnelState.NeedsAttention(Codes.AUTH_FAILED))
 
 @Preview(name = "Host key changed") @Preview(name = "Host key changed dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable private fun PreviewMismatch() = PreviewState(TunnelState.NeedsAttention(Codes.HOST_KEY_MISMATCH))
+@Composable private fun PreviewMismatch() = PreviewState(
+    TunnelState.NeedsAttention(
+        Codes.HOST_KEY_MISMATCH,
+        receivedHostKey = HostKeyInfo("ssh-ed25519", "SHA256:p7VqZc0MhR3kWy8nUe2BtL6jXa9FdK1sGm4HrO5wNi7"),
+    ),
+)
+
+@Preview(name = "Host key unverified") @Preview(name = "Host key unverified dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable private fun PreviewUnverified() = PreviewState(TunnelState.NeedsAttention(Codes.HOST_KEY_UNVERIFIED))
 
 @Preview(name = "No profile") @Preview(name = "No profile dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable private fun PreviewNoProfile() = SshovelTheme(dynamicColor = false) { HomeScreen(HomeUiState(), {}, {}, {}) }
+@Composable private fun PreviewNoProfile() = SshovelTheme(dynamicColor = false) { HomeScreen(HomeUiState(), HomeActions()) }

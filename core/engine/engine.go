@@ -62,6 +62,9 @@ type Status struct {
 	Attempt     int      `json:"attempt,omitempty"`     // Reconnecting
 	NextRetryAt int64    `json:"nextRetryAt,omitempty"` // Reconnecting, unix ms; 0 while dialing
 	Warnings    []string `json:"warnings,omitempty"`    // On: FORWARDING_DENIED, DNS_UNREACHABLE
+	// NeedsAttention with HOST_KEY_UNVERIFIED or HOST_KEY_MISMATCH: the key
+	// the server presented. Never used to pin anything automatically.
+	HostKey *sshx.HostKeyInfo `json:"hostKey,omitempty"`
 }
 
 // Log levels passed to Callbacks.Log.
@@ -361,7 +364,8 @@ func (e *Engine) setStatus(s Status) {
 func sameStatus(a, b Status) bool {
 	return a.State == b.State && a.Code == b.Code && a.Detail == b.Detail && a.Step == b.Step &&
 		a.Reason == b.Reason && a.Attempt == b.Attempt && a.NextRetryAt == b.NextRetryAt &&
-		slices.Equal(a.Warnings, b.Warnings)
+		slices.Equal(a.Warnings, b.Warnings) &&
+		(a.HostKey == nil) == (b.HostKey == nil) && (a.HostKey == nil || *a.HostKey == *b.HostKey)
 }
 
 func (e *Engine) warningList() []string {
@@ -625,7 +629,12 @@ func (e *Engine) attention(code errcode.Code, err error) bool {
 	if errors.As(err, &ce) && ce.Err != nil {
 		detail = ce.Err.Error() // the code is already in Code
 	}
-	e.setStatus(Status{State: NeedsAttention, Code: string(code), Detail: detail})
+	st := Status{State: NeedsAttention, Code: string(code), Detail: detail}
+	var hke *sshx.HostKeyError
+	if errors.As(err, &hke) {
+		st.HostKey = &hke.Received
+	}
+	e.setStatus(st)
 	ctx := e.enter(phaseAttention)
 	<-ctx.Done()
 	e.leave(ctx)

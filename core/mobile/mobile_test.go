@@ -5,10 +5,12 @@ package mobile
 
 import (
 	"crypto/ecdsa"
+	"crypto/ed25519"
 	"crypto/rand"
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
+	"encoding/pem"
 	"errors"
 	"fmt"
 	"net/netip"
@@ -269,6 +271,41 @@ func TestFetchHostKeyAndDiscoverRoutes(t *testing.T) {
 	if _, err := DiscoverRoutes(p, profileJSON(t, p, srv, true), nil); err == nil || !strings.HasPrefix(err.Error(), "ROUTE_DISCOVERY_UNAVAILABLE") {
 		t.Errorf("exec denied: %v", err)
 	}
+}
+
+func TestImportKey(t *testing.T) {
+	_, priv, _ := ed25519.GenerateKey(rand.Reader)
+	block, err := ssh.MarshalPrivateKeyWithPassphrase(priv, "", []byte("pw"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	in, pass := pem.EncodeToMemory(block), []byte("pw")
+	k, err := ImportKey(in, pass, "phone")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !allZero(in) || !allZero(pass) {
+		t.Error("inputs not zeroed")
+	}
+	if k.Type != ssh.KeyAlgoED25519 || !strings.HasSuffix(k.AuthorizedLine, " phone") {
+		t.Errorf("got %+v", k)
+	}
+	k.Clear()
+	if !allZero(k.Key) {
+		t.Error("Clear left key bytes")
+	}
+	if _, err := ImportKey([]byte("x"), nil, ""); err == nil || !strings.HasPrefix(err.Error(), "KEY_UNSUPPORTED: ") {
+		t.Errorf("garbage: %v", err)
+	}
+}
+
+func allZero(b []byte) bool {
+	for _, c := range b {
+		if c != 0 {
+			return false
+		}
+	}
+	return true
 }
 
 func TestValidateConfig(t *testing.T) {

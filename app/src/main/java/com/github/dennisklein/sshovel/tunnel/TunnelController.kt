@@ -63,6 +63,14 @@ class TunnelController(
 
     fun retryNow() = commands.retryNow()
 
+    /** The user dismissed a stopping error (e.g. "Disconnect" on HOST_KEY_MISMATCH): show Off. */
+    fun acknowledgeError() {
+        if (engineState.value is TunnelState.NeedsAttention) {
+            engineState.value = TunnelState.Off
+            _activeProfile.value = null
+        }
+    }
+
     // Called by SshovelVpnService.
     internal fun onState(state: TunnelState) {
         engineState.value = state

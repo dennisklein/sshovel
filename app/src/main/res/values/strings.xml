@@ -34,6 +34,17 @@
     <plurals name="active_connections"><item quantity="one">%d active connection</item><item quantity="other">%d active connections</item></plurals>
     <string name="home_no_profile">No profile yet. Profiles arrive with setup in a later version.</string>
 
+    <!-- Host key verification (DESIGN_BRIEF §5.5) -->
+    <string name="verify_server">Verify server</string>
+    <string name="verify_sent_key">%1$s sent this %2$s key</string>
+    <string name="verify_compare">Compare this with the output of %1$s on the server.</string>
+    <string name="action_trust_server">Trust this server</string>
+    <string name="server_trusted">Server trusted</string>
+    <string name="mismatch_trusted">Trusted</string>
+    <string name="mismatch_received">Received now</string>
+    <string name="mismatch_explain">Someone may be intercepting the connection, or the server was reinstalled and got a new key. Check with the server’s admin. If the change is expected, forget the pinned key in the profile and verify the new one.</string>
+    <string name="cd_copy_fingerprint">Copy fingerprint</string>
+
     <!-- Notifications -->
     <string name="channel_status">Tunnel status</string>
     <string name="channel_problems">Problems</string>

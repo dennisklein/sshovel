@@ -3,6 +3,7 @@
 
 package com.github.dennisklein.sshovel.tunnel
 
+import com.github.dennisklein.sshovel.data.HostKeyInfo
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -19,6 +20,11 @@ object Codes {
     const val INTERNAL = "INTERNAL"
     const val FORWARDING_DENIED = "FORWARDING_DENIED"
     const val DNS_UNREACHABLE = "DNS_UNREACHABLE"
+
+    // Key import only (mobile.ImportKey).
+    const val KEY_PASSPHRASE = "KEY_PASSPHRASE"
+    const val KEY_UNSUPPORTED = "KEY_UNSUPPORTED"
+    const val KEY_PUTTY = "KEY_PUTTY"
 
     /** Go errors read "CODE: detail". */
     fun of(t: Throwable): String {
@@ -44,7 +50,12 @@ sealed interface TunnelState {
         val code: String?,
     ) : TunnelState
 
-    data class NeedsAttention(val code: String, val detail: String = "") : TunnelState
+    /** [receivedHostKey]: the key the server presented, for HOST_KEY_UNVERIFIED / _MISMATCH. */
+    data class NeedsAttention(
+        val code: String,
+        val detail: String = "",
+        val receivedHostKey: HostKeyInfo? = null,
+    ) : TunnelState
 
     data object Disconnecting : TunnelState
 
@@ -62,6 +73,7 @@ internal data class EngineStatus(
     val attempt: Int = 0,
     val nextRetryAt: Long = 0,
     val warnings: List<String> = emptyList(),
+    val hostKey: HostKeyInfo? = null,
 ) {
     /** Maps to [TunnelState]; "sshReady" shows as the last Connecting step. */
     fun toTunnelState(): TunnelState = when (state) {
@@ -75,7 +87,7 @@ internal data class EngineStatus(
             nextRetryAtMillis = nextRetryAt.takeIf { it > 0 },
             code = code.ifEmpty { null },
         )
-        "needsAttention" -> TunnelState.NeedsAttention(code.ifEmpty { Codes.INTERNAL }, detail)
+        "needsAttention" -> TunnelState.NeedsAttention(code.ifEmpty { Codes.INTERNAL }, detail, hostKey)
         "disconnecting" -> TunnelState.Disconnecting
         else -> TunnelState.NeedsAttention(Codes.INTERNAL, "unknown engine state $state")
     }

@@ -4,7 +4,6 @@
 package sshx
 
 import (
-	"errors"
 	"net"
 
 	"golang.org/x/crypto/ssh"
@@ -25,10 +24,20 @@ func infoOf(k ssh.PublicKey) HostKeyInfo {
 	return HostKeyInfo{Type: k.Type(), Fingerprint: ssh.FingerprintSHA256(k), Line: line[:len(line)-1]}
 }
 
-var (
-	errNotPinned = errors.New("no pinned host key")
-	errMismatch  = errors.New("host key does not match the pinned key")
-)
+// HostKeyError is the cause of HOST_KEY_UNVERIFIED and HOST_KEY_MISMATCH. It
+// carries the key the server presented, so the mismatch screen can show the
+// pinned and received fingerprints side by side (DESIGN_BRIEF §5.5).
+type HostKeyError struct {
+	Received HostKeyInfo
+	pinned   bool
+}
+
+func (e *HostKeyError) Error() string {
+	if !e.pinned {
+		return "no pinned host key; server presented " + e.Received.Type + " " + e.Received.Fingerprint
+	}
+	return "host key does not match the pinned key; server presented " + e.Received.Type + " " + e.Received.Fingerprint
+}
 
 // pinnedCallback enforces the profile's pin. There is deliberately no way to
 // accept a changed key here (CLAUDE.md, Host keys).
@@ -38,10 +47,10 @@ func pinnedCallback(pin *config.HostKey, seen func(ssh.PublicKey)) ssh.HostKeyCa
 			seen(k)
 		}
 		if pin == nil || pin.Fingerprint == "" {
-			return errcode.New(errcode.HostKeyUnverified, errNotPinned)
+			return errcode.New(errcode.HostKeyUnverified, &HostKeyError{Received: infoOf(k)})
 		}
 		if k.Type() != pin.Type || ssh.FingerprintSHA256(k) != pin.Fingerprint {
-			return errcode.New(errcode.HostKeyMismatch, errMismatch)
+			return errcode.New(errcode.HostKeyMismatch, &HostKeyError{Received: infoOf(k), pinned: true})
 		}
 		return nil
 	}

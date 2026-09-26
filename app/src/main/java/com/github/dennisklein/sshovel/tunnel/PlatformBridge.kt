@@ -4,11 +4,11 @@
 package com.github.dennisklein.sshovel.tunnel
 
 import android.net.DnsResolver
-import android.net.VpnService
 import android.os.CancellationSignal
 import android.util.Log
 import com.github.dennisklein.sshovel.BuildConfig
 import com.github.dennisklein.sshovel.core.mobile.Platform
+import com.github.dennisklein.sshovel.keys.KeyRepository
 import java.io.IOException
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
@@ -20,17 +20,16 @@ import java.util.concurrent.TimeoutException
  * thread, concurrently.
  */
 class PlatformBridge(
-    private val service: VpnService,
+    private val protectFd: (Int) -> Boolean,
     private val network: NetworkMonitor,
-    private val onEngineStatus: (String) -> Unit,
+    private val keys: KeyRepository,
+    private val onEngineStatus: (String) -> Unit = {},
 ) : Platform {
     private val dnsExecutor = Executors.newCachedThreadPool()
 
-    override fun protect(fd: Int): Boolean = service.protect(fd)
+    override fun protect(fd: Int): Boolean = protectFd(fd)
 
-    override fun signDigest(keyAlias: String, digest: ByteArray): ByteArray =
-        // Keystore keys arrive in M3; until then only imported keys connect.
-        throw UnsupportedOperationException("KEY_UNAVAILABLE: Keystore signing is not implemented yet")
+    override fun signDigest(keyAlias: String, digest: ByteArray): ByteArray = keys.sign(keyAlias, digest)
 
     /** DnsResolver.rawQuery on the underlying network, so the query never enters our VPN. */
     override fun queryUpstreamDNS(query: ByteArray): ByteArray {

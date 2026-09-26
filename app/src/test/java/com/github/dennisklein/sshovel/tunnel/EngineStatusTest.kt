@@ -35,6 +35,19 @@ class EngineStatusTest {
         )
     }
 
+    @Test fun hostKeyErrorsCarryTheReceivedKey() {
+        assertEquals(
+            TunnelState.NeedsAttention(
+                "HOST_KEY_MISMATCH", "host key does not match the pinned key; server presented ssh-ed25519 SHA256:abc",
+                com.github.dennisklein.sshovel.data.HostKeyInfo("ssh-ed25519", "SHA256:abc", "ssh-ed25519 AAAA"),
+            ),
+            state(
+                """{"state":"needsAttention","code":"HOST_KEY_MISMATCH","detail":"host key does not match the pinned key; server presented ssh-ed25519 SHA256:abc",""" +
+                    """"hostKey":{"type":"ssh-ed25519","fingerprint":"SHA256:abc","line":"ssh-ed25519 AAAA"}}""",
+            ),
+        )
+    }
+
     @Test fun needsAttentionAndUnknown() {
         assertEquals(
             TunnelState.NeedsAttention("HOST_KEY_MISMATCH", "host key does not match the pinned key"),

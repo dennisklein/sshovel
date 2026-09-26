@@ -91,10 +91,14 @@ func AuthorizedKeyLine(pkix []byte, comment string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	line := string(ssh.MarshalAuthorizedKey(sp))
+	return authorizedLine(sp, comment), nil
+}
+
+func authorizedLine(k ssh.PublicKey, comment string) string {
+	line := string(ssh.MarshalAuthorizedKey(k))
 	line = "restrict,port-forwarding " + line[:len(line)-1]
 	if comment != "" {
 		line += " " + comment
 	}
-	return line, nil
+	return line
 }

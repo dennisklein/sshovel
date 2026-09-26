@@ -30,6 +30,13 @@ const (
 	RouteDiscoveryUnavailable Code = "ROUTE_DISCOVERY_UNAVAILABLE"
 )
 
+// Key import errors (mobile.ImportKey only; the import sheet, DESIGN_BRIEF §5.6).
+const (
+	KeyPassphrase  Code = "KEY_PASSPHRASE"  // encrypted key: passphrase missing or wrong
+	KeyUnsupported Code = "KEY_UNSUPPORTED" // not an OpenSSH/PEM Ed25519, ECDSA, or RSA 2048+ key
+	KeyPutty       Code = "KEY_PUTTY"       // a PuTTY .ppk file
+)
+
 // Reasons attached to failed flows (diagnostics only, never a state code).
 const (
 	DestUnreachable Code = "DEST_UNREACHABLE"
