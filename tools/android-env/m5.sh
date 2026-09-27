@@ -157,15 +157,28 @@ always_on_boot() {
     cat "$OUT/boot.txt" >> "$OUT/boot-all.txt"
     grep -q 'sshovel/State.*On(' "$OUT/boot.txt"
 }
+# service_line: what the service reported about Always-on/lockdown after the last reboot.
+service_line() { grep -o 'connect alwaysOn=[a-z]* lockdown=[a-z]*' "$OUT/boot.txt" | tail -n1; }
 say "Always-on at boot"
-if always_on_boot 0 && grep -q 'sshovel/Service.*connect alwaysOn=true lockdown=false' "$OUT/boot.txt"; then
-    result PASS "Always-on: the system starts sshovel at boot and it connects the default profile"
+if always_on_boot 0; then
+    line=$(service_line); echo "service: ${line:-no connect line}"
+    [ "$line" = "connect alwaysOn=true lockdown=false" ] &&
+        result PASS "Always-on: the system starts sshovel at boot and it connects the default profile ($line)" ||
+        result FAIL "connected after reboot, but the service reported: ${line:-no connect line}"
 else
-    result FAIL "Always-on didn't connect at boot"
+    result FAIL "Always-on didn't connect at boot (service: $(service_line))"
 fi
 sleep 2; shot 8-always-on
 say "Always-on with lockdown at boot"
-if always_on_boot 1 && grep -q 'sshovel/Service.*connect alwaysOn=true lockdown=true' "$OUT/boot.txt"; then
+lockdown_ok=0
+if always_on_boot 1; then
+    line=$(service_line); echo "service: ${line:-no connect line}"
+    [ "$line" = "connect alwaysOn=true lockdown=true" ] && lockdown_ok=1 ||
+        result FAIL "lockdown: connected after reboot, but the service reported: ${line:-no connect line}"
+else
+    result FAIL "Always-on with lockdown didn't connect at boot (service: $(service_line))"
+fi
+if [ "$lockdown_ok" = 1 ]; then
     # fetch reads $OUT/logcat.txt: point the logcat stream there again.
     kill "$LOGCAT_PID" 2>/dev/null
     adb logcat -v time >> "$OUT/logcat.txt" 2>/dev/null &
@@ -173,8 +186,6 @@ if always_on_boot 1 && grep -q 'sshovel/Service.*connect alwaysOn=true lockdown=
     r=$(fetch lockdown-wiki http://wiki.corp.test/); echo "$r"
     echo "$r" | grep -q ' 200 ' && result PASS "Lockdown: connects at boot with the TUN up first; wiki loads ($r)" ||
         result FAIL "Lockdown connected but the wiki fetch failed: $r"
-else
-    result FAIL "Always-on with lockdown didn't connect at boot"
 fi
 adb shell settings delete secure always_on_vpn_app; adb shell settings delete secure always_on_vpn_lockdown
 

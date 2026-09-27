@@ -134,7 +134,7 @@ write_summary() {
         printf '%s\n' "${RESULTS[@]}"
         echo
         echo "## State transitions"
-        grep "sshovel/State\|sshovel-m\|sshovel/Debug" "$OUT/logcat.txt" | sed 's/^[0-9-]* //'
+        grep "sshovel/State\|sshovel/Service\|sshovel-m\|sshovel/Debug" "$OUT/logcat.txt" | sed 's/^[0-9-]* //'
     } > "$OUT/summary.txt"
     cat "$OUT/summary.txt"
 }
