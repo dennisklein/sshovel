@@ -29,7 +29,33 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!-- Long-press on the Quick Settings tile opens the app (DESIGN_BRIEF §7). -->
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
+            </intent-filter>
         </activity>
+
+        <!-- Explainer + Android's VPN consent dialog, opened by the tile and the app (§5.4). -->
+        <activity
+            android:name=".ui.consent.VpnConsentActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:launchMode="singleTask" />
+
+        <service
+            android:name=".tile.TunnelTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_sshovel"
+            android:label="@string/tile_label"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+            <!-- Active: updated through requestListeningState when the tunnel state changes. -->
+            <meta-data android:name="android.service.quicksettings.ACTIVE_TILE" android:value="true" />
+            <meta-data android:name="android.service.quicksettings.TOGGLEABLE_TILE" android:value="true" />
+        </service>
 
         <!-- M0: systemExempted works from app, tile, consent, and Always-on boot;
              exported=false still lists the app under Settings → VPN (ARCHITECTURE §11).

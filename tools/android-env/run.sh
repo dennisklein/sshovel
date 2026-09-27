@@ -9,6 +9,7 @@
 #   tools/android-env/run.sh m2          M2 acceptance on the emulator
 #   tools/android-env/run.sh m3          M3 acceptance on the emulator
 #   tools/android-env/run.sh m4          M4 acceptance on the emulator
+#   tools/android-env/run.sh m5          M5 acceptance on the emulator
 #   tools/android-env/run.sh shell       a shell in the toolbox (test-env running)
 set -eu
 cd "$(dirname "$0")"
@@ -22,6 +23,6 @@ $compose up -d --build jumphost dns wiki
 trap '$compose down' EXIT
 case "${1:-}" in
     shell) $compose --profile tools run --rm android bash ;;
-    m2|m3|m4) m=$1; shift; $compose --profile tools run --rm android bash /work/tools/android-env/$m.sh "$@" ;;
-    *)     echo "usage: $0 m2|m3|m4|shell" >&2; exit 2 ;;
+    m2|m3|m4|m5) m=$1; shift; $compose --profile tools run --rm android bash /work/tools/android-env/$m.sh "$@" ;;
+    *)     echo "usage: $0 m2|m3|m4|m5|shell" >&2; exit 2 ;;
 esac

@@ -27,10 +27,6 @@ import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,6 +39,7 @@ import com.github.dennisklein.sshovel.data.Server
 import com.github.dennisklein.sshovel.keys.SshKeys
 import com.github.dennisklein.sshovel.tunnel.Codes
 import com.github.dennisklein.sshovel.ui.format.errorText
+import com.github.dennisklein.sshovel.ui.format.monoArg
 import com.github.dennisklein.sshovel.ui.home.VerifyUi
 import com.github.dennisklein.sshovel.ui.theme.MonoFamily
 import com.github.dennisklein.sshovel.ui.theme.SshovelTheme
@@ -133,19 +130,6 @@ fun Fingerprint(fingerprint: String, copy: Boolean = true) {
             }) {
                 Icon(painterResource(R.drawable.ic_content_copy), stringResource(R.string.cd_copy_fingerprint))
             }
-        }
-    }
-}
-
-/** A string resource whose arguments (hosts, commands) are set in monospace (DESIGN_BRIEF §8). */
-@Composable
-private fun monoArg(id: Int, vararg args: String): AnnotatedString {
-    val marker = "\u0000"
-    val template = stringResource(id, *Array(args.size) { "$marker$it$marker" })
-    return buildAnnotatedString {
-        template.split(marker).forEachIndexed { i, part ->
-            val arg = if (i % 2 == 1) part.toIntOrNull()?.let { args.getOrNull(it) } else null
-            if (arg != null) withStyle(SpanStyle(fontFamily = MonoFamily)) { append(arg) } else append(part)
         }
     }
 }

@@ -38,6 +38,7 @@ import kotlin.concurrent.thread
  *   `profile-exclude profile [cidrs]`, `profile-tun profile cidr dnsip`: edit and save a profile
  *   the way the editor will; validation errors are logged as `<cmd> invalid CODE@field …`
  * - `dns-log` (the DNS diagnostics buffer, one line per query), `dns-clear`
+ * - `require-unlock value` (true|false), `profile-default profile`
  *
  * Results are logged under the tag "sshovel/Debug", one line per command, starting with the
  * command name. Never used for anything but test-env: passphrases here are test data.
@@ -148,6 +149,14 @@ object DebugCommands {
                 Log.i(TAG, "dns-log end ${events.size}")
             }
             "dns-clear" -> container.dnsLog.clear()
+            "require-unlock" -> async {
+                container.settings.setRequireUnlock(arg("value") == "true")
+                Log.i(TAG, "require-unlock ${container.settings.current().requireUnlock}")
+            }
+            "profile-default" -> async {
+                container.profiles.setDefault(arg("profile").orEmpty())
+                Log.i(TAG, "profile-default ${container.profiles.defaultProfile()?.id}")
+            }
         }
     }
 

@@ -311,6 +311,13 @@ unlock" setting, and the tile long-press → app.
 in system settings connects at boot. Starting another VPN app moves sshovel to
 `VPN_REVOKED`.
 
+Run it with `tools/android-env/run.sh m5`. It taps the tile with `cmd statusbar click-tile` (the
+same SystemUI path as a finger, M0), accepts Android's VPN dialog through uiautomator, sets
+Always-on (and lockdown) through `settings put secure always_on_vpn_*` and reboots, and uses a
+throwaway VPN app (`tools/android-env/othervpn`, built by the script, never shipped) for the
+revoke. The "Require unlock" setting is stored and enforced by the tile; its UI toggle arrives
+with the M6 Settings screen, and the lock-screen behaviour stays a physical-device check (§7).
+
 ### M6 — Full UI from the design handoff
 
 Implement all screens in `DESIGN_BRIEF.md` §5 using the Claude Design handoff: tokens → `Theme.kt`

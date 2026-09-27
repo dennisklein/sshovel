@@ -318,7 +318,8 @@ Stats fields: `uptimeSec` (since the last transition to On; 0 otherwise), `bytes
     1. If "require unlock" is on and `isLocked`, wrap the action in `unlockAndRun { … }`. (M0: on the
        API 36 emulator with a PIN, SystemUI already shows the bouncer and never calls `onClick` while
        locked; keep the check anyway and verify on a physical device in M5.)
-    2. If there's no default profile, open the app.
+    2. If there's no default profile, open the app. Needs attention ("Tap to fix") and
+       Disconnecting also open the app (M5); Connecting, On, and Reconnecting disconnect.
     3. If `VpnService.prepare(context) != null`, call
        `startActivityAndCollapse(PendingIntent)` to open `VpnConsentActivity`. This activity shows
        the explainer, then the system consent, then connects.

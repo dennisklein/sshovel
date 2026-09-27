@@ -8,12 +8,14 @@ import androidx.datastore.dataStoreFile
 import com.github.dennisklein.sshovel.data.AppStore
 import com.github.dennisklein.sshovel.data.GoProfileValidator
 import com.github.dennisklein.sshovel.data.ProfileRepository
+import com.github.dennisklein.sshovel.data.SettingsRepository
 import com.github.dennisklein.sshovel.data.VariantSeed
 import com.github.dennisklein.sshovel.diagnostics.DnsLog
 import com.github.dennisklein.sshovel.keys.GoKeyCodec
 import com.github.dennisklein.sshovel.keys.ImportedKeyVault
 import com.github.dennisklein.sshovel.keys.KeyRepository
 import com.github.dennisklein.sshovel.keys.KeystoreKeys
+import com.github.dennisklein.sshovel.tile.TunnelTileService
 import com.github.dennisklein.sshovel.tunnel.HostKeyVerifier
 import com.github.dennisklein.sshovel.tunnel.NetworkMonitor
 import com.github.dennisklein.sshovel.tunnel.ServiceTunnelCommands
@@ -21,6 +23,8 @@ import com.github.dennisklein.sshovel.tunnel.TunnelController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -39,9 +43,16 @@ class AppContainer(context: Context) {
     )
     val hostKeys = HostKeyVerifier(networkMonitor, keys)
     val dnsLog = DnsLog()
+    val settings = SettingsRepository(store, appScope)
     val tunnelController = TunnelController(ServiceTunnelCommands(context), networkMonitor.available, appScope)
 
     init {
         appScope.launch(Dispatchers.IO) { VariantSeed.seed(context, profiles, keys) }
+        // The tile is an active tile: it only re-renders when asked (ARCHITECTURE §7).
+        appScope.launch {
+            combine(tunnelController.state, profiles.defaultProfileId) { s, d -> s to d }
+                .distinctUntilChanged()
+                .collect { TunnelTileService.requestUpdate(context) }
+        }
     }
 }

@@ -92,4 +92,15 @@ class ProfileRepositoryTest {
         repo.trustHostKey(p.id, keyB)
         assertEquals(keyB.fingerprint, repo.profile(p.id)?.hostKey?.fingerprint)
     }
+
+    @Test fun requireUnlockSettingPersists() = runBlocking {
+        val settings = SettingsRepository(t.store, t.scope)
+        assertEquals(false, settings.current().requireUnlock)
+        settings.setRequireUnlock(true)
+        assertEquals(true, settings.current().requireUnlock)
+        // Settings live next to profiles without disturbing them.
+        val p = repo.save(profile("A"))
+        assertEquals(true, settings.current().requireUnlock)
+        assertEquals("A", repo.profile(p.id)?.name)
+    }
 }

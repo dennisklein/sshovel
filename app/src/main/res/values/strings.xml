@@ -45,6 +45,29 @@
     <string name="mismatch_explain">Someone may be intercepting the connection, or the server was reinstalled and got a new key. Check with the server’s admin. If the change is expected, forget the pinned key in the profile and verify the new one.</string>
     <string name="cd_copy_fingerprint">Copy fingerprint</string>
 
+    <!-- Tile and VPN permission (DESIGN_BRIEF §5.4, §7) -->
+    <string name="tile_label" translatable="false">sshovel</string>
+    <string name="tile_sub_off">Off</string>
+    <string name="tile_sub_connecting">Connecting…</string>
+    <string name="tile_sub_reconnecting">Reconnecting…</string>
+    <string name="tile_sub_attention">Tap to fix</string>
+    <string name="tile_sub_setup">Set up</string>
+    <string name="vpn_explainer_title">Android will ask to set up a VPN</string>
+    <string name="vpn_explainer_body">sshovel uses Android’s VPN feature to route intranet traffic. The next screen is Android asking for that permission. You only grant it once.</string>
+    <string name="vpn_explainer_tunnel">Through the tunnel</string>
+    <string name="vpn_explainer_tunnel_body">%1$s and names ending in %2$s</string>
+    <string name="vpn_explainer_else">Everything else</string>
+    <string name="vpn_explainer_else_body">Uses your normal connection, unchanged</string>
+    <string name="vpn_explainer_nothing">Nothing else leaves your phone</string>
+    <string name="vpn_explainer_nothing_body">sshovel only connects to your SSH server, %1$s. No other servers, no analytics.</string>
+    <string name="action_continue">Continue</string>
+    <string name="err_permission_body_denied">Android needs your permission before sshovel can route traffic. Nothing was changed on your phone.</string>
+    <string name="vpn_denied_note">If the Android dialog didn’t appear, another app may be set as Always-on VPN. Turn it off in Settings → Network → VPN.</string>
+    <string name="open_vpn_settings">Open VPN settings</string>
+    <string name="onb_not_now">Not now</string>
+    <string name="action_try_again">Try again</string>
+    <string name="cd_close">Close</string>
+
     <!-- Notifications -->
     <string name="channel_status">Tunnel status</string>
     <string name="channel_problems">Problems</string>

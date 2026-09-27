@@ -27,6 +27,14 @@ data class StoredData(
     val profiles: List<Profile> = emptyList(),
     val defaultProfileId: String? = null,
     val keys: List<KeyEntry> = emptyList(),
+    val settings: AppSettings = AppSettings(),
+)
+
+/** App-wide settings (DESIGN_BRIEF §5.10). */
+@kotlinx.serialization.Serializable
+data class AppSettings(
+    /** "Require unlock to use the tile": on the lock screen the tile asks to unlock first. */
+    val requireUnlock: Boolean = false,
 )
 
 internal object StoredDataSerializer : Serializer<StoredData> {

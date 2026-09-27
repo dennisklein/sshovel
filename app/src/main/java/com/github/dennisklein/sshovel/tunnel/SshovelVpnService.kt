@@ -122,6 +122,7 @@ class SshovelVpnService : android.net.VpnService() {
             end(it, TunnelState.Off, keepService = true)
         }
         if (prepare(this) != null) return fail(null, TunnelState.NeedsAttention(Codes.VPN_PERMISSION))
+        if (BuildConfig.DEBUG) Log.i(TAG, "connect alwaysOn=$isAlwaysOn lockdown=$isLockdownEnabled")
 
         controller.onProfile(profile)
         notifications.cancelAlert() // the previous error no longer applies
