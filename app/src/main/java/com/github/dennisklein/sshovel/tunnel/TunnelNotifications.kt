@@ -67,6 +67,9 @@ class TunnelNotifications(private val context: Context) {
         nm.notify(STATUS_ID, status(state, profile, stats))
     }
 
+    /** Removes the last alert, e.g. once a new connection attempt starts. */
+    fun cancelAlert() = nm.cancel(ALERT_ID)
+
     /** A normal-importance alert for errors that need the user. */
     fun showAlert(state: TunnelState.NeedsAttention, profile: Profile?) {
         val (title, body) = errorText(context, state.code, profile)

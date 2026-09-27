@@ -124,6 +124,7 @@ class SshovelVpnService : android.net.VpnService() {
         if (prepare(this) != null) return fail(null, TunnelState.NeedsAttention(Codes.VPN_PERMISSION))
 
         controller.onProfile(profile)
+        notifications.cancelAlert() // the previous error no longer applies
         report(TunnelState.Connecting("resolving"))
         lateinit var s: Session
         val bridge = PlatformBridge(::protect, network, app.container.keys) { json -> scope.launch { onEngineStatus(s, json) } }

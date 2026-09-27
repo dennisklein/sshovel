@@ -70,10 +70,16 @@ shot() { adb exec-out screencap -p > "$OUT/$1.png"; }
 # Progress goes to stderr: helpers that print results (debug, fetch) must return only those.
 mark() { adb shell log -t sshovel-m -- "=== $*"; echo "--- $*" >&2; }
 # wait_log <mark> <regex> <timeout>: the first line matching regex after the mark.
+# (Not `awk | grep -m1 && …`: under pipefail, grep exiting early fails the pipeline, so the
+# loop would keep printing the same match until the timeout.)
 wait_log() {
-    local m=$1 re=$2 t=$3
+    local m=$1 re=$2 t=$3 hit
     for _ in $(seq 1 "$t"); do
-        awk -v m="=== $m" 'index($0, m) {on=1} on' "$OUT/logcat.txt" | grep -E -m1 "$re" && return 0
+        hit=$(since "$m" | grep -E "$re" | head -n1 || true)
+        if [ -n "$hit" ]; then
+            echo "$hit"
+            return 0
+        fi
         sleep 1
     done
     return 1
@@ -113,10 +119,10 @@ install_app() {
     adb shell appops set "$PKG" ACTIVATE_VPN allow   # VPN consent without the dialog (explainer: M5)
 }
 
-# no_tun: true if no TUN interface and no VPN network exist right now.
+# no_tun: true if no VPN TUN interface (tun0, tun1, …) exists right now. The kernel's own
+# IPIP device is called tunl0 and doesn't count.
 no_tun() {
-    ! adb shell ip -o link 2>/dev/null | grep -q ' tun' &&
-        ! adb shell dumpsys connectivity 2>/dev/null | grep -q 'VPN CONNECTED'
+    ! adb shell ip -o link 2>/dev/null | grep -Eq '^[0-9]+: tun[0-9]+[:@]'
 }
 
 write_summary() {

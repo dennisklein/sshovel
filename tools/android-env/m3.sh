@@ -89,6 +89,8 @@ if tap_text "Verify server" && sleep 4 && shot 3-verify-dialog && mark gen-trust
         echo "$r" | grep -q ' 200 .*title="Welcome to nginx!"' &&
             result PASS "a generated Keystore key ($gen_security) authenticates; wiki loads ($r)" ||
             result FAIL "generated key connected but wiki fetch failed: $r"
+        # The no-tunnel checks below are only meaningful if this one sees the TUN while On.
+        no_tun && result FAIL "no_tun doesn't see the TUN while On; its checks are unreliable"
         sleep 1; shot 4-generated-on
     else
         result FAIL "no On after trusting the server"
