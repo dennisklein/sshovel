@@ -47,7 +47,8 @@ if gradle :app:connectedDebugAndroidTest > "$OUT/android-test.log" 2>&1; then
     n=$(grep -ho 'tests="[0-9]*"' /work/app/build/outputs/androidTest-results/connected/debug/*.xml 2>/dev/null | grep -o '[0-9]*' | awk '{s+=$1} END {print s}')
     result PASS "instrumented tests: Compose UI tests (editor validation, mismatch screen can't be dismissed) and key tests (${n:-?} tests)"
 else
-    grep -E "FAILED|Tests? .*failed|AssertionError" "$OUT/android-test.log" | head -n 20
+    grep -E "FAILED|failed|Exception|Error|> Task" "$OUT/android-test.log" | grep -v "^> Task .* UP-TO-DATE" | head -n 40
+    tail -n 40 "$OUT/android-test.log"
     result FAIL "instrumented tests failed (android-test.log, app/build/reports/androidTests)"
 fi
 cp -r /work/app/build/reports/androidTests "$OUT/androidTests-report" 2>/dev/null
@@ -57,7 +58,9 @@ cp -r /work/app/build/reports/androidTests "$OUT/androidTests-report" 2>/dev/nul
 say "Fresh install without the seeded test-env profile"
 adb uninstall "$PKG" >/dev/null 2>&1
 adb install -r -g "$APK" || die "install failed"
-adb shell run-as "$PKG" sh -c 'mkdir -p files && touch files/no-seed' || die "run-as failed (debuggable build?)"
+# adb shell joins its arguments into one remote command line: keep each run-as call simple.
+adb shell run-as "$PKG" mkdir -p files && adb shell run-as "$PKG" touch files/no-seed ||
+    die "run-as failed (debuggable build?)"
 adb shell appops set "$PKG" ACTIVATE_VPN allow   # the consent flow is M5's; here Connect now goes straight on
 app wallpaper value false; sleep 1                # the brand scheme, as in the handoff
 home
