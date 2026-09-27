@@ -67,7 +67,8 @@ app() {
     adb shell am start -n "$PKG/.ui.MainActivity" --es cmd "$cmd" "${args[@]}" >/dev/null
 }
 shot() { adb exec-out screencap -p > "$OUT/$1.png"; }
-mark() { adb shell log -t sshovel-m -- "=== $*"; echo "--- $*"; }
+# Progress goes to stderr: helpers that print results (debug, fetch) must return only those.
+mark() { adb shell log -t sshovel-m -- "=== $*"; echo "--- $*" >&2; }
 # wait_log <mark> <regex> <timeout>: the first line matching regex after the mark.
 wait_log() {
     local m=$1 re=$2 t=$3
