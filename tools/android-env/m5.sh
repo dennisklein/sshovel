@@ -158,11 +158,14 @@ always_on_boot() {
     grep -q 'sshovel/State.*On(' "$OUT/boot.txt"
 }
 # service_line: what the service reported about Always-on/lockdown after the last reboot.
-service_line() { grep -o 'connect alwaysOn=[a-z]* lockdown=[a-z]*' "$OUT/boot.txt" | tail -n1; }
+# The service logs "connect tunFirst=…" and, once the TUN exists, "established alwaysOn=… lockdown=…".
+service_line() {
+    echo "$(grep -o 'connect tunFirst=[a-z]*' "$OUT/boot.txt" | tail -n1); $(grep -o 'established alwaysOn=[a-z]* lockdown=[a-z]*' "$OUT/boot.txt" | tail -n1)"
+}
 say "Always-on at boot"
 if always_on_boot 0; then
     line=$(service_line); echo "service: ${line:-no connect line}"
-    [ "$line" = "connect alwaysOn=true lockdown=false" ] &&
+    [ "$line" = "connect tunFirst=true; established alwaysOn=true lockdown=false" ] &&
         result PASS "Always-on: the system starts sshovel at boot and it connects the default profile ($line)" ||
         result FAIL "connected after reboot, but the service reported: ${line:-no connect line}"
 else
@@ -173,7 +176,7 @@ say "Always-on with lockdown at boot"
 lockdown_ok=0
 if always_on_boot 1; then
     line=$(service_line); echo "service: ${line:-no connect line}"
-    [ "$line" = "connect alwaysOn=true lockdown=true" ] && lockdown_ok=1 ||
+    [ "$line" = "connect tunFirst=true; established alwaysOn=true lockdown=true" ] && lockdown_ok=1 ||
         result FAIL "lockdown: connected after reboot, but the service reported: ${line:-no connect line}"
 else
     result FAIL "Always-on with lockdown didn't connect at boot (service: $(service_line))"

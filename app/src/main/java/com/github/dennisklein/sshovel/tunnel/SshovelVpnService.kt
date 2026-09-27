@@ -87,10 +87,10 @@ class SshovelVpnService : android.net.VpnService() {
                 ACTION_DISCONNECT -> disconnect()
                 ACTION_RETRY -> session?.engine?.retryNow() ?: finishIfIdle()
                 // The system starts us for Always-on VPN with this action (or a null intent after
-                // a restart): connect the default profile.
+                // a restart): connect the default profile, TUN first (see connect).
                 SERVICE_INTERFACE, null -> {
                     val p = app.container.profiles.defaultProfile()
-                    if (p != null) connect(p.id) else fail(null, TunnelState.NeedsAttention(Codes.INTERNAL, "no default profile"))
+                    if (p != null) connect(p.id, tunFirst = true) else fail(null, TunnelState.NeedsAttention(Codes.INTERNAL, "no default profile"))
                 }
                 else -> finishIfIdle()
             }
@@ -114,7 +114,14 @@ class SshovelVpnService : android.net.VpnService() {
 
     // ---- worker thread ---------------------------------------------------------
 
-    private suspend fun connect(profileId: String) {
+    /**
+     * Connects [profileId]. Normally SSH comes first and the TUN only after sshReady, so auth and
+     * host-key failures never touch routing. [tunFirst] (Always-on starts) establishes the TUN
+     * first so that under lockdown the system doesn't treat the VPN as failed. Always-on starts
+     * can't tell lockdown apart: isLockdownEnabled() only answers once a VPN is established
+     * (ARCHITECTURE §11).
+     */
+    private suspend fun connect(profileId: String, tunFirst: Boolean = false) {
         val profile = app.container.profiles.profile(profileId)
             ?: return fail(null, TunnelState.NeedsAttention(Codes.INTERNAL, "unknown profile"))
         session?.let {
@@ -122,7 +129,7 @@ class SshovelVpnService : android.net.VpnService() {
             end(it, TunnelState.Off, keepService = true)
         }
         if (prepare(this) != null) return fail(null, TunnelState.NeedsAttention(Codes.VPN_PERMISSION))
-        if (BuildConfig.DEBUG) Log.i(TAG, "connect alwaysOn=$isAlwaysOn lockdown=$isLockdownEnabled")
+        if (BuildConfig.DEBUG) Log.i(TAG, "connect tunFirst=$tunFirst")
 
         controller.onProfile(profile)
         notifications.cancelAlert() // the previous error no longer applies
@@ -144,7 +151,7 @@ class SshovelVpnService : android.net.VpnService() {
         }
         try {
             var fd = -1
-            if (isLockdownEnabled) {
+            if (tunFirst) {
                 fd = establish(profile)?.detachFd()
                     ?: return fail(s, TunnelState.NeedsAttention(Codes.VPN_PERMISSION))
                 s.tunUp = true
@@ -262,7 +269,10 @@ class SshovelVpnService : android.net.VpnService() {
             Apps.INCLUDE -> p.apps.packages.forEach { pkg -> skipMissing(pkg) { b.addAllowedApplication(it) } }
             Apps.EXCLUDE -> p.apps.packages.forEach { pkg -> skipMissing(pkg) { b.addDisallowedApplication(it) } }
         }
-        return b.establish()
+        return b.establish().also {
+            // Only now can the system tell us about Always-on and lockdown (ARCHITECTURE §11).
+            if (BuildConfig.DEBUG && it != null) Log.i(TAG, "established alwaysOn=$isAlwaysOn lockdown=$isLockdownEnabled")
+        }
     }
 
     private inline fun skipMissing(pkg: String, add: (String) -> Unit) {

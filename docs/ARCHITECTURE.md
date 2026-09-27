@@ -277,8 +277,12 @@ the attempt counter; while On it drops the connection (bound to the old network)
 without waiting.
 
 - **Connect SSH before establishing the TUN.** Auth and host-key failures then never disturb
-  routing. When Always-on *lockdown* is active, establish the TUN first so the system doesn't
-  treat the VPN as failed. Check via `VpnService.isLockdownEnabled()`.
+  routing. When the system starts the service for Always-on (`VpnService.SERVICE_INTERFACE` or a
+  null intent), establish the TUN first so that under lockdown the system doesn't treat the VPN
+  as failed. The service can't tell lockdown apart at that point: `isLockdownEnabled()` and
+  `isAlwaysOn()` return false until a VPN is established (§11 item 7), so every Always-on start
+  goes TUN first. Under plain Always-on that only means the routed subnets are black-holed a few
+  seconds longer, which they would be without the tunnel anyway.
 - **Stats** come from `Engine.StatsJSON()`, polled every 1 s while the UI or notification is
   visible, otherwise every 10 s.
 
@@ -517,6 +521,12 @@ results and logs are on the `spikes` branch (`spikes/README.md`, `spikes/out/`).
    authenticates against OpenSSH 10.2, and `direct-tcpip` works through it. The emulator's Keystore
    reports `SECURITY_LEVEL_SOFTWARE` and no StrongBox, so the hardware-backed badge must come from
    `KeyInfo.getSecurityLevel()` and may legitimately be absent.
+
+7. **`VpnService.isAlwaysOn()` / `isLockdownEnabled()`** (M5) return `false` until the service has
+   established its VPN. With Always-on and lockdown set, a service started at boot logged
+   `alwaysOn=false lockdown=false` before `establish()`; the M0 spike, which read them after
+   `establish()`, saw `alwaysOn=true`. They answer "is the caller's established VPN the Always-on
+   one", so they can't decide the connect ordering; the start action does (§7).
 
 ## 12. Licensing and compliance
 
