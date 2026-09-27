@@ -36,6 +36,9 @@ dns_log() {
     since "$1" | grep 'sshovel/Debug.*: dns-log ' | grep -v 'dns-log end' | sed 's/.*: dns-log //'
 }
 ok() { grep -q ' 200 .*title="Welcome to nginx!"'; }
+# tunnel_flow <mark>: true if the tunnel forwarded a connection to the wiki after the mark
+# (debug builds log flow events as sshovel/Flow).
+tunnel_flow() { since "$1" | grep 'sshovel/Flow' | grep -q '"dst":"10\.77\.0\.20:80"'; }
 
 say "Toolchain"; toolchain
 say "Wait for test-env's host key"; wait_hostkey
@@ -57,7 +60,8 @@ have_chrome=0; chrome_setup && have_chrome=1
 say "Split DNS"
 connect split || die "test-env profile didn't connect"
 app dns-clear; sleep 1
-r=$(fetch split-wiki "$WIKI"); echo "$r"; echo "$r" | ok || result FAIL "wiki through the tunnel: $r"
+r=$(fetch split-wiki "$WIKI"); echo "$r"
+echo "$r" | ok && tunnel_flow split-wiki || result FAIL "wiki through the tunnel (no forwarded flow to 10.77.0.20:80): $r"
 r=$(fetch split-public "$PUBLIC"); echo "$r"
 dns_log split-log | tee "$OUT/dns-split.txt"
 if grep -q '^tunnel wiki\.corp\.test\.\? A NOERROR 10\.77\.0\.20' "$OUT/dns-split.txt" &&
@@ -85,9 +89,11 @@ r=$(debug ex-set profile-exclude profile "$P" cidrs 10.77.0.20/32); echo "$r"
 if [ "$r" = "profile-exclude ok" ] && connect excluded; then
     r=$(fetch ex-wiki "$WIKI"); echo "$r"
     dns_log ex-log | tee "$OUT/dns-excluded.txt"
-    # The name still resolves through the tunnel; the connection to the excluded host doesn't enter it.
-    if ! echo "$r" | grep -q ' 200 ' && grep -q '^tunnel wiki\.corp\.test\.\? A NOERROR 10\.77\.0\.20' "$OUT/dns-excluded.txt"; then
-        result PASS "excluded subnet 10.77.0.20/32 bypasses the tunnel ($r)"
+    # The name still resolves through the tunnel; the connection to the excluded host doesn't
+    # enter it. (The fetch itself may still work: the toolbox host has the test-env intranet
+    # bridge, so the emulator's own network reaches 10.77.0.20 directly.)
+    if ! tunnel_flow ex-wiki && grep -q '^tunnel wiki\.corp\.test\.\? A NOERROR 10\.77\.0\.20' "$OUT/dns-excluded.txt"; then
+        result PASS "excluded subnet 10.77.0.20/32 bypasses the tunnel: no forwarded flow; name still resolved via tunnel ($r)"
     else
         result FAIL "excluded subnet: $r"
     fi

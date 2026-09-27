@@ -6,6 +6,8 @@
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">corp.test</domain>
+        <!-- The short name, completed by the search domain corp.test (M4). -->
+        <domain includeSubdomains="false">wiki</domain>
         <domain includeSubdomains="false">connectivitycheck.gstatic.com</domain>
     </domain-config>
 </network-security-config>

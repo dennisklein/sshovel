@@ -68,7 +68,8 @@ app() {
 }
 shot() { adb exec-out screencap -p > "$OUT/$1.png"; }
 # Progress goes to stderr: helpers that print results (debug, fetch) must return only those.
-mark() { adb shell log -t sshovel-m -- "=== $*"; echo "--- $*" >&2; }
+# Marks end in " ===" so that "connect-exclude" doesn't also match "connect-excluded".
+mark() { adb shell log -t sshovel-m -- "=== $* ==="; echo "--- $*" >&2; }
 # wait_log <mark> <regex> <timeout>: the first line matching regex after the mark.
 # (Not `awk | grep -m1 && …`: under pipefail, grep exiting early fails the pipeline, so the
 # loop would keep printing the same match until the timeout.)
@@ -85,7 +86,7 @@ wait_log() {
     return 1
 }
 # since <mark>: all log lines after the mark.
-since() { awk -v m="=== $1" 'index($0, m) {on=1} on' "$OUT/logcat.txt"; }
+since() { awk -v m="=== $1 ===" 'index($0, m) {on=1} on' "$OUT/logcat.txt"; }
 # debug <mark> <cmd> [key value]...: runs a DebugCommands command, prints its result text.
 debug() {
     local m=$1 cmd=$2; shift 2
