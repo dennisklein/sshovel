@@ -252,6 +252,18 @@ buffer. If a tunnel-bound answer contains an A record outside all routed subnets
   sorted, loopback dropped; `unreachable`/`blackhole`/`local`… routes skipped.
 - If the server denies exec or no command yields routes, return `ROUTE_DISCOVERY_UNAVAILABLE`.
 
+**Connection test** (onboarding step 5, handoff O6; M6)
+
+- `mobile.TestConnection(platform, configJSON, importedKey)` (`core/probe`) runs, in order and
+  outside the VPN: *reachable* (resolve and TCP-connect, timed), *identity* (the pinned key; no
+  pin → `HOST_KEY_UNVERIFIED`), *auth* (the key is accepted), *forwarding* (a `direct-tcpip`
+  channel to the intranet DNS server's port 53; `Prohibited` → `FORWARDING_DENIED`, any other
+  refusal means forwarding works and the resolver is unreachable), and *dns* (one query over that
+  channel, RFC 7766 framing: SOA of the first routed suffix, or the root NS set; any answer, even
+  NXDOMAIN, passes; silence for 5 s → `DNS_UNREACHABLE`).
+- The first failure stops the rest (`notRun`); without an intranet DNS server the last two are
+  `skipped`. It never pins a key and never touches the TUN.
+
 **Recommended `authorized_keys` line** (shown in UI):
 `restrict,port-forwarding ecdsa-sha2-nistp256 AAAA… sshovel@<device>`
 
@@ -372,6 +384,7 @@ func (e *Engine) StatsJSON() string
 
 func FetchHostKey(platform Platform, configJSON string) (string, error) // {"type","fingerprint","line"}
 func DiscoverRoutes(platform Platform, configJSON string, importedKey []byte) (string, error) // [{"cidr","dev","isDefault","isLinkLocal"}]
+func TestConnection(platform Platform, configJSON string, importedKey []byte) (string, error) // M6: [{"id","status","ms","target","code","detail"}], §6
 func AuthorizedKeyLine(pkixPublicKey []byte, comment string) (string, error)
 func ImportKey(key, passphrase []byte, comment string) (*ImportedKey, error) // zeroes key and passphrase
 
@@ -386,9 +399,10 @@ func ValidateConfig(configJSON string) string // "" or JSON list of {field, code
 func Version() string
 ```
 
-`FetchHostKey` and `DiscoverRoutes` take the `Platform` because they must protect their socket,
-resolve the host on the underlying network, and (for discovery) sign with the Keystore key
-(M1). Every `[]byte importedKey` is zeroed by Go before the call returns.
+`FetchHostKey`, `DiscoverRoutes`, and `TestConnection` take the `Platform` because they must
+protect their socket, resolve the host on the underlying network, and (for discovery and the
+test) sign with the Keystore key (M1). `TestConnection` fails only for an invalid profile
+(`INTERNAL`); check failures are in its result, each with its §8 code. Every `[]byte importedKey` is zeroed by Go before the call returns.
 
 **Errors.** Every error returned to Kotlin has a message of the form `"CODE: detail"`, where `CODE`
 is one of the codes below. Invalid profiles fail with `INTERNAL: invalid profile: field=CODE, …`.
@@ -549,7 +563,7 @@ Current stack, all allowed:
 | Go runtime/stdlib, `x/crypto`, `x/mobile`, `miekg/dns` | BSD-3-Clause |
 | gVisor | Apache-2.0 |
 | AndroidX, Compose, Material 3, Kotlin, kotlinx, ZXing, AboutLibraries, Material Symbols | Apache-2.0 |
-| Monospace font | Apache-2.0 or OFL-1.1 |
+| Monospace font (Roboto Mono, bundled; M6) | OFL-1.1 |
 
 Test-only tooling that isn't shipped in the APK is out of scope: the Docker test environment
 (nginx, dnsmasq) and build tools like `go-licenses` and `reuse`.
@@ -557,7 +571,8 @@ Test-only tooling that isn't shipped in the APK is out of scope: the Docker test
 ### Obligations the app and repo must meet
 
 1. **License text.** Keep the verbatim GPL-3.0 text in `LICENSE` at the repo root, and ship it in
-   the app so the in-app screen can display it.
+   the app so the in-app screen can display it (the `licenseAsset` Gradle task copies it, and the
+   OFL-1.1 and Apache-2.0 texts of the bundled font and icons, into the APK's assets).
 2. **Per-file notices.** Every source file (Go, Kotlin, Gradle scripts, XML resources, shell) starts
    with SPDX headers:
    <!-- REUSE-IgnoreStart -->
@@ -589,6 +604,8 @@ Test-only tooling that isn't shipped in the APK is out of scope: the Docker test
      with `GOOS=android GOARCH=arm64`. The output is merged into the same screen.
    - Go's own `$(go env GOROOT)/LICENSE` is added explicitly, since the runtime is statically linked
      into the `.so` and tooling may not report it.
+   - The bundled font (Roboto Mono) and icons (Material Symbols) are listed after the Go modules,
+     each with its license text (M6).
 6. **Copied code.** Code copied or adapted from other projects keeps its original copyright and
    license header (SPDX lines for both). The file must be listed in `docs/THIRD_PARTY.md`, and its
    license must be on the allowed list. Code from `xjasonlyu/tun2socks` (MIT) may be adapted under

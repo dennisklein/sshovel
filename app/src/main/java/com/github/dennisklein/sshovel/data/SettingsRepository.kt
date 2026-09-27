@@ -14,9 +14,21 @@ class SettingsRepository(private val store: AppStore, scope: CoroutineScope) {
     val settings: StateFlow<AppSettings> = store.state.map { it?.settings ?: AppSettings() }
         .stateIn(scope, SharingStarted.Eagerly, AppSettings())
 
+    /** Null until the store has been read, so the UI can wait instead of flashing defaults. */
+    val loaded: StateFlow<AppSettings?> = store.state.map { it?.settings }
+        .stateIn(scope, SharingStarted.Eagerly, null)
+
     suspend fun current(): AppSettings = store.current().settings
 
-    suspend fun setRequireUnlock(on: Boolean) {
-        store.update { it.copy(settings = it.settings.copy(requireUnlock = on)) }
+    suspend fun setRequireUnlock(on: Boolean) = update { it.copy(requireUnlock = on) }
+
+    suspend fun setTheme(theme: String) = update { it.copy(theme = theme) }
+
+    suspend fun setWallpaperColors(on: Boolean) = update { it.copy(wallpaperColors = on) }
+
+    suspend fun setOnboardingDone() = update { it.copy(onboardingDone = true) }
+
+    private suspend fun update(change: (AppSettings) -> AppSettings) {
+        store.update { it.copy(settings = change(it.settings)) }
     }
 }

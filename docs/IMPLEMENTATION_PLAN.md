@@ -342,6 +342,26 @@ composables.
 - If the design handoff doesn't cover these elements, build them from the handoff's existing
   components (list items, top app bar, body text) and note it in the report.
 
+Run it with `tools/android-env/run.sh m6`. It runs `connectedDebugAndroidTest` (the Compose UI
+tests in `app/src/androidTest/.../ui`), then installs the app fresh without the debug build's
+test-env profile (a `no-seed` marker made with `run-as`) and walks onboarding through uiautomator:
+the key is created on the emulator, its `authorized_keys` line (from the debug `key-list`
+command) goes into test-env, the server is verified, trusted, and tested with the Go core's
+`TestConnection` (added in M6, ARCHITECTURE §6), and the tile is added through Android's own
+`requestAddTileService` dialog. It then screenshots the screens in light and dark with wallpaper
+colors off (the handoff's brand scheme) through the debug `open` command, forces a host key
+change for S4, and checks About and the licenses screen against `go-licenses report`.
+
+Implementation notes (M6):
+
+- Screens live in `ui/screens/<feature>`, components in `ui/components`, navigation in
+  `ui/SshovelApp.kt` (type-safe routes, `ui/nav/Routes.kt`).
+- The profile editor keeps a string draft (`ProfileDraft`) and maps the Go core's
+  `ValidateConfig` issues to fields; a subnet covered by another is a *warning* (it doesn't block
+  saving), as `ValidateConfig` reports it (ARCHITECTURE §8), shown with the warning accent.
+- The Diagnostics entry (`troubleshoot`) and the "View diagnostics" actions arrive with the
+  Diagnostics screen in M7; until then the On-state warning card has no button.
+
 ### M7 — Diagnostics, accessibility, polish
 
 The Diagnostics screen (events, DNS, connections) with share/export, the flagged-DNS warnings, and

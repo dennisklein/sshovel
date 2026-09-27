@@ -23,3 +23,15 @@ fun monoArg(id: Int, vararg args: String): AnnotatedString {
         }
     }
 }
+
+/** [text] with every occurrence of [words] set in monospace, for copy that names machine values. */
+fun monoWords(text: String, vararg words: String): AnnotatedString = buildAnnotatedString {
+    append(text)
+    for (w in words.filter { it.isNotEmpty() }) {
+        var i = text.indexOf(w)
+        while (i >= 0) {
+            addStyle(SpanStyle(fontFamily = MonoFamily), i, i + w.length)
+            i = text.indexOf(w, i + w.length)
+        }
+    }
+}

@@ -39,6 +39,10 @@ import kotlin.concurrent.thread
  *   the way the editor will; validation errors are logged as `<cmd> invalid CODE@field …`
  * - `dns-log` (the DNS diagnostics buffer, one line per query), `dns-clear`
  * - `require-unlock value` (true|false), `profile-default profile`
+ * - `theme value` (system|light|dark), `wallpaper value` (true|false: wallpaper colors)
+ * - `open screen [arg]`: navigate, for screenshots (M6): home, onboarding [step], profile [id],
+ *   apps (the open editor's app picker), keys, key id, settings, about, license, licenses,
+ *   mismatch
  *
  * Results are logged under the tag "sshovel/Debug", one line per command, starting with the
  * command name. Never used for anything but test-env: passphrases here are test data.
@@ -46,7 +50,7 @@ import kotlin.concurrent.thread
 object DebugCommands {
     private const val TAG = "sshovel/Debug"
 
-    fun handle(activity: Activity, intent: Intent?, connect: (String?) -> Unit) {
+    fun handle(activity: Activity, intent: Intent?, connect: (String?) -> Unit, open: (String, String?) -> Unit) {
         val container = (activity.application as SshovelApplication).container
         val controller = container.tunnelController
         fun arg(name: String) = intent?.getStringExtra(name)
@@ -89,7 +93,9 @@ object DebugCommands {
                 }
             }
             "key-list" -> async {
-                container.keys.keys.value.forEach { Log.i(TAG, "key-list ${it.id} ${it.kind} ${it.type} ${it.security} ${it.name}") }
+                // Public material only: the authorized_keys line lets the runbook install a key.
+                container.keys.keys.value.forEach { Log.i(TAG, "key-list ${it.id} ${it.kind} ${it.type} ${it.security} ${it.name} | ${it.authorizedLine}") }
+                Log.i(TAG, "key-list end ${container.keys.keys.value.size}")
             }
             "key-delete" -> async {
                 try {
@@ -152,6 +158,18 @@ object DebugCommands {
             "require-unlock" -> async {
                 container.settings.setRequireUnlock(arg("value") == "true")
                 Log.i(TAG, "require-unlock ${container.settings.current().requireUnlock}")
+            }
+            "theme" -> async {
+                container.settings.setTheme(arg("value") ?: "system")
+                Log.i(TAG, "theme ${container.settings.current().theme}")
+            }
+            "wallpaper" -> async {
+                container.settings.setWallpaperColors(arg("value") == "true")
+                Log.i(TAG, "wallpaper ${container.settings.current().wallpaperColors}")
+            }
+            "open" -> {
+                open(arg("screen") ?: "home", arg("arg"))
+                Log.i(TAG, "open ${arg("screen")}")
             }
             "profile-default" -> async {
                 container.profiles.setDefault(arg("profile").orEmpty())

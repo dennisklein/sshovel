@@ -13,6 +13,7 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
+	"net"
 	"net/netip"
 	"strings"
 	"sync"
@@ -270,6 +271,27 @@ func TestFetchHostKeyAndDiscoverRoutes(t *testing.T) {
 	srv.DenyExec.Store(true)
 	if _, err := DiscoverRoutes(p, profileJSON(t, p, srv, true), nil); err == nil || !strings.HasPrefix(err.Error(), "ROUTE_DISCOVERY_UNAVAILABLE") {
 		t.Errorf("exec denied: %v", err)
+	}
+}
+
+func TestTestConnection(t *testing.T) {
+	p := newFakePlatform(t)
+	srv := newServer(t, p)
+	resolver := testutil.NewFakeDNS(t)
+	srv.Dial = func(string) (net.Conn, error) { return net.Dial("tcp", resolver.Addr) }
+
+	var checks []struct{ ID, Status, Code string }
+	out, err := TestConnection(p, profileJSON(t, p, srv, false), nil)
+	if err != nil || json.Unmarshal([]byte(out), &checks) != nil || len(checks) != 5 ||
+		checks[0].Status != "passed" || checks[1].Code != "HOST_KEY_UNVERIFIED" || checks[2].Status != "notRun" {
+		t.Errorf("unpinned: %s %v", out, err)
+	}
+	out, err = TestConnection(p, profileJSON(t, p, srv, true), nil)
+	if err != nil || json.Unmarshal([]byte(out), &checks) != nil || checks[4].Status != "passed" {
+		t.Errorf("pinned: %s %v", out, err)
+	}
+	if _, err := TestConnection(p, `{"name":""}`, nil); err == nil || !strings.HasPrefix(err.Error(), "INTERNAL") {
+		t.Errorf("invalid profile: %v", err)
 	}
 }
 

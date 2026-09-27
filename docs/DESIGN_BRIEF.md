@@ -294,6 +294,16 @@ once (ARCHITECTURE §4), not held. The handoff's `reconnect_detail_*` strings en
 connections fail until the tunnel is back." instead of "Intranet traffic is held until the tunnel
 is back."
 
+**M6 notes (implementation of the handoff).**
+
+- Copy the handoff implies but doesn't spell out is added at the end of the app's `strings.xml`
+  (e.g. the per-check "Connection failed" explanations, "Reconnecting" after a lost connection
+  that wasn't a network change, uptime units, the About screen). Same voice as above.
+- Mismatch (S4): the back gesture is "Disconnect", as the S4 frame says. The H6 hero stays the
+  way back to S4 while the error stands (after "Review in profile", or when S4 wasn't opened).
+- A subnet already covered by another is shown as a warning, not an error: the core reports it
+  as one, and a covered subnet is harmless (ARCHITECTURE §8).
+
 ## 9. Handoff deliverables (what engineering needs from you)
 
 1. Every screen and state in §5, light and dark, plus the storyboards in §6.

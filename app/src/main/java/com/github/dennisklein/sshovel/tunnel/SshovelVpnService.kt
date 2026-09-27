@@ -65,6 +65,7 @@ class SshovelVpnService : android.net.VpnService() {
         app = application as SshovelApplication
         notifications = TunnelNotifications(this)
         lastNetwork = network.current.value
+        previousTransport = lastNetwork?.let(network::transportOf)
         scope.launch {
             combine(controller.state, controller.activeProfile, controller.stats) { s, p, st -> Triple(s, p, st) }
                 .distinctUntilChanged()
@@ -232,13 +233,20 @@ class SshovelVpnService : android.net.VpnService() {
         stopSelf()
     }
 
+    /** Transport of the last network seen, for "from Wi-Fi to mobile data". */
+    private var previousTransport: NetworkMonitor.Transport? = null
+
     private fun onNetwork(net: Network?) {
         val previous = lastNetwork
         lastNetwork = net
         val s = session ?: return
         if (s.tunUp) setUnderlyingNetworks(net?.let { arrayOf(it) } ?: emptyArray())
         // A new network (or the first one after none): the SSH socket is bound to the old one.
-        if (net != null && net != previous) s.engine.networkChanged()
+        if (net != null && net != previous) {
+            controller.onNetworkChange(NetworkChange(previousTransport, network.transportOf(net)))
+            s.engine.networkChanged()
+        }
+        previousTransport = net?.let(network::transportOf) ?: previousTransport
     }
 
     private suspend fun pollStats(s: Session) {
@@ -271,6 +279,7 @@ class SshovelVpnService : android.net.VpnService() {
         }
         return b.establish().also {
             // Only now can the system tell us about Always-on and lockdown (ARCHITECTURE §11).
+            if (it != null) controller.onAlwaysOn(if (isAlwaysOn) AlwaysOn(isLockdownEnabled) else null)
             if (BuildConfig.DEBUG && it != null) Log.i(TAG, "established alwaysOn=$isAlwaysOn lockdown=$isLockdownEnabled")
         }
     }

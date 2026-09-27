@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-FileCopyrightText: Google LLC -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Material Symbols Outlined "arrow_upward", 24px, from google/material-design-icons
+     (symbols/android/arrow_upward/materialsymbolsoutlined/arrow_upward_24px.xml).
+     Changed: removed android:tint="?attr/colorControlNormal" (AppCompat attribute; Compose tints). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960"
+>
+  <path
+      android:fillColor="@android:color/white"
+      android:pathData="M440,800L440,313L216,537L160,480L480,160L800,480L744,537L520,313L520,800L440,800Z"/>
+</vector>

@@ -12,13 +12,18 @@ import com.github.dennisklein.sshovel.keys.KeyRepository
  * Debug builds only: on first start, adds a "test-env" profile (test-env/README.md, reached from
  * the emulator at 10.0.2.2:2222) as the default. Its key is the build-generated test key
  * (:app:debugTestKey), imported through the vault like any other key, and it pins the host key
- * test-env created on first start (test-env/hostkeys), read at build time.
+ * test-env created on first start (test-env/hostkeys), read at build time. Skipped when the
+ * [NO_SEED_MARKER] file exists (the onboarding run in tools/android-env/m6.sh).
  */
 object VariantSeed {
     const val PROFILE_ID = "debug-test-env"
 
+    /** tools/android-env creates this file (run-as) to start from an empty app for onboarding. */
+    const val NO_SEED_MARKER = "no-seed"
+
     suspend fun seed(context: Context, profiles: ProfileRepository, keys: KeyRepository) {
         if (profiles.profile(PROFILE_ID) != null) return
+        if (java.io.File(context.filesDir, NO_SEED_MARKER).exists()) return
         try {
             val keyBytes = context.assets.open("test_env_client_key").use { it.readBytes() }
             val key = keys.import("test-env", keyBytes, null)

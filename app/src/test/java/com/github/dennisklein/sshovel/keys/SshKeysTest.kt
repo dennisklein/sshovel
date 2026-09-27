@@ -23,4 +23,12 @@ class SshKeysTest {
         assertEquals("Pixel-9-Pro", SshKeys.comment(" Pixel 9  Pro "))
         assertEquals("sshovel", SshKeys.comment("   "))
     }
+
+    @Test fun rsaBitsAndOptions() {
+        val rsa = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCxsywykH18pVKKOKaGGSIxDeoJM7M+UiXLB9zSUszY7ANHAySrqjHBLjsTJT6BLZBSQZ5AMtMeqdq4sVL6cJID+Ba43F7JR2QvALqSA8TkuryXVAiuays5yrA44lA2TOLnL7F6jN9WxvPByeecTjsRb52ssne1n2uqmTNZ+hF3Cp/lcrOQLcJoRk9NxH48FXtcU4nPUrTJXqiJlk4Sfl5ZOfqCDecSqf5Srqd2zCBkevv4Oxn1oYWFk1hJ5uVUeOWuCPOEwSMbIhXQIhaXYCzUnDxEpDuuTZDnw2KfGDBMZXIMsgPPwdKt/zysx56qfd+4oZo+0n7XB2SgiczY+xfTdN2LU6niwoZtx9sHNwyAdwfMYrzrhJTUbfP1J4DO/KidK296poWoV1YABs3wiS6OyyIBMJu09/hQmKfU0gl4wTtdvvNJ6MTPeQzeVDeYIIxkXJUXJtKiFqKqi7SbYxJE3o6H8NbvoVUoi+HjwGJeKWss4okW1YAScOK1cx8aVYM= t"
+        assertEquals(3072, SshKeys.rsaBits("restrict,port-forwarding $rsa"))
+        assertEquals(null, SshKeys.rsaBits(line))
+        assertEquals(line, SshKeys.withoutOptions("restrict,port-forwarding $line"))
+        assertEquals(line, SshKeys.withoutOptions(line))
+    }
 }

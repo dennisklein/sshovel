@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-FileCopyrightText: Google LLC -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Material Symbols Outlined "swap_horiz", 24px, from google/material-design-icons
+     (symbols/android/swap_horiz/materialsymbolsoutlined/swap_horiz_24px.xml).
+     Changed: removed android:tint="?attr/colorControlNormal" (AppCompat attribute; Compose tints). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="960"
+    android:viewportHeight="960"
+>
+  <path
+      android:fillColor="@android:color/white"
+      android:pathData="M280,800L80,600L280,400L336,457L233,560L520,560L520,640L233,640L336,743L280,800ZM680,560L624,503L727,400L440,400L440,320L727,320L624,217L680,160L880,360L680,560Z"/>
+</vector>

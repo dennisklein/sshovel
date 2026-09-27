@@ -20,6 +20,7 @@ object Codes {
     const val INTERNAL = "INTERNAL"
     const val FORWARDING_DENIED = "FORWARDING_DENIED"
     const val DNS_UNREACHABLE = "DNS_UNREACHABLE"
+    const val ROUTE_DISCOVERY_UNAVAILABLE = "ROUTE_DISCOVERY_UNAVAILABLE"
 
     // Key import only (mobile.ImportKey).
     const val KEY_PASSPHRASE = "KEY_PASSPHRASE"

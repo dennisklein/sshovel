@@ -32,15 +32,21 @@ class NetworkMonitor(context: Context, scope: CoroutineScope) {
     val available: StateFlow<Boolean> = current.map { it != null }.stateIn(scope, SharingStarted.Eagerly, false)
 
     /** Human-readable transport of the current network, for diagnostics ("Wi-Fi", "mobile"). */
-    fun describe(network: Network?): String {
-        val caps = network?.let { cm.getNetworkCapabilities(it) } ?: return "none"
+    fun describe(network: Network?): String = network?.let { transportOf(it)?.label } ?: "none"
+
+    /** The transport of [network], or null if it's gone. */
+    fun transportOf(network: Network): Transport? {
+        val caps = cm.getNetworkCapabilities(network) ?: return null
         return when {
-            caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> "Wi-Fi"
-            caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> "mobile"
-            caps.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> "Ethernet"
-            else -> "other"
+            caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> Transport.WIFI
+            caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> Transport.MOBILE
+            caps.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> Transport.ETHERNET
+            else -> Transport.OTHER
         }
     }
+
+    /** Kinds of underlying network, for the Reconnecting copy ("from Wi-Fi to mobile data"). */
+    enum class Transport(val label: String) { WIFI("Wi-Fi"), MOBILE("mobile"), ETHERNET("Ethernet"), OTHER("other") }
 
     init {
         val request = NetworkRequest.Builder()

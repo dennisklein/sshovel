@@ -35,7 +35,19 @@ data class StoredData(
 data class AppSettings(
     /** "Require unlock to use the tile": on the lock screen the tile asks to unlock first. */
     val requireUnlock: Boolean = false,
-)
+    /** [THEME_SYSTEM], [THEME_LIGHT], or [THEME_DARK]. */
+    val theme: String = THEME_SYSTEM,
+    /** "Use wallpaper colors"; off uses the brand scheme (handoff §1.1). */
+    val wallpaperColors: Boolean = true,
+    /** Onboarding finished or skipped once; it no longer opens by itself. */
+    val onboardingDone: Boolean = false,
+) {
+    companion object {
+        const val THEME_SYSTEM = "system"
+        const val THEME_LIGHT = "light"
+        const val THEME_DARK = "dark"
+    }
+}
 
 internal object StoredDataSerializer : Serializer<StoredData> {
     override val defaultValue = StoredData()

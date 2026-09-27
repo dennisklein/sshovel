@@ -26,6 +26,7 @@ import (
 	"github.com/dennisklein/sshovel/core/engine"
 	"github.com/dennisklein/sshovel/core/errcode"
 	"github.com/dennisklein/sshovel/core/netstack"
+	"github.com/dennisklein/sshovel/core/probe"
 	"github.com/dennisklein/sshovel/core/sshx"
 )
 
@@ -212,6 +213,24 @@ func DiscoverRoutes(platform Platform, configJSON string, importedKey []byte) (s
 		return "", err
 	}
 	return mustJSON(routes), nil
+}
+
+// TestConnection runs "Test connection" (onboarding, handoff O6) against the
+// profile without the VPN: reachable, identity, key accepted, forwarding, and
+// intranet DNS. It returns [{"id","status","ms","target","code","detail"}]
+// (probe.Check); only an invalid profile is an error. importedKey is zeroed.
+func TestConnection(platform Platform, configJSON string, importedKey []byte) (string, error) {
+	defer clear(importedKey)
+	prof, err := parseValid(configJSON)
+	if err != nil {
+		return "", err
+	}
+	signer, signerErr := sshx.SignerFor(prof, platform.SignDigest, importedKey)
+	o := sshx.OptionsFor(prof, signer)
+	o.Protect, o.Lookup = protectOf(platform), lookupOf(platform)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*prof.ConnectTimeout()+15*time.Second)
+	defer cancel()
+	return mustJSON(probe.Run(ctx, prof, o, signerErr)), nil
 }
 
 // AuthorizedKeyLine renders the recommended authorized_keys line for a

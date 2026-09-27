@@ -25,3 +25,10 @@ path = ["gradlew", "gradlew.bat", "gradle/wrapper/gradle-wrapper.jar", "gradle/w
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2015-2021 the original authors (Gradle)"
 SPDX-License-Identifier = "Apache-2.0"
+
+# Roboto Mono (docs/design handoff §1.3), bundled for machine values.
+[[annotations]]
+path = ["app/src/main/res/font/roboto_mono_*.ttf"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2015 The Roboto Mono Project Authors (https://github.com/googlefonts/robotomono)"
+SPDX-License-Identifier = "OFL-1.1"

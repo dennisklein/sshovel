@@ -181,11 +181,12 @@ if always_on_boot 1; then
 else
     result FAIL "Always-on with lockdown didn't connect at boot (service: $(service_line))"
 fi
+# Both boots' logs, once and in order, then only new lines (-T 1): fetch reads $OUT/logcat.txt.
+kill "$LOGCAT_PID" 2>/dev/null
+cat "$OUT/boot-all.txt" >> "$OUT/logcat.txt" 2>/dev/null
+adb logcat -v time -T 1 >> "$OUT/logcat.txt" 2>/dev/null &
+LOGCAT_PID=$!
 if [ "$lockdown_ok" = 1 ]; then
-    # fetch reads $OUT/logcat.txt: point the logcat stream there again.
-    kill "$LOGCAT_PID" 2>/dev/null
-    adb logcat -v time >> "$OUT/logcat.txt" 2>/dev/null &
-    LOGCAT_PID=$!
     r=$(fetch lockdown-wiki http://wiki.corp.test/); echo "$r"
     echo "$r" | grep -q ' 200 ' && result PASS "Lockdown: connects at boot with the TUN up first; wiki loads ($r)" ||
         result FAIL "Lockdown connected but the wiki fetch failed: $r"
@@ -193,5 +194,4 @@ fi
 adb shell settings delete secure always_on_vpn_app; adb shell settings delete secure always_on_vpn_lockdown
 
 say "Summary"
-cat "$OUT/boot-all.txt" >> "$OUT/logcat.txt" 2>/dev/null
 write_summary M5

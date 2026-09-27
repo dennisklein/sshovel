@@ -69,6 +69,24 @@ object SshKeys {
         else -> "/etc/ssh/ssh_host_ecdsa_key.pub"
     }
 
+    /** Bit length of an ssh-rsa key in an authorized_keys line (e.g. 3072), or null. */
+    fun rsaBits(authorizedLine: String): Int? = runCatching {
+        val tokens = authorizedLine.trim().split(Regex("\\s+"))
+        val i = tokens.indexOf("ssh-rsa")
+        val b = java.nio.ByteBuffer.wrap(Base64.getDecoder().decode(tokens[i + 1]))
+        fun next(): ByteArray = ByteArray(b.int).also { b.get(it) }
+        next() // "ssh-rsa"
+        next() // e
+        java.math.BigInteger(1, next()).bitLength()
+    }.getOrNull()
+
+    /** The public key without authorized_keys options ("restrict,port-forwarding ssh-… AAAA… c" → "ssh-… AAAA… c"). */
+    fun withoutOptions(authorizedLine: String): String {
+        val tokens = authorizedLine.trim().split(Regex("\\s+"))
+        val i = tokens.indexOfFirst { it.startsWith("ssh-") || it.startsWith("ecdsa-") || it.startsWith("sk-") }
+        return if (i > 0) tokens.drop(i).joinToString(" ") else authorizedLine.trim()
+    }
+
     /** A key name usable as the public key comment: no spaces, no control characters. */
     fun comment(name: String): String =
         name.trim().replace(Regex("\\s+"), "-").filter { it.isLetterOrDigit() || it in "@._-+" }.ifEmpty { "sshovel" }

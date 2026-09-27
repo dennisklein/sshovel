@@ -16,7 +16,7 @@ import com.github.dennisklein.sshovel.BuildConfig
 import com.github.dennisklein.sshovel.R
 import com.github.dennisklein.sshovel.SshovelApplication
 import com.github.dennisklein.sshovel.ui.MainActivity
-import com.github.dennisklein.sshovel.ui.consent.VpnConsentActivity
+import com.github.dennisklein.sshovel.ui.screens.consent.VpnConsentActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

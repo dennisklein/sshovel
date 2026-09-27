@@ -296,3 +296,25 @@ func (c *Client) Keepalive(ctx context.Context, interval time.Duration) error {
 		}
 	}
 }
+
+// Ping resolves the server and opens (then closes) a TCP connection to it,
+// returning how long the connect took. Errors carry HOST_UNREACHABLE.
+func Ping(ctx context.Context, o Options) (time.Duration, error) {
+	if o.Timeout <= 0 {
+		o.Timeout = config.DefaultConnectTimeoutSec * time.Second
+	}
+	ctx, cancel := context.WithTimeout(ctx, o.Timeout)
+	defer cancel()
+	addrs, err := resolve(ctx, o)
+	if err != nil {
+		return 0, errcode.New(errcode.HostUnreachable, err)
+	}
+	start := time.Now()
+	conn, err := dialAny(ctx, addrs, o.Port, o.Protect)
+	if err != nil {
+		return 0, errcode.New(errcode.HostUnreachable, err)
+	}
+	d := time.Since(start)
+	conn.Close()
+	return d, nil
+}

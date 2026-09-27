@@ -12,27 +12,21 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.res.stringResource
-import com.github.dennisklein.sshovel.R
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.dennisklein.sshovel.SshovelApplication
-import com.github.dennisklein.sshovel.ui.consent.VpnConsentActivity
-import com.github.dennisklein.sshovel.ui.home.HomeActions
-import com.github.dennisklein.sshovel.ui.home.HomeMessage
-import com.github.dennisklein.sshovel.ui.home.HomeScreen
-import com.github.dennisklein.sshovel.ui.home.HomeViewModel
+import com.github.dennisklein.sshovel.ui.screens.consent.VpnConsentActivity
 import com.github.dennisklein.sshovel.ui.theme.SshovelTheme
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 
 class MainActivity : ComponentActivity() {
     private val container get() = (application as SshovelApplication).container
-    private val home: HomeViewModel by viewModels { HomeViewModel.factory(container) }
 
     private val notificationPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
+
+    /** Debug builds' "open" command (tools/android-env screenshots); buffered until composed. */
+    private val opens = Channel<Pair<String, String?>>(Channel.BUFFERED)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,42 +35,26 @@ class MainActivity : ComponentActivity() {
             notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
         setContent {
-            SshovelTheme {
-                val ui by home.ui.collectAsStateWithLifecycle()
-                val snackbar = remember { SnackbarHostState() }
-                val trusted = stringResource(R.string.server_trusted)
-                LaunchedEffect(Unit) {
-                    home.messages.collect { if (it == HomeMessage.SERVER_TRUSTED) snackbar.showSnackbar(trusted) }
-                }
-                HomeScreen(
-                    ui,
-                    HomeActions(
-                        onConnect = { connect() },
-                        onDisconnect = home::disconnect,
-                        onRetryNow = home::retryNow,
-                        onVerify = home::startVerify,
-                        onTrust = { home.trust(onTrusted = { connect() }) },
-                        onCancelVerify = home::cancelVerify,
-                        onDismissError = home::dismissError,
-                    ),
-                    snackbar,
-                )
+            val settings by container.settings.settings.collectAsStateWithLifecycle()
+            SshovelTheme(settings) {
+                SshovelApp(container, ::connect, opens.receiveAsFlow())
             }
         }
-        DebugCommands.handle(this, intent, ::connect)
+        DebugCommands.handle(this, intent, ::connect) { screen, arg -> opens.trySend(screen to arg) }
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        DebugCommands.handle(this, intent, ::connect)
+        DebugCommands.handle(this, intent, ::connect) { screen, arg -> opens.trySend(screen to arg) }
     }
 
     /** Connects, via the explainer and Android's consent dialog if needed (DESIGN_BRIEF §5.4). */
-    private fun connect(profileId: String? = null) {
+    private fun connect(profileId: String?) {
+        val id = profileId ?: container.profiles.defaultProfileNow()?.id ?: return
         if (VpnService.prepare(this) != null) {
-            startActivity(VpnConsentActivity.intent(this, profileId ?: home.ui.value.profile?.id))
+            startActivity(VpnConsentActivity.intent(this, id))
         } else {
-            home.connect(profileId)
+            container.tunnelController.connect(id)
         }
     }
 }

@@ -9,7 +9,7 @@ import com.github.dennisklein.sshovel.data.Profile
 import com.github.dennisklein.sshovel.tunnel.Codes
 import java.util.Locale
 
-/** 1536 → "1.5 KB". Binary units with decimal-style labels, like Android's own data usage. */
+/** 1536 → "1.5 KB", 50_540_000 → "48.2 MB" (handoff H3): binary units, one decimal below 100. */
 fun formatBytes(bytes: Long): String {
     if (bytes < 1024) return "$bytes B"
     val units = listOf("KB", "MB", "GB", "TB")
@@ -19,7 +19,26 @@ fun formatBytes(bytes: Long): String {
         v /= 1024
         i++
     }
-    return String.format(Locale.ROOT, if (v < 10) "%.1f %s" else "%.0f %s", v, units[i])
+    return String.format(Locale.getDefault(), if (v < 100) "%.1f %s" else "%.0f %s", v, units[i])
+}
+
+/** 1902 → "1,902" in the user's locale. */
+fun formatCount(n: Long): String = String.format(Locale.getDefault(), "%,d", n)
+
+/** Uptime as the hero shows it: "1 h 24 min", "7 min" (whole minutes; handoff H3). */
+fun formatUptimeShort(context: Context, seconds: Long): String {
+    val h = (seconds / 3600).toInt()
+    val m = ((seconds % 3600) / 60).toInt()
+    return if (h > 0) context.getString(R.string.uptime_h_min, h, m) else context.getString(R.string.uptime_min, m)
+}
+
+/** An ISO-8601 instant as "12 Mar 2026" in the user's locale, or null if unparsable. */
+fun formatDate(iso: String?): String? = iso?.let {
+    runCatching {
+        java.time.format.DateTimeFormatter.ofLocalizedDate(java.time.format.FormatStyle.MEDIUM)
+            .withZone(java.time.ZoneId.systemDefault())
+            .format(java.time.Instant.parse(it))
+    }.getOrNull()
 }
 
 /** 3725 → "1:02:05", 65 → "1:05". */

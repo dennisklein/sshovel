@@ -10,6 +10,14 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SYSTEM_EXEMPTED" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!-- The app picker lists launchable apps (DESIGN_BRIEF §5.7); no QUERY_ALL_PACKAGES. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
+
     <!-- Pinned host keys and the key vault must not be restored elsewhere (ARCHITECTURE §9). -->
     <application
         android:name=".SshovelApplication"
@@ -37,7 +45,7 @@
 
         <!-- Explainer + Android's VPN consent dialog, opened by the tile and the app (§5.4). -->
         <activity
-            android:name=".ui.consent.VpnConsentActivity"
+            android:name=".ui.screens.consent.VpnConsentActivity"
             android:exported="false"
             android:excludeFromRecents="true"
             android:taskAffinity=""

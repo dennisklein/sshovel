@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Dennis Klein
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package com.github.dennisklein.sshovel.ui.consent
+package com.github.dennisklein.sshovel.ui.screens.consent
 
 import android.content.Context
 import android.content.Intent
@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.github.dennisklein.sshovel.SshovelApplication
 import com.github.dennisklein.sshovel.data.Profile
@@ -45,7 +46,8 @@ class VpnConsentActivity : ComponentActivity() {
                 ?: container.profiles.defaultProfile()
         }
         setContent {
-            SshovelTheme {
+            val settings by container.settings.settings.collectAsStateWithLifecycle()
+            SshovelTheme(settings) {
                 if (denied) {
                     VpnDeniedScreen(
                         onTryAgain = ::askSystem,

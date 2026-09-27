@@ -72,7 +72,7 @@ android {
         minSdk = 36
         targetSdk = 36
         versionCode = 1
-        versionName = "0.2.0-m2"
+        versionName = "0.6.0-m6"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "SOURCE_URL", "\"${sourceUrl.get()}\"")
         // core.aar is built for these only (buildGoCore); drop other ABIs'
@@ -138,7 +138,12 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.androidx.datastore)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.zxing.core)
+    implementation(libs.aboutlibraries.core)
+    implementation(libs.aboutlibraries.compose.m3)
     debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     // tools/android-env/m2.sh proves checkLicenses fails on a forbidden license
     // (GPL-2.0 with FOSS exception) by building with -Psshovel.licenseProbe.
@@ -153,6 +158,8 @@ dependencies {
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
 }
 
 // ---- Go core → AAR (IMPLEMENTATION_PLAN §4) ---------------------------------
@@ -381,6 +388,18 @@ tasks.matching { it.name == "preReleaseBuild" }.configureEach { dependsOn(checkL
 
 // ---- Generated assets ---------------------------------------------------------
 
+// The GPL text for Settings → About → View license (ARCHITECTURE §12 item 3), from the repo's
+// verbatim LICENSE file.
+// Also the license texts of the bundled font and icons (Roboto Mono, Material Symbols).
+val licenseAsset = tasks.register<Copy>("licenseAsset") {
+    from(repoRoot.file("LICENSE"))
+    from(repoRoot.dir("LICENSES")) {
+        include("OFL-1.1.txt", "Apache-2.0.txt")
+        into("licenses")
+    }
+    into(layout.buildDirectory.dir("generated/license/assets"))
+}
+
 val debugTestKey = tasks.register<Exec>("debugTestKey") {
     group = "test-env"
     description = "Creates the debug build's test-env client key (test-env/keys/debug_client_key)."
@@ -410,6 +429,7 @@ androidComponents {
         }
         verifyPageAlignment.configure { dependsOn(verifyApk) }
         variant.sources.assets?.addGeneratedSourceDirectory(collectGoLicenses, CollectGoLicenses::outputDir)
+        variant.sources.assets?.addStaticSourceDirectory(layout.buildDirectory.dir("generated/license/assets").get().asFile.absolutePath)
         if (variant.buildType == "debug") {
             variant.sources.assets?.addStaticSourceDirectory(
                 layout.buildDirectory.dir("generated/debugKey/assets").get().asFile.absolutePath,
@@ -418,3 +438,4 @@ androidComponents {
     }
 }
 tasks.matching { it.name == "preDebugBuild" }.configureEach { dependsOn(debugKeyAsset) }
+tasks.matching { it.name == "preBuild" }.configureEach { dependsOn(licenseAsset) }

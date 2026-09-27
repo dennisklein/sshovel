@@ -139,6 +139,16 @@ write_summary() {
     cat "$OUT/summary.txt"
 }
 
+# shows <text> [seconds]: waits until a node's text contains <text> (uiautomator dump).
+shows() {
+    for _ in $(seq 1 "${2:-15}"); do
+        adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
+        adb exec-out cat /sdcard/ui.xml | grep -qF "$1" && return 0
+        sleep 1
+    done
+    return 1
+}
+
 # Chrome without first-run screens or the notification prompt (needs adb root).
 chrome_setup() {
     adb shell pm list packages | grep -q com.android.chrome || return 1
