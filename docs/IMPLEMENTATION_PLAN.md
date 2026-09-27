@@ -295,6 +295,12 @@ include/exclude modes, and config validation surfaced in Kotlin.
 through the carrier or Wi-Fi resolver (visible in the diagnostics DNS log). *Only selected apps* mode
 limits the tunnel to the chosen apps. A validation error blocks saving an overlapping tun subnet.
 
+Run it with `tools/android-env/run.sh m4`. The DNS diagnostics log is the in-memory `DnsLog`
+(ARCHITECTURE §5); the M7 Diagnostics screen shows it, and until then debug builds dump it with
+the adb `dns-log` command. Validation reaches Kotlin as `ValidationIssue`s from `ValidateConfig`;
+`ProfileRepository.save` refuses errors. Mapping issues to the handoff's field messages
+(`err_cidr_*`, `err_tunnel_overlap`, …) is part of the M6 profile editor.
+
 ### M5 — Tile, Always-on, consent, revoke
 
 `TunnelTileService` covering every state in `DESIGN_BRIEF.md` §7, `VpnConsentActivity` with the

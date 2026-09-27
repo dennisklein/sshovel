@@ -7,7 +7,10 @@ import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import com.github.dennisklein.sshovel.SshovelApplication
+import com.github.dennisklein.sshovel.data.Apps
 import com.github.dennisklein.sshovel.data.HostKeyAlreadyPinnedException
+import com.github.dennisklein.sshovel.data.Profile
+import com.github.dennisklein.sshovel.data.ProfileInvalidException
 import com.github.dennisklein.sshovel.data.VariantSeed
 import com.github.dennisklein.sshovel.keys.KeyImportException
 import com.github.dennisklein.sshovel.keys.KeyInUseException
@@ -31,6 +34,10 @@ import kotlin.concurrent.thread
  * - `profile-add name key` (a test-env profile, unpinned), `profile-list`
  * - `verify profile` (fetch and log the host key), `trust profile` (fetch and pin, like tapping
  *   "Trust this server"; refused if a pin exists), `forget profile` ("Forget pinned key")
+ * - `profile-apps profile mode [packages]` (mode all|include|exclude, packages comma-separated),
+ *   `profile-exclude profile [cidrs]`, `profile-tun profile cidr dnsip`: edit and save a profile
+ *   the way the editor will; validation errors are logged as `<cmd> invalid CODE@field …`
+ * - `dns-log` (the DNS diagnostics buffer, one line per query), `dns-clear`
  *
  * Results are logged under the tag "sshovel/Debug", one line per command, starting with the
  * command name. Never used for anything but test-env: passphrases here are test data.
@@ -47,6 +54,17 @@ object DebugCommands {
                 block()
             } catch (e: Exception) {
                 Log.i(TAG, "${arg("cmd")} error ${e.javaClass.simpleName}: ${e.message}")
+            }
+        }
+        /** Saves [change] applied to the "profile" extra's profile, logging ok or the issues. */
+        fun edit(change: (Profile) -> Profile) = async {
+            val cmd = arg("cmd")
+            val p = container.profiles.profile(arg("profile").orEmpty()) ?: error("no profile")
+            try {
+                container.profiles.save(change(p))
+                Log.i(TAG, "$cmd ok")
+            } catch (e: ProfileInvalidException) {
+                Log.i(TAG, "$cmd invalid " + e.issues.filter { it.isError }.joinToString(" ") { "${it.code}@${it.field}" })
             }
         }
         when (arg("cmd")) {
@@ -116,6 +134,20 @@ object DebugCommands {
                 container.profiles.forgetHostKey(arg("profile").orEmpty())
                 Log.i(TAG, "forget ok")
             }
+
+            "profile-apps" -> edit { p ->
+                p.copy(apps = Apps(arg("mode") ?: Apps.ALL, arg("packages").orEmpty().split(',').filter { it.isNotBlank() }))
+            }
+            "profile-exclude" -> edit { p -> p.copy(excludedRoutes = arg("cidrs").orEmpty().split(',').filter { it.isNotBlank() }) }
+            "profile-tun" -> edit { p -> p.copy(tun = p.tun.copy(cidr = arg("cidr").orEmpty(), dnsVirtualIp = arg("dnsip").orEmpty())) }
+            "dns-log" -> {
+                val events = container.dnsLog.events.value
+                events.forEach {
+                    Log.i(TAG, "dns-log ${it.route} ${it.name} ${it.qtype} ${it.rcode} ${it.answers.joinToString(",")} ${it.latencyMs}ms")
+                }
+                Log.i(TAG, "dns-log end ${events.size}")
+            }
+            "dns-clear" -> container.dnsLog.clear()
         }
     }
 

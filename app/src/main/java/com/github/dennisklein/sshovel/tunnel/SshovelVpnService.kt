@@ -127,7 +127,7 @@ class SshovelVpnService : android.net.VpnService() {
         notifications.cancelAlert() // the previous error no longer applies
         report(TunnelState.Connecting("resolving"))
         lateinit var s: Session
-        val bridge = PlatformBridge(::protect, network, app.container.keys) { json -> scope.launch { onEngineStatus(s, json) } }
+        val bridge = PlatformBridge(::protect, network, app.container.keys, app.container.dnsLog) { json -> scope.launch { onEngineStatus(s, json) } }
         s = Session(profile, Mobile.newEngine(bridge), bridge)
         session = s
 

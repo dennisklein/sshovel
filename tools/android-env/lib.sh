@@ -137,3 +137,21 @@ write_summary() {
     } > "$OUT/summary.txt"
     cat "$OUT/summary.txt"
 }
+
+# Chrome without first-run screens or the notification prompt (needs adb root).
+chrome_setup() {
+    adb shell pm list packages | grep -q com.android.chrome || return 1
+    adb shell pm grant com.android.chrome android.permission.POST_NOTIFICATIONS 2>/dev/null || true
+    adb shell 'echo "chrome --disable-fre --no-default-browser-check --no-first-run" > /data/local/tmp/chrome-command-line'
+    adb shell am set-debug-app --persistent com.android.chrome
+}
+# chrome_open <url>; chrome_shows <text> [seconds]: polls the UI dump for the text.
+chrome_open() { adb shell am start -a android.intent.action.VIEW -d "$1" com.android.chrome >/dev/null; }
+chrome_shows() {
+    for _ in $(seq 1 "${2:-10}"); do
+        sleep 3
+        adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
+        adb exec-out cat /sdcard/ui.xml | grep -q "$1" && return 0
+    done
+    return 1
+}

@@ -26,6 +26,7 @@ class HostKeyAlreadyPinnedException : IllegalStateException("host key already pi
 class ProfileRepository(
     private val store: AppStore,
     scope: CoroutineScope,
+    private val validator: ProfileValidator = ProfileValidator { emptyList() },
     private val now: () -> Instant = Instant::now,
 ) {
     val profiles: StateFlow<List<Profile>> = store.state.map { it?.profiles.orEmpty() }
@@ -42,11 +43,17 @@ class ProfileRepository(
     /** [defaultProfile] from the last loaded state, for UI code that can't suspend. */
     fun defaultProfileNow(): Profile? = store.state.value?.let(::defaultOf)
 
+    /** Validation issues for [profile] (errors and warnings), as the editor shows them. */
+    fun validate(profile: Profile): List<ValidationIssue> = validator.validate(profile)
+
     /**
-     * Adds or replaces a profile. The stored host key pin is kept as is (a new profile starts
+     * Adds or replaces a profile. Throws [ProfileInvalidException] if validation reports an
+     * error; warnings don't block. The stored host key pin is kept as is (a new profile starts
      * unpinned). The first profile becomes the default.
      */
     suspend fun save(profile: Profile): Profile {
+        val issues = validator.validate(profile)
+        if (issues.any { it.isError }) throw ProfileInvalidException(issues)
         var saved = profile
         store.update { d ->
             val existing = d.profiles.firstOrNull { it.id == profile.id }

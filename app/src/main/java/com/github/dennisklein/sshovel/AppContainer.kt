@@ -6,8 +6,10 @@ package com.github.dennisklein.sshovel
 import android.content.Context
 import androidx.datastore.dataStoreFile
 import com.github.dennisklein.sshovel.data.AppStore
+import com.github.dennisklein.sshovel.data.GoProfileValidator
 import com.github.dennisklein.sshovel.data.ProfileRepository
 import com.github.dennisklein.sshovel.data.VariantSeed
+import com.github.dennisklein.sshovel.diagnostics.DnsLog
 import com.github.dennisklein.sshovel.keys.GoKeyCodec
 import com.github.dennisklein.sshovel.keys.ImportedKeyVault
 import com.github.dennisklein.sshovel.keys.KeyRepository
@@ -27,7 +29,7 @@ class AppContainer(context: Context) {
     val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     val networkMonitor = NetworkMonitor(context, appScope)
     val store = AppStore(context.dataStoreFile("sshovel.json"), CoroutineScope(SupervisorJob() + Dispatchers.IO))
-    val profiles = ProfileRepository(store, appScope)
+    val profiles = ProfileRepository(store, appScope, GoProfileValidator())
     val keys = KeyRepository(
         store = store,
         hardware = KeystoreKeys(),
@@ -36,6 +38,7 @@ class AppContainer(context: Context) {
         scope = appScope,
     )
     val hostKeys = HostKeyVerifier(networkMonitor, keys)
+    val dnsLog = DnsLog()
     val tunnelController = TunnelController(ServiceTunnelCommands(context), networkMonitor.available, appScope)
 
     init {

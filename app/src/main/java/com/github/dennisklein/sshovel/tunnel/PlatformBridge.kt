@@ -8,6 +8,7 @@ import android.os.CancellationSignal
 import android.util.Log
 import com.github.dennisklein.sshovel.BuildConfig
 import com.github.dennisklein.sshovel.core.mobile.Platform
+import com.github.dennisklein.sshovel.diagnostics.DnsLog
 import com.github.dennisklein.sshovel.keys.KeyRepository
 import java.io.IOException
 import java.util.concurrent.CompletableFuture
@@ -23,6 +24,7 @@ class PlatformBridge(
     private val protectFd: (Int) -> Boolean,
     private val network: NetworkMonitor,
     private val keys: KeyRepository,
+    private val dnsLog: DnsLog? = null,
     private val onEngineStatus: (String) -> Unit = {},
 ) : Platform {
     private val dnsExecutor = Executors.newCachedThreadPool()
@@ -62,14 +64,15 @@ class PlatformBridge(
     override fun onState(stateJSON: String) = onEngineStatus(stateJSON)
 
     // Messages and events name hosts and destinations, which may only live in the in-memory
-    // diagnostics buffer (ARCHITECTURE §9). That buffer arrives in M7; until then they go to
-    // logcat in debug builds only.
+    // diagnostics buffers (ARCHITECTURE §9). DNS events have theirs (DnsLog, M4); log lines and
+    // flow events get theirs with the Diagnostics screen in M7 and until then go to logcat in
+    // debug builds only.
     override fun log(level: Int, component: String, message: String) {
         if (BuildConfig.DEBUG) Log.println(PRIORITIES.getOrElse(level) { Log.INFO }, "sshovel/$component", message)
     }
 
     override fun onDnsEvent(eventJSON: String) {
-        if (BuildConfig.DEBUG) Log.d("sshovel/DNS", eventJSON)
+        dnsLog?.addJson(eventJSON)
     }
 
     override fun onFlowEvent(eventJSON: String) {
