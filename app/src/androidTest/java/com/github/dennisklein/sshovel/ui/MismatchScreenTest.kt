@@ -58,7 +58,8 @@ class MismatchScreenTest {
         assertEquals(2, clickable.size)
         rule.onNodeWithText("Disconnect").assertExists()
         rule.onNodeWithText("Review in profile").assertExists()
-        for (word in listOf("Trust", "Accept", "Continue", "Connect anyway")) {
+        // "Trusted" labels the pinned fingerprint; no action may trust or accept the new key.
+        for (word in listOf("Trust this server", "Accept", "Connect anyway")) {
             assertEquals(word, 0, rule.onAllNodesWithText(word, substring = true, ignoreCase = true).fetchSemanticsNodes().size)
         }
     }

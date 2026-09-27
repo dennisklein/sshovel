@@ -47,8 +47,12 @@ if gradle :app:connectedDebugAndroidTest > "$OUT/android-test.log" 2>&1; then
     n=$(grep -ho 'tests="[0-9]*"' /work/app/build/outputs/androidTest-results/connected/debug/*.xml 2>/dev/null | grep -o '[0-9]*' | awk '{s+=$1} END {print s}')
     result PASS "instrumented tests: Compose UI tests (editor validation, mismatch screen can't be dismissed) and key tests (${n:-?} tests)"
 else
-    grep -E "FAILED|failed|Exception|Error|> Task" "$OUT/android-test.log" | grep -v "^> Task .* UP-TO-DATE" | head -n 40
-    tail -n 40 "$OUT/android-test.log"
+    # Which tests failed and why, from the JUnit XML (the HTML report can't be attached).
+    for x in /work/app/build/outputs/androidTest-results/connected/debug/*.xml; do
+        tr '\n' ' ' < "$x" | grep -o '<testcase [^>]*>[^<]*<failure[^>]*>[^<]\{0,600\}' |
+            sed -e 's/<testcase [^>]*name="\([^"]*\)" classname="\([^"]*\)"[^>]*>/\n\2.\1:/' -e 's/<failure[^>]*>//'
+    done > "$OUT/android-test-failures.txt"
+    cat "$OUT/android-test-failures.txt"
     result FAIL "instrumented tests failed (android-test.log, app/build/reports/androidTests)"
 fi
 cp -r /work/app/build/reports/androidTests "$OUT/androidTests-report" 2>/dev/null
