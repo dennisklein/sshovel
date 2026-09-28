@@ -42,6 +42,52 @@ add_chip() {
     local rc=$?; sleep 1; hide_ime; return $rc
 }
 
+say "Toolchain"; toolchain
+say "Wait for test-env's host key"; wait_hostkey
+echo "sdk.dir=$ANDROID_HOME" > /work/local.properties
+say "./gradlew check assembleDebug assembleDebugAndroidTest"
+if gradle check :app:assembleDebug :app:assembleDebugAndroidTest > "$OUT/gradle-check.log" 2>&1; then
+    result PASS "gradle check (unit tests, lint, license tasks, reuseLint, verifyPageAlignment)"
+else
+    tail -n 60 "$OUT/gradle-check.log"; die "gradle check failed (gradle-check.log)"
+fi
+
+say "Boot emulator"; boot_emulator; start_logcat
+
+# --- Instrumented tests ------------------------------------------------------------------------
+
+say "connectedDebugAndroidTest"
+if gradle :app:connectedDebugAndroidTest > "$OUT/android-test.log" 2>&1; then
+    n=$(grep -ho 'tests="[0-9]*"' /work/app/build/outputs/androidTest-results/connected/debug/*.xml 2>/dev/null | grep -o '[0-9]*' | awk '{s+=$1} END {print s}')
+    result PASS "instrumented tests: Compose UI tests (editor validation, mismatch screen can't be dismissed) and key tests (${n:-?} tests)"
+else
+    # Which tests failed and why, from the JUnit XML (the HTML report can't be attached).
+    for x in /work/app/build/outputs/androidTest-results/connected/debug/*.xml; do
+        tr '\n' ' ' < "$x" | grep -o '<testcase [^>]*>[^<]*<failure[^>]*>[^<]\{0,600\}' |
+            sed -e 's/<testcase [^>]*name="\([^"]*\)" classname="\([^"]*\)"[^>]*>/\n\2.\1:/' -e 's/<failure[^>]*>//'
+    done > "$OUT/android-test-failures.txt"
+    cat "$OUT/android-test-failures.txt"
+    result FAIL "instrumented tests failed (android-test.log, app/build/reports/androidTests)"
+fi
+cp -r /work/app/build/reports/androidTests "$OUT/androidTests-report" 2>/dev/null
+
+# --- Onboarding end to end ----------------------------------------------------------------------
+
+say "Fresh install without the seeded test-env profile"
+adb uninstall "$PKG" >/dev/null 2>&1
+adb install -r -g "$APK" || die "install failed"
+# adb shell joins its arguments into one remote command line: keep each run-as call simple.
+adb shell run-as "$PKG" mkdir -p files && adb shell run-as "$PKG" touch files/no-seed ||
+    die "run-as failed (debuggable build?)"
+adb shell appops set "$PKG" ACTIVATE_VPN allow   # the consent flow is M5's; here Connect now goes straight on
+app wallpaper value false; sleep 1                # the brand scheme, as in the handoff
+home
+
+onb_ok=1
+step() { # step <name> <condition...>: runs the condition, screenshots, records the first failure
+    local name=$1; shift
+    if "$@"; then shot "$name"; else shot "$name"; [ "$onb_ok" = 1 ] && fail_at=$name; onb_ok=0; fi
+}
 say "O1 welcome (opens by itself on first run)"
 step o1-welcome shows "Reach your intranet from any app" 20
 tap_text "Get started"
