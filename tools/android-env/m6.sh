@@ -25,22 +25,14 @@ home() { adb shell am start -n "$PKG/.ui.MainActivity" >/dev/null; sleep 2; }
 open() { mark "open-$1-$RANDOM"; app open screen "$1" ${2:+arg "$2"}; sleep "${3:-2}"; }
 back() { adb shell input keyevent KEYCODE_BACK; sleep 1; }
 state_after() { wait_log "$1" "sshovel/State.*$2" "${3:-60}" >/dev/null; }
-# hide_ime: closes the keyboard if it's showing (back closes the IME first, never the screen).
-hide_ime() {
-    adb shell dumpsys input_method | grep -qE 'mInputShown=true|mIsInputViewShown=true' && adb shell input keyevent KEYCODE_BACK
-    sleep 1
-}
-# type_into <label> <text>: focuses the field labelled <label>, types at its end (no spaces),
-# and closes the keyboard so the next field isn't hidden behind it.
-type_into() {
-    tap_text "$1" && sleep 1 && adb shell input keyevent KEYCODE_MOVE_END && adb shell input text "$2"
-    local rc=$?; hide_ime; return $rc
-}
-# add_chip <label> <text>: taps an "Add …" chip, types into the field it opens, and submits.
-add_chip() {
-    tap_text "$1" && sleep 1 && adb shell input text "$2" && adb shell input keyevent KEYCODE_ENTER
-    local rc=$?; sleep 1; hide_ime; return $rc
-}
+# The AVD has a hardware keyboard; with this off Android shows no soft keyboard, so nothing on
+# screen is hidden behind one. Never press back to close a keyboard: when none is showing, back
+# leaves the onboarding step instead.
+no_soft_keyboard() { adb shell settings put secure show_ime_with_hard_keyboard 0; }
+# type_into <label> <text>: focuses the field labelled <label> and types at its end (no spaces).
+type_into() { tap_text "$1" && sleep 1 && adb shell input keyevent KEYCODE_MOVE_END && adb shell input text "$2"; }
+# add_chip <label> <text>: taps an "Add …" field, types, and submits with Enter.
+add_chip() { tap_text "$1" && sleep 1 && adb shell input text "$2" && adb shell input keyevent KEYCODE_ENTER && sleep 1; }
 
 say "Toolchain"; toolchain
 say "Wait for test-env's host key"; wait_hostkey
@@ -52,7 +44,7 @@ else
     tail -n 60 "$OUT/gradle-check.log"; die "gradle check failed (gradle-check.log)"
 fi
 
-say "Boot emulator"; boot_emulator; start_logcat
+say "Boot emulator"; boot_emulator; start_logcat; no_soft_keyboard
 
 # --- Instrumented tests ------------------------------------------------------------------------
 
