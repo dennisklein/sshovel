@@ -123,7 +123,7 @@ fun BottomActions(secondary: (@Composable () -> Unit)?, primary: @Composable () 
         itemVerticalAlignment = Alignment.CenterVertically,
     ) {
         if (secondary != null) {
-            Row(Modifier.weight(1f, fill = false)) { secondary() }
+            secondary()
             androidx.compose.foundation.layout.Spacer(Modifier.weight(1f))
         }
         primary()

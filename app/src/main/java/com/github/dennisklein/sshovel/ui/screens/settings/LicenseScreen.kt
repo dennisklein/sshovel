@@ -50,7 +50,7 @@ fun TextDocumentScreen(title: String, text: String?, onBack: () -> Unit) {
         },
     ) { padding ->
         MaxWidth(Modifier.padding(padding)) {
-            val paragraphs = text.orEmpty().split(Regex("\n\\s*\n"))
+            val paragraphs = reflow(text.orEmpty())
             LazyColumn(Modifier.testTag("license-text"), contentPadding = PaddingValues(16.dp)) {
                 items(paragraphs) { p ->
                     Text(p.trimEnd(), style = MaterialTheme.typography.bodySmall.mono(), modifier = Modifier.padding(bottom = 12.dp))
@@ -58,6 +58,16 @@ fun TextDocumentScreen(title: String, text: String?, onBack: () -> Unit) {
             }
         }
     }
+}
+
+/**
+ * The FSF text is hard-wrapped at 72-80 columns, which breaks mid-sentence on a phone: join the
+ * lines of each paragraph. Centred headings (deeply indented) keep their lines.
+ */
+fun reflow(text: String): List<String> = text.split(Regex("\n\\s*\n")).map { p ->
+    val lines = p.lines().filter { it.isNotBlank() }
+    if (lines.all { it.startsWith("      ") }) lines.joinToString("\n") { it.trim() }
+    else lines.joinToString(" ") { it.trim() }
 }
 
 /** Settings → About → View license: the full GPL-3.0 text, bundled with the app. */

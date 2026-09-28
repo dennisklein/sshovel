@@ -459,6 +459,8 @@
     <string name="onb_done_routes">%1$s, %2$s</string>
     <plurals name="domain_suffixes"><item quantity="one">%d domain suffix</item><item quantity="other">%d domain suffixes</item></plurals>
     <string name="onb_done_key">%1$s · accepted by the server</string>
+    <string name="badge_software">Software keystore</string>
+    <string name="onb_key_software_note">This device has no secure hardware for keys, so the key is kept in Android’s software keystore. It still can’t be exported.</string>
     <string name="key_type_ecdsa">ECDSA P-256</string>
     <string name="key_type_ed25519">Ed25519</string>
     <string name="key_type_rsa">RSA %1$d</string>

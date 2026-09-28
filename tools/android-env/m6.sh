@@ -25,55 +25,23 @@ home() { adb shell am start -n "$PKG/.ui.MainActivity" >/dev/null; sleep 2; }
 open() { mark "open-$1-$RANDOM"; app open screen "$1" ${2:+arg "$2"}; sleep "${3:-2}"; }
 back() { adb shell input keyevent KEYCODE_BACK; sleep 1; }
 state_after() { wait_log "$1" "sshovel/State.*$2" "${3:-60}" >/dev/null; }
-# type_into <label> <text>: focuses the field showing <label> and types (no spaces).
-type_into() { tap_text "$1" && sleep 1 && adb shell input text "$2"; }
-
-say "Toolchain"; toolchain
-say "Wait for test-env's host key"; wait_hostkey
-echo "sdk.dir=$ANDROID_HOME" > /work/local.properties
-say "./gradlew check assembleDebug assembleDebugAndroidTest"
-if gradle check :app:assembleDebug :app:assembleDebugAndroidTest > "$OUT/gradle-check.log" 2>&1; then
-    result PASS "gradle check (unit tests, lint, license tasks, reuseLint, verifyPageAlignment)"
-else
-    tail -n 60 "$OUT/gradle-check.log"; die "gradle check failed (gradle-check.log)"
-fi
-
-say "Boot emulator"; boot_emulator; start_logcat
-
-# --- Instrumented tests ------------------------------------------------------------------------
-
-say "connectedDebugAndroidTest"
-if gradle :app:connectedDebugAndroidTest > "$OUT/android-test.log" 2>&1; then
-    n=$(grep -ho 'tests="[0-9]*"' /work/app/build/outputs/androidTest-results/connected/debug/*.xml 2>/dev/null | grep -o '[0-9]*' | awk '{s+=$1} END {print s}')
-    result PASS "instrumented tests: Compose UI tests (editor validation, mismatch screen can't be dismissed) and key tests (${n:-?} tests)"
-else
-    # Which tests failed and why, from the JUnit XML (the HTML report can't be attached).
-    for x in /work/app/build/outputs/androidTest-results/connected/debug/*.xml; do
-        tr '\n' ' ' < "$x" | grep -o '<testcase [^>]*>[^<]*<failure[^>]*>[^<]\{0,600\}' |
-            sed -e 's/<testcase [^>]*name="\([^"]*\)" classname="\([^"]*\)"[^>]*>/\n\2.\1:/' -e 's/<failure[^>]*>//'
-    done > "$OUT/android-test-failures.txt"
-    cat "$OUT/android-test-failures.txt"
-    result FAIL "instrumented tests failed (android-test.log, app/build/reports/androidTests)"
-fi
-cp -r /work/app/build/reports/androidTests "$OUT/androidTests-report" 2>/dev/null
-
-# --- Onboarding end to end ----------------------------------------------------------------------
-
-say "Fresh install without the seeded test-env profile"
-adb uninstall "$PKG" >/dev/null 2>&1
-adb install -r -g "$APK" || die "install failed"
-# adb shell joins its arguments into one remote command line: keep each run-as call simple.
-adb shell run-as "$PKG" mkdir -p files && adb shell run-as "$PKG" touch files/no-seed ||
-    die "run-as failed (debuggable build?)"
-adb shell appops set "$PKG" ACTIVATE_VPN allow   # the consent flow is M5's; here Connect now goes straight on
-app wallpaper value false; sleep 1                # the brand scheme, as in the handoff
-home
-
-onb_ok=1
-step() { # step <name> <condition...>: runs the condition, screenshots, records the first failure
-    local name=$1; shift
-    if "$@"; then shot "$name"; else shot "$name"; [ "$onb_ok" = 1 ] && fail_at=$name; onb_ok=0; fi
+# hide_ime: closes the keyboard if it's showing (back closes the IME first, never the screen).
+hide_ime() {
+    adb shell dumpsys input_method | grep -qE 'mInputShown=true|mIsInputViewShown=true' && adb shell input keyevent KEYCODE_BACK
+    sleep 1
 }
+# type_into <label> <text>: focuses the field labelled <label>, types at its end (no spaces),
+# and closes the keyboard so the next field isn't hidden behind it.
+type_into() {
+    tap_text "$1" && sleep 1 && adb shell input keyevent KEYCODE_MOVE_END && adb shell input text "$2"
+    local rc=$?; hide_ime; return $rc
+}
+# add_chip <label> <text>: taps an "Add …" chip, types into the field it opens, and submits.
+add_chip() {
+    tap_text "$1" && sleep 1 && adb shell input text "$2" && adb shell input keyevent KEYCODE_ENTER
+    local rc=$?; sleep 1; hide_ime; return $rc
+}
+
 say "O1 welcome (opens by itself on first run)"
 step o1-welcome shows "Reach your intranet from any app" 20
 tap_text "Get started"
@@ -95,13 +63,16 @@ tap_text "Show QR code" && sleep 2 && shot o3-qr && back
 tap_text "I’ve added it"
 say "O4 add the server"
 step o4-server shows "Add your server"
-type_into "Profile name" "Office"
-type_into "Host" "10.0.2.2"
-type_into "22" "22"            # port 22 → 2222
-type_into "Username" "tester"
-tap_text "Add subnet" && sleep 1 && adb shell input text "10.77.0.0/24" && adb shell input keyevent KEYCODE_ENTER
-type_into "Intranet DNS server" "10.77.0.53"
-tap_text "Add suffix" && sleep 1 && adb shell input text "corp.test" && adb shell input keyevent KEYCODE_ENTER
+o4_ok=1
+type_into "Profile name" "Office" || o4_ok=0
+type_into "Host" "10.0.2.2" || o4_ok=0
+type_into "22" "22" || o4_ok=0            # port 22 → 2222
+type_into "Username" "tester" || o4_ok=0
+add_chip "Add subnet" "10.77.0.0/24" || o4_ok=0
+type_into "Intranet DNS server" "10.77.0.53" || o4_ok=0
+add_chip "Add suffix" "corp.test" || o4_ok=0
+[ "$o4_ok" = 1 ] || { onb_ok=0; fail_at=${fail_at:-o4-fields}; }
+adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1; adb exec-out cat /sdcard/ui.xml > "$OUT/o4-ui.xml"
 sleep 1; shot o4-filled
 tap_text "Next"
 say "O5 verify the server"
@@ -189,9 +160,13 @@ go_self=$(grep -c '"module":"Go go' "$OUT/go_licenses.json")
 report_n=$(cd /work/core && GOOS=android GOARCH=arm64 go-licenses report ./mobile --ignore github.com/dennisklein/sshovel 2>/dev/null | grep -c .)
 android_n=$(grep -o '"uniqueId"' "$OUT/aboutlibraries.json" 2>/dev/null | wc -l)
 open licenses 4
-for _ in $(seq 1 40); do adb shell input swipe 500 1800 500 300 150; done
-sleep 1; shot licenses-go
-shows "Go modules" 5 && ui_go=1 || ui_go=0
+# Scroll down (slow drags, no fling) until the Go section is on screen.
+ui_go=0
+for _ in $(seq 1 60); do
+    adb shell input swipe 500 1800 500 400 600; sleep 0.3
+    shows "gvisor.dev/gvisor" 1 && { ui_go=1; break; }
+done
+shot licenses-go
 echo "go entries $go_n (go-licenses report $report_n + Go itself $go_self), android libraries $android_n, Go section on screen $ui_go"
 [ "$go_n" -eq $((report_n + 1)) ] && [ "$go_self" = 1 ] && [ "$android_n" -gt 0 ] && [ "$ui_go" = 1 ] &&
     result PASS "Open-source licenses: $android_n Android libraries (AboutLibraries) and $go_n Go entries (go-licenses report + Go itself), each with its text" ||

@@ -40,7 +40,11 @@ import com.github.dennisklein.sshovel.ui.components.clearListColors
 import com.github.dennisklein.sshovel.ui.components.mono
 import com.github.dennisklein.sshovel.ui.theme.SshovelTheme
 import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
+import com.mikepenz.aboutlibraries.ui.compose.LibraryDefaults
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
+import com.mikepenz.aboutlibraries.ui.compose.m3.chipColors
+import com.mikepenz.aboutlibraries.ui.compose.m3.libraryColors
+import androidx.compose.ui.graphics.Color
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
@@ -88,6 +92,18 @@ fun OpenSourceLicensesScreen(onBack: () -> Unit) {
                 libraries = libraries,
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 24.dp),
+                // Chips in our roles instead of the library's own greens (CLAUDE.md, Compose colors).
+                colors = LibraryDefaults.libraryColors(
+                    versionChipColors = LibraryDefaults.chipColors(containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
+                    licenseChipColors = LibraryDefaults.chipColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    ),
+                    fundingChipColors = LibraryDefaults.chipColors(
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                    ),
+                ),
                 header = { sectionHeader(R.string.licenses_android) },
                 footer = {
                     sectionHeader(R.string.licenses_go)

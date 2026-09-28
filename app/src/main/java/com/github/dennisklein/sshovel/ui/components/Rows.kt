@@ -138,12 +138,14 @@ fun AlwaysOnRow(lockdown: Boolean, modifier: Modifier = Modifier) {
     }
 }
 
-enum class Badge { STRONGBOX, HARDWARE, ENCRYPTED, NOT_EXPORTABLE }
+enum class Badge { STRONGBOX, HARDWARE, SOFTWARE, ENCRYPTED, NOT_EXPORTABLE }
 
 /** The security badge of a key (DESIGN_BRIEF §5.6). */
 fun KeyEntry.badge(): Badge = when (security) {
     KeyEntry.STRONGBOX -> Badge.STRONGBOX
     KeyEntry.TEE -> Badge.HARDWARE
+    // A Keystore key without secure hardware (emulators, some old devices): say so plainly.
+    KeyEntry.SOFTWARE -> Badge.SOFTWARE
     else -> Badge.ENCRYPTED
 }
 
@@ -170,6 +172,7 @@ fun KeyBadge(badge: Badge, large: Boolean = false) {
                     Badge.STRONGBOX -> R.drawable.ic_memory
                     Badge.HARDWARE -> R.drawable.ic_verified_user
                     Badge.ENCRYPTED -> R.drawable.ic_lock
+                    Badge.SOFTWARE -> R.drawable.ic_key
                     Badge.NOT_EXPORTABLE -> R.drawable.ic_block
                 },
                 size = if (large) 18.dp else 16.dp,
@@ -180,6 +183,7 @@ fun KeyBadge(badge: Badge, large: Boolean = false) {
                         Badge.STRONGBOX -> R.string.badge_strongbox
                         Badge.HARDWARE -> R.string.badge_hardware
                         Badge.ENCRYPTED -> R.string.badge_encrypted
+                        Badge.SOFTWARE -> R.string.badge_software
                         Badge.NOT_EXPORTABLE -> R.string.badge_not_exportable
                     },
                 ),
@@ -238,7 +242,7 @@ fun KeyChoiceRow(key: KeyEntry, typeLine: String, selected: Boolean, enabled: Bo
         Column(Modifier.weight(1f).padding(vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(key.name, style = MaterialTheme.typography.bodyLarge)
             FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), itemVerticalAlignment = Alignment.CenterVertically) {
-                Text("$typeLine ·", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(typeLine, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 KeyBadge(key.badge())
             }
         }

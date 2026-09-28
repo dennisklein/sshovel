@@ -306,7 +306,13 @@ private fun CreateKeyStep(ui: OnboardingUi, actions: OnboardingActions) {
                 }
                 if (key.kind == KeyEntry.KEYSTORE) {
                     Text(
-                        stringResource(if (key.security == KeyEntry.STRONGBOX) R.string.onb_key_strongbox_note else R.string.onb_key_tee_note),
+                        stringResource(
+                            when (key.security) {
+                                KeyEntry.STRONGBOX -> R.string.onb_key_strongbox_note
+                                KeyEntry.TEE -> R.string.onb_key_tee_note
+                                else -> R.string.onb_key_software_note
+                            },
+                        ),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -646,6 +652,7 @@ private fun DoneStep(ui: OnboardingUi) {
                 when (k.badge()) {
                     Badge.STRONGBOX -> R.string.badge_strongbox
                     Badge.HARDWARE -> R.string.badge_hardware
+                    Badge.SOFTWARE -> R.string.badge_software
                     else -> R.string.badge_encrypted
                 },
             )
