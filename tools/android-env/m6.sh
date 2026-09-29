@@ -25,14 +25,32 @@ home() { adb shell am start -n "$PKG/.ui.MainActivity" >/dev/null; sleep 2; }
 open() { mark "open-$1-$RANDOM"; app open screen "$1" ${2:+arg "$2"}; sleep "${3:-2}"; }
 back() { adb shell input keyevent KEYCODE_BACK; sleep 1; }
 state_after() { wait_log "$1" "sshovel/State.*$2" "${3:-60}" >/dev/null; }
-# The AVD has a hardware keyboard; with this off Android shows no soft keyboard, so nothing on
-# screen is hidden behind one. Never press back to close a keyboard: when none is showing, back
-# leaves the onboarding step instead.
+# The AVD has a hardware keyboard; with this off Android should show no soft keyboard. It may
+# still show one, so tap_visible scrolls instead of relying on that. Never press back to close a
+# keyboard: when none is showing, back leaves the onboarding step instead.
 no_soft_keyboard() { adb shell settings put secure show_ime_with_hard_keyboard 0; }
+# tap_visible <text>: taps the node showing <text> once it is in the upper half of the screen,
+# above where a keyboard and the bottom actions would be; otherwise scrolls the form up a bit.
+tap_visible() {
+    local h b cy
+    h=$(adb shell wm size | grep -o '[0-9]*x[0-9]*' | tail -n1 | cut -dx -f2)
+    for _ in $(seq 1 12); do
+        adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
+        b=$(adb exec-out cat /sdcard/ui.xml | tr '>' '\n' | grep -F "text=\"$1\"" | head -n1 |
+            sed -n 's/.*bounds="\[\([0-9]*\),\([0-9]*\)\]\[\([0-9]*\),\([0-9]*\)\]".*/\1 \2 \3 \4/p')
+        if [ -n "$b" ]; then
+            set -- "$1" $b
+            cy=$(( ($3 + $5) / 2 ))
+            if [ "$cy" -lt $(( h / 2 )) ]; then adb shell input tap $(( ($2 + $4) / 2 )) "$cy"; return 0; fi
+        fi
+        adb shell input swipe 500 $(( h * 45 / 100 )) 500 $(( h * 30 / 100 )) 500; sleep 1
+    done
+    echo "tap_visible: \"$1\" never came into view"; return 1
+}
 # type_into <label> <text>: focuses the field labelled <label> and types at its end (no spaces).
-type_into() { tap_text "$1" && sleep 1 && adb shell input keyevent KEYCODE_MOVE_END && adb shell input text "$2"; }
-# add_chip <label> <text>: taps an "Add …" field, types, and submits with Enter.
-add_chip() { tap_text "$1" && sleep 1 && adb shell input text "$2" && adb shell input keyevent KEYCODE_ENTER && sleep 1; }
+type_into() { tap_visible "$1" && sleep 1 && adb shell input keyevent KEYCODE_MOVE_END && adb shell input text "$2"; }
+# add_chip <label> <text>: focuses an "Add …" field, types, and submits with Enter.
+add_chip() { tap_visible "$1" && sleep 1 && adb shell input text "$2" && adb shell input keyevent KEYCODE_ENTER && sleep 1; }
 
 say "Toolchain"; toolchain
 say "Wait for test-env's host key"; wait_hostkey
