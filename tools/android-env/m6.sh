@@ -29,19 +29,21 @@ state_after() { wait_log "$1" "sshovel/State.*$2" "${3:-60}" >/dev/null; }
 # still show one, so tap_visible scrolls instead of relying on that. Never press back to close a
 # keyboard: when none is showing, back leaves the onboarding step instead.
 no_soft_keyboard() { adb shell settings put secure show_ime_with_hard_keyboard 0; }
-# tap_visible <text>: taps the node showing <text> once it is in the upper half of the screen,
-# above where a keyboard and the bottom actions would be; otherwise scrolls the form up a bit.
+# tap_visible <text>: taps the node showing <text> once it sits above the bottom actions (Next),
+# which stay just above the keyboard when one shows; otherwise scrolls the form up a bit.
+node_bounds() { sed -n 's/.*bounds="\[\([0-9]*\),\([0-9]*\)\]\[\([0-9]*\),\([0-9]*\)\]".*/\1 \2 \3 \4/p'; }
 tap_visible() {
-    local h b cy
+    local h ui b n limit
     h=$(adb shell wm size | grep -o '[0-9]*x[0-9]*' | tail -n1 | cut -dx -f2)
     for _ in $(seq 1 12); do
         adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
-        b=$(adb exec-out cat /sdcard/ui.xml | tr '>' '\n' | grep -F "text=\"$1\"" | head -n1 |
-            sed -n 's/.*bounds="\[\([0-9]*\),\([0-9]*\)\]\[\([0-9]*\),\([0-9]*\)\]".*/\1 \2 \3 \4/p')
+        ui=$(adb exec-out cat /sdcard/ui.xml | tr '>' '\n')
+        b=$(echo "$ui" | grep -F "text=\"$1\"" | head -n1 | node_bounds)
+        n=$(echo "$ui" | grep -F 'text="Next"' | head -n1 | node_bounds)
+        limit=$(( h / 2 )); [ -n "$n" ] && limit=$(echo "$n" | awk '{print $2}')
         if [ -n "$b" ]; then
             set -- "$1" $b
-            cy=$(( ($3 + $5) / 2 ))
-            if [ "$cy" -lt $(( h / 2 )) ]; then adb shell input tap $(( ($2 + $4) / 2 )) "$cy"; return 0; fi
+            if [ "$5" -lt "$limit" ]; then adb shell input tap $(( ($2 + $4) / 2 )) $(( ($3 + $5) / 2 )); return 0; fi
         fi
         adb shell input swipe 500 $(( h * 45 / 100 )) 500 $(( h * 30 / 100 )) 500; sleep 1
     done
