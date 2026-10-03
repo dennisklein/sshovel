@@ -50,16 +50,19 @@ private fun spokenChar(c: Char): String = when (c) {
 
 enum class FingerprintSize { LARGE, COMPACT }
 
-/** The grouped fingerprint grid: 4-character groups, [perRow] per row. */
+/**
+ * The grouped fingerprint grid: 4-character groups, at most [perRow] per row. Groups never
+ * break; when [perRow] don't fit (large fonts), rows hold fewer.
+ */
 @Composable
 fun FingerprintGrid(fingerprint: String, style: TextStyle, perRow: Int = 4, gap: androidx.compose.ui.unit.Dp = 14.dp) {
-    Column(
+    androidx.compose.foundation.layout.FlowRow(
         Modifier.clearAndSetSemantics { contentDescription = spokenFingerprint(fingerprint) },
+        horizontalArrangement = Arrangement.spacedBy(gap),
         verticalArrangement = Arrangement.spacedBy(2.dp),
+        maxItemsInEachRow = perRow,
     ) {
-        fingerprintGroups(fingerprint).chunked(perRow).forEach { row ->
-            Row(horizontalArrangement = Arrangement.spacedBy(gap)) { row.forEach { Text(it, style = style) } }
-        }
+        fingerprintGroups(fingerprint).forEach { Text(it, style = style, softWrap = false) }
     }
 }
 

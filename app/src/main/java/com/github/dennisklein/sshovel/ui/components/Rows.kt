@@ -7,6 +7,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -423,7 +424,7 @@ fun DiscoveredRouteRow(cidr: String, detail: String, detailIcon: Int?, checked: 
 @Composable
 private fun PreviewRows() = SshovelTheme(dynamicColor = false) {
     Surface {
-        Column {
+        Column(Modifier.verticalScroll(androidx.compose.foundation.rememberScrollState())) {
             ProfileRow(previewProfile, selected = true, isDefault = true, enabled = true, onSelect = {}, onOpen = {})
             AlwaysOnRow(lockdown = true, Modifier.padding(16.dp))
             SubnetRow("10.20.4.0/24", "Already covered by 10.20.0.0/16", onRemove = {})
