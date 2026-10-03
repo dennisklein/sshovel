@@ -49,23 +49,47 @@ fun formatUptime(seconds: Long): String {
     return if (h > 0) String.format(Locale.ROOT, "%d:%02d:%02d", h, m, s) else String.format(Locale.ROOT, "%d:%02d", m, s)
 }
 
-/** Title and body for an error code (DESIGN_BRIEF §8). */
+/** The catalog entry for a state or warning code (DESIGN_BRIEF §8): title, body, primary action. */
+data class ErrorCopy(val title: Int, val body: Int, val action: Int?)
+
+/** DESIGN_BRIEF §8's catalog; null for codes that aren't tunnel states (import, discovery, flows). */
+fun errorCopy(code: String): ErrorCopy? = when (code) {
+    Codes.AUTH_FAILED -> ErrorCopy(R.string.err_auth_title, R.string.err_auth_body, R.string.err_auth_action)
+    Codes.HOST_UNREACHABLE -> ErrorCopy(R.string.err_unreachable_title, R.string.err_unreachable_body, R.string.err_unreachable_action)
+    Codes.HOST_KEY_UNVERIFIED -> ErrorCopy(R.string.err_unverified_title, R.string.err_unverified_body, R.string.err_unverified_action)
+    Codes.HOST_KEY_MISMATCH -> ErrorCopy(R.string.err_mismatch_title, R.string.err_mismatch_body, R.string.err_mismatch_action)
+    Codes.FORWARDING_DENIED -> ErrorCopy(R.string.err_forwarding_title, R.string.err_forwarding_body, R.string.err_forwarding_action)
+    Codes.DNS_UNREACHABLE -> ErrorCopy(R.string.err_dns_title, R.string.err_dns_body, R.string.err_dns_action)
+    Codes.NETWORK_LOST -> ErrorCopy(R.string.err_network_title, R.string.err_network_body, null)
+    Codes.VPN_REVOKED -> ErrorCopy(R.string.err_revoked_title, R.string.err_revoked_body, R.string.err_revoked_action)
+    Codes.VPN_PERMISSION -> ErrorCopy(R.string.err_permission_title, R.string.err_permission_body, R.string.err_permission_action)
+    Codes.KEY_UNAVAILABLE -> ErrorCopy(R.string.err_key_unavailable_title, R.string.err_key_unavailable_body, R.string.err_key_unavailable_action)
+    Codes.INTERNAL -> ErrorCopy(R.string.err_internal_title, R.string.err_internal_body, R.string.err_internal_action)
+    else -> null
+}
+
+/** Title and next step for a failed flow's reason (Diagnostics, Connections; handoff G3). */
+fun failureCopy(reason: String): Pair<Int, Int?>? = when (reason) {
+    Codes.FORWARDING_DENIED -> R.string.conn_refused_title to R.string.conn_refused_body
+    Codes.DEST_UNREACHABLE -> R.string.conn_unreachable_title to R.string.conn_unreachable_body
+    Codes.DEST_TIMEOUT -> R.string.conn_timeout_title to null
+    Codes.TUNNEL_DOWN -> R.string.conn_tunnel_down_title to null
+    else -> null
+}
+
+/** Title and body for an error code (DESIGN_BRIEF §8); unknown codes read as INTERNAL. */
 fun errorText(context: Context, code: String, profile: Profile?, keyName: String? = null): Pair<String, String> {
     val host = profile?.let { "${it.server.host}:${it.server.port}" } ?: ""
     val userHost = profile?.let { "${it.server.user}@${it.server.host}" } ?: ""
     val key = keyName ?: profile?.auth?.alias ?: ""
-    fun s(id: Int, vararg args: Any) = context.getString(id, *args)
-    return when (code) {
-        Codes.AUTH_FAILED -> s(R.string.err_auth_title) to s(R.string.err_auth_body, userHost, key)
-        Codes.HOST_UNREACHABLE -> s(R.string.err_unreachable_title) to s(R.string.err_unreachable_body, host)
-        Codes.HOST_KEY_UNVERIFIED -> s(R.string.err_unverified_title) to s(R.string.err_unverified_body)
-        Codes.HOST_KEY_MISMATCH -> s(R.string.err_mismatch_title) to s(R.string.err_mismatch_body, profile?.server?.host ?: "")
-        Codes.FORWARDING_DENIED -> s(R.string.err_forwarding_title) to s(R.string.err_forwarding_body)
-        Codes.DNS_UNREACHABLE -> s(R.string.err_dns_title) to s(R.string.err_dns_body, profile?.dns?.server ?: "")
-        Codes.NETWORK_LOST -> s(R.string.err_network_title) to s(R.string.err_network_body)
-        Codes.VPN_REVOKED -> s(R.string.err_revoked_title) to s(R.string.err_revoked_body)
-        Codes.VPN_PERMISSION -> s(R.string.err_permission_title) to s(R.string.err_permission_body)
-        Codes.KEY_UNAVAILABLE -> s(R.string.err_key_unavailable_title) to s(R.string.err_key_unavailable_body, key)
-        else -> s(R.string.err_internal_title) to s(R.string.err_internal_body)
+    val copy = errorCopy(code) ?: errorCopy(Codes.INTERNAL)!!
+    val args: Array<Any> = when (code) {
+        Codes.AUTH_FAILED -> arrayOf(userHost, key)
+        Codes.HOST_UNREACHABLE -> arrayOf(host)
+        Codes.HOST_KEY_MISMATCH -> arrayOf(profile?.server?.host ?: "")
+        Codes.DNS_UNREACHABLE -> arrayOf(profile?.dns?.server ?: "")
+        Codes.KEY_UNAVAILABLE -> arrayOf(key)
+        else -> emptyArray()
     }
+    return context.getString(copy.title) to context.getString(copy.body, *args)
 }

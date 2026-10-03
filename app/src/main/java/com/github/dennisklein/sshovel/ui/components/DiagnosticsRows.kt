@@ -33,6 +33,7 @@ import com.github.dennisklein.sshovel.diagnostics.DnsEvent
 import com.github.dennisklein.sshovel.diagnostics.FailedFlow
 import com.github.dennisklein.sshovel.diagnostics.Level
 import com.github.dennisklein.sshovel.diagnostics.LogEvent
+import com.github.dennisklein.sshovel.ui.format.failureCopy
 import com.github.dennisklein.sshovel.ui.format.formatBytes
 import com.github.dennisklein.sshovel.ui.theme.LocalStateColors
 import java.time.Instant
@@ -208,13 +209,8 @@ fun ActiveConnectionRow(f: ActiveFlow, now: Long, modifier: Modifier = Modifier)
 
 /** Title and next step for a failed flow's reason (Go's flow codes, ARCHITECTURE §4). */
 @Composable
-fun failureText(reason: String): Pair<String, String?> = when (reason) {
-    "FORWARDING_DENIED" -> stringResource(R.string.conn_refused_title) to stringResource(R.string.conn_refused_body)
-    "DEST_UNREACHABLE" -> stringResource(R.string.conn_unreachable_title) to stringResource(R.string.conn_unreachable_body)
-    "DEST_TIMEOUT" -> stringResource(R.string.conn_timeout_title) to null
-    "TUNNEL_DOWN" -> stringResource(R.string.conn_tunnel_down_title) to null
-    else -> reason to null
-}
+fun failureText(reason: String): Pair<String, String?> =
+    failureCopy(reason)?.let { (title, body) -> stringResource(title) to body?.let { stringResource(it) } } ?: (reason to null)
 
 /** ConnectionRow, failed (handoff §2, G3): errorContainer, reason title and next step. */
 @Composable

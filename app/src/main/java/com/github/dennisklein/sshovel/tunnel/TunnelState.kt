@@ -22,6 +22,11 @@ object Codes {
     const val DNS_UNREACHABLE = "DNS_UNREACHABLE"
     const val ROUTE_DISCOVERY_UNAVAILABLE = "ROUTE_DISCOVERY_UNAVAILABLE"
 
+    // Failed flows only (Diagnostics, Connections); never a state code.
+    const val DEST_UNREACHABLE = "DEST_UNREACHABLE"
+    const val DEST_TIMEOUT = "DEST_TIMEOUT"
+    const val TUNNEL_DOWN = "TUNNEL_DOWN"
+
     // Key import only (mobile.ImportKey).
     const val KEY_PASSPHRASE = "KEY_PASSPHRASE"
     const val KEY_UNSUPPORTED = "KEY_UNSUPPORTED"
