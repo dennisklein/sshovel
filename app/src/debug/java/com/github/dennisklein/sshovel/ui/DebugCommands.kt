@@ -155,6 +155,22 @@ object DebugCommands {
                 Log.i(TAG, "dns-log end ${events.size}")
             }
             "dns-clear" -> container.dnsLog.clear()
+            // M7: what Diagnostics holds, for tools/android-env/m7.sh (debug builds only: names
+            // and destinations never reach logcat otherwise, ARCHITECTURE §9).
+            "diag-dump" -> {
+                val d = container.diagnostics
+                d.events.events.value.forEach { Log.i(TAG, "diag-dump event ${it.level} ${it.component.label} ${it.message}") }
+                d.dns.events.value.forEach {
+                    Log.i(TAG, "diag-dump dns ${it.route} ${it.name} ${it.rcode} ${it.answers.joinToString(",")} outside=${it.resolvedOutsideRoutes}")
+                }
+                d.flows.failed.value.forEach { Log.i(TAG, "diag-dump failed ${it.dst} ${it.reason} app=${it.owner.app} host=${it.owner.host}") }
+                d.flows.active.value.forEach { Log.i(TAG, "diag-dump active ${it.dst} app=${it.owner.app} in=${it.bytesIn} out=${it.bytesOut}") }
+                Log.i(TAG, "diag-dump end ${d.events.events.value.size} ${d.dns.events.value.size} ${d.flows.failed.value.size} ${d.flows.active.value.size}")
+            }
+            "diag-clear" -> {
+                container.diagnostics.clearAll()
+                Log.i(TAG, "diag-clear ok")
+            }
             "require-unlock" -> async {
                 container.settings.setRequireUnlock(arg("value") == "true")
                 Log.i(TAG, "require-unlock ${container.settings.current().requireUnlock}")

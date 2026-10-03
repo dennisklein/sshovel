@@ -11,7 +11,11 @@ SPDX-License-Identifier: GPL-3.0-or-later
 |---|---|---|
 | `jumphost` (OpenSSH, user `tester`, key-only) | host port `2222` | everywhere |
 | `wiki` (nginx) | `10.77.0.20:80` | only the jump host |
-| `dns` (dnsmasq): `wiki.corp.test` → `10.77.0.20`, `api.corp.test` → `10.77.0.21` | `10.77.0.53:53` | only the jump host |
+| `dns` (dnsmasq): `wiki.corp.test` → `10.77.0.20`, `api.corp.test` → `10.77.0.21` (no host), `git.corp.test` → `203.0.113.40` (outside the routed subnet) | `10.77.0.53:53` | only the jump host |
+
+The jump host forwards only to `10.77.0.20:80`, `10.77.0.53:53` and `10.77.0.21:80`
+(`PermitOpen`), so `https://wiki.corp.test` (port 443) is refused by server policy and
+`http://api.corp.test` finds nothing: the failures Diagnostics explains (M7).
 
 Keys allowed to log in go into `keys/authorized_keys` (one per line; sshd reads the file on
 every login). To rotate the host key (`HOST_KEY_MISMATCH` test), delete the files in `hostkeys/`:

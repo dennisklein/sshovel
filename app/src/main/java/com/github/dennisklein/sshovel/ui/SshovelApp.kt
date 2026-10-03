@@ -111,7 +111,7 @@ fun SshovelApp(
                 "onboarding" -> nav.navigate(Routes.Onboarding(step = arg?.toIntOrNull() ?: 1))
                 "profile" -> nav.navigate(Routes.Profile(arg))
                 "apps" -> nav.navigate(Routes.AppPicker)
-                "keys" -> nav.navigate(Routes.Keys())
+                "keys" -> nav.navigate(Routes.Keys(import = arg == "import", create = arg == "create"))
                 "key" -> arg?.let { nav.navigate(Routes.KeyDetail(it)) }
                 "settings" -> nav.navigate(Routes.Settings)
                 "diagnostics" -> nav.navigate(Routes.Diagnostics(arg?.toIntOrNull() ?: 0))

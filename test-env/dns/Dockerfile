@@ -6,4 +6,5 @@ FROM alpine:3
 RUN apk add --no-cache dnsmasq
 ENTRYPOINT ["dnsmasq", "-k", "--no-resolv", "--log-queries", "--log-facility=-", \
             "--address=/wiki.corp.test/10.77.0.20", \
-            "--address=/api.corp.test/10.77.0.21"]
+            "--address=/api.corp.test/10.77.0.21", \
+            "--address=/git.corp.test/203.0.113.40"]
