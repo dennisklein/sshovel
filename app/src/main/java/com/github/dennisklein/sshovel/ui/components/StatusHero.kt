@@ -103,6 +103,7 @@ fun errorAction(code: String): ErrorAction? = when (code) {
     Codes.VPN_REVOKED -> ErrorAction(R.string.err_revoked_action, R.drawable.ic_refresh)
     Codes.VPN_PERMISSION -> ErrorAction(R.string.err_permission_action, R.drawable.ic_vpn_lock)
     Codes.KEY_UNAVAILABLE -> ErrorAction(R.string.err_key_unavailable_action, R.drawable.ic_key)
+    Codes.INTERNAL -> ErrorAction(R.string.err_internal_action, R.drawable.ic_troubleshoot)
     else -> null
 }
 

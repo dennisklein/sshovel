@@ -79,5 +79,15 @@
                 <action android:name="android.net.VpnService" />
             </intent-filter>
         </service>
+            <!-- Diagnostics "Share as text file" (DESIGN_BRIEF §5.9): the export in cache/diagnostics. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.files"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/shared_files" />
+        </provider>
     </application>
 </manifest>

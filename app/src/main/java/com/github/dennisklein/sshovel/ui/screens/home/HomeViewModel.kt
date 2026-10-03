@@ -62,6 +62,8 @@ sealed interface HomeEvent {
     /** Connect through the explainer and Android's consent if needed. */
     data class Connect(val profileId: String) : HomeEvent
     data object ServerTrusted : HomeEvent
+    /** [tab]: 0 Events, 1 DNS, 2 Connections. */
+    data class OpenDiagnostics(val tab: Int) : HomeEvent
 }
 
 class HomeViewModel(private val container: AppContainer) : ViewModel() {
@@ -165,6 +167,7 @@ class HomeViewModel(private val container: AppContainer) : ViewModel() {
                 Codes.HOST_KEY_UNVERIFIED -> startVerify()
                 Codes.HOST_KEY_MISMATCH -> events.send(HomeEvent.OpenMismatch)
                 Codes.KEY_UNAVAILABLE -> events.send(HomeEvent.OpenProfile(p.id))
+                Codes.INTERNAL -> events.send(HomeEvent.OpenDiagnostics(0))
                 else -> events.send(HomeEvent.Connect(p.id))
             }
         }

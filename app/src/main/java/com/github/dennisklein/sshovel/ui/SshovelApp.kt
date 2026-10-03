@@ -4,30 +4,43 @@
 package com.github.dennisklein.sshovel.ui
 
 import android.content.Intent
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.toRoute
 import com.github.dennisklein.sshovel.AppContainer
 import com.github.dennisklein.sshovel.BuildConfig
 import com.github.dennisklein.sshovel.R
 import com.github.dennisklein.sshovel.core.mobile.Mobile
+import com.github.dennisklein.sshovel.diagnostics.DiagnosticsReport
 import com.github.dennisklein.sshovel.tunnel.TunnelState
+import com.github.dennisklein.sshovel.ui.components.copyText
 import com.github.dennisklein.sshovel.ui.components.openNotificationSettings
 import com.github.dennisklein.sshovel.ui.components.openVpnSettings
+import com.github.dennisklein.sshovel.ui.components.shareTextFile
 import com.github.dennisklein.sshovel.ui.nav.Routes
+import com.github.dennisklein.sshovel.ui.screens.diagnostics.DiagTab
+import com.github.dennisklein.sshovel.ui.screens.diagnostics.DiagnosticsActions
+import com.github.dennisklein.sshovel.ui.screens.diagnostics.DiagnosticsScreen
+import com.github.dennisklein.sshovel.ui.screens.diagnostics.DiagnosticsViewModel
 import com.github.dennisklein.sshovel.ui.screens.home.HomeActions
 import com.github.dennisklein.sshovel.ui.screens.home.HomeEvent
 import com.github.dennisklein.sshovel.ui.screens.home.HomeScreen
@@ -75,6 +88,7 @@ fun SshovelApp(
 ) {
     val context = LocalContext.current
     val resources = LocalResources.current
+    val clipboard = LocalClipboard.current
     val appSnackbar = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -100,6 +114,7 @@ fun SshovelApp(
                 "keys" -> nav.navigate(Routes.Keys())
                 "key" -> arg?.let { nav.navigate(Routes.KeyDetail(it)) }
                 "settings" -> nav.navigate(Routes.Settings)
+                "diagnostics" -> nav.navigate(Routes.Diagnostics(arg?.toIntOrNull() ?: 0))
                 "about" -> nav.navigate(Routes.About)
                 "license" -> nav.navigate(Routes.License)
                 "licenses" -> nav.navigate(Routes.OpenSourceLicenses)
@@ -120,6 +135,7 @@ fun SshovelApp(
                         is HomeEvent.OpenProfile -> nav.navigate(Routes.Profile(e.profileId, e.focus))
                         HomeEvent.OpenMismatch -> nav.navigate(Routes.Mismatch) { launchSingleTop = true }
                         HomeEvent.ServerTrusted -> scope.launch { appSnackbar.showSnackbar(resources.getString(R.string.server_trusted)) }
+                        is HomeEvent.OpenDiagnostics -> nav.navigate(Routes.Diagnostics(e.tab))
                     }
                 }
             }
@@ -136,6 +152,7 @@ fun SshovelApp(
                     onSetUp = { nav.navigate(Routes.Onboarding()) },
                     onKeys = { nav.navigate(Routes.Keys()) },
                     onSettings = { nav.navigate(Routes.Settings) },
+                    onDiagnostics = { nav.navigate(Routes.Diagnostics(it)) },
                     onConfirmSwitch = vm::confirmSwitch,
                     onCancelSwitch = vm::cancelSwitch,
                     onTrust = vm::trust,
@@ -282,6 +299,59 @@ fun SshovelApp(
                 is KeyDialog.Delete -> DeleteKeyDialog(d.key, { vm.delete(d.key) }, vm::dismissDialog)
                 null -> {}
             }
+        }
+
+        composable<Routes.Diagnostics> { entry ->
+            val route = entry.toRoute<Routes.Diagnostics>()
+            val vm: DiagnosticsViewModel = viewModel(factory = DiagnosticsViewModel.factory(container))
+            val ui by vm.ui.collectAsStateWithLifecycle()
+            val snackbar = remember { SnackbarHostState() }
+            val pager = rememberPagerState(route.tab.coerceIn(0, DiagTab.entries.lastIndex)) { DiagTab.entries.size }
+            // Open flows are polled only while their tab is on screen and the app is visible.
+            LifecycleStartEffect(pager.currentPage) {
+                vm.watchFlows(pager.currentPage == DiagTab.CONNECTIONS.ordinal)
+                onStopOrDispose { vm.watchFlows(false) }
+            }
+            val titles = DiagnosticsReport.Titles(
+                stringResource(R.string.diag_report_header),
+                stringResource(R.string.tab_events),
+                stringResource(R.string.tab_dns),
+                stringResource(R.string.diag_report_active),
+                stringResource(R.string.diag_report_failed),
+            )
+            DiagnosticsScreen(
+                ui,
+                DiagnosticsActions(
+                    onBack = { nav.popBackStack() },
+                    onTab = vm::showTab,
+                    onLevel = vm::setMinLevel,
+                    onComponent = vm::toggle,
+                    onPause = vm::togglePause,
+                    onShare = { context.shareTextFile(vm.reportFileName(), vm.report(titles)) },
+                    onCopyAll = {
+                        scope.launch {
+                            clipboard.copyText(resources.getString(R.string.diagnostics), vm.report(titles))
+                            snackbar.showSnackbar(resources.getString(R.string.copied))
+                        }
+                    },
+                    onClear = {
+                        vm.clear()
+                        scope.launch {
+                            val r = snackbar.showSnackbar(resources.getString(R.string.cleared), resources.getString(R.string.undo), duration = SnackbarDuration.Short)
+                            if (r == SnackbarResult.ActionPerformed) vm.undoClear()
+                        }
+                    },
+                    onCopyName = { name ->
+                        scope.launch {
+                            clipboard.copyText(name, name)
+                            snackbar.showSnackbar(resources.getString(R.string.copied))
+                        }
+                    },
+                    onConnect = { stored?.let { st -> (st.defaultProfileId ?: st.profiles.firstOrNull()?.id)?.let(connect) } },
+                ),
+                snackbar,
+                pager,
+            )
         }
 
         composable<Routes.Settings> {

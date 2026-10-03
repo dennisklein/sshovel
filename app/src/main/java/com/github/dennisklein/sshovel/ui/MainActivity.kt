@@ -25,7 +25,10 @@ class MainActivity : ComponentActivity() {
 
     private val notificationPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
 
-    /** Debug builds' "open" command (tools/android-env screenshots); buffered until composed. */
+    /**
+     * Screens to open once composed: Diagnostics from the notification, and debug builds' "open"
+     * command (tools/android-env screenshots).
+     */
     private val opens = Channel<Pair<String, String?>>(Channel.BUFFERED)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,11 +43,16 @@ class MainActivity : ComponentActivity() {
                 SshovelApp(container, ::connect, opens.receiveAsFlow())
             }
         }
-        DebugCommands.handle(this, intent, ::connect) { screen, arg -> opens.trySend(screen to arg) }
+        handle(intent)
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        handle(intent)
+    }
+
+    private fun handle(intent: Intent) {
+        intent.getIntExtra(EXTRA_DIAGNOSTICS_TAB, -1).takeIf { it >= 0 }?.let { opens.trySend("diagnostics" to it.toString()) }
         DebugCommands.handle(this, intent, ::connect) { screen, arg -> opens.trySend(screen to arg) }
     }
 
@@ -56,5 +64,10 @@ class MainActivity : ComponentActivity() {
         } else {
             container.tunnelController.connect(id)
         }
+    }
+
+    companion object {
+        /** Opens Diagnostics on this tab (0 Events, 1 DNS, 2 Connections). */
+        const val EXTRA_DIAGNOSTICS_TAB = "diagnostics_tab"
     }
 }

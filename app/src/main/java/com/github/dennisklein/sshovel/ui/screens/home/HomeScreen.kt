@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,11 +18,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -36,6 +39,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -77,6 +84,8 @@ data class HomeActions(
     val onSetUp: () -> Unit = {},
     val onKeys: () -> Unit = {},
     val onSettings: () -> Unit = {},
+    /** [tab]: 0 Events, 1 DNS, 2 Connections. */
+    val onDiagnostics: (Int) -> Unit = {},
     val onConfirmSwitch: () -> Unit = {},
     val onCancelSwitch: () -> Unit = {},
     val onTrust: () -> Unit = {},
@@ -85,7 +94,7 @@ data class HomeActions(
 
 /**
  * Home (DESIGN_BRIEF §5.1, handoff H0–H7): the status hero, Always-on info, and the profile
- * list. The Diagnostics entry (troubleshoot) arrives with the Diagnostics screen in M7.
+ * list, with entries to Keys, Diagnostics and Settings.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -101,6 +110,9 @@ fun HomeScreen(ui: HomeUiState, actions: HomeActions, snackbar: SnackbarHostStat
                 },
                 actions = {
                     IconButton(actions.onKeys) { SymbolIcon(R.drawable.ic_key, stringResource(R.string.cd_keys)) }
+                    if (ui.profiles.isNotEmpty()) {
+                        IconButton({ actions.onDiagnostics(0) }) { SymbolIcon(R.drawable.ic_troubleshoot, stringResource(R.string.cd_diagnostics)) }
+                    }
                     IconButton(actions.onSettings) { SymbolIcon(R.drawable.ic_settings, stringResource(R.string.cd_settings)) }
                 },
             )
@@ -141,7 +153,9 @@ private fun ProfileList(ui: HomeUiState, actions: HomeActions) {
             )
         }
         val warnings = (ui.state as? TunnelState.On)?.warnings.orEmpty()
-        items(warnings, key = { "warning-$it" }) { code -> WarningCard(code, profile) }
+        items(warnings, key = { "warning-$it" }) { code ->
+            WarningCard(code, profile) { actions.onDiagnostics(if (code == Codes.DNS_UNREACHABLE) 1 else 2) }
+        }
         ui.alwaysOn?.let { info ->
             item(key = "always-on") { AlwaysOnRow(info.lockdown, Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp)) }
         }
@@ -162,7 +176,7 @@ private fun ProfileList(ui: HomeUiState, actions: HomeActions) {
 
 /** On-state warnings (FORWARDING_DENIED, DNS_UNREACHABLE): the tunnel keeps running (handoff §6). */
 @Composable
-private fun WarningCard(code: String, profile: Profile) {
+private fun WarningCard(code: String, profile: Profile, onViewDiagnostics: () -> Unit) {
     val (title, body) = errorText(LocalContext.current, code, profile)
     val st = LocalStateColors.current
     Card(
@@ -173,8 +187,20 @@ private fun WarningCard(code: String, profile: Profile) {
         Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             SymbolIcon(R.drawable.ic_warning)
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(title, style = MaterialTheme.typography.titleSmall)
+                // Announced when it appears: "Warning: {title}" (handoff §5).
+                val announce = stringResource(R.string.a11y_warning, title)
+                Text(
+                    title,
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.semantics {
+                        liveRegion = LiveRegionMode.Polite
+                        contentDescription = announce
+                    },
+                )
                 Text(body, style = MaterialTheme.typography.bodyMedium)
+                TextButton(onViewDiagnostics, Modifier.offset(x = (-12).dp), colors = ButtonDefaults.textButtonColors(contentColor = LocalContentColor.current)) {
+                    Text(stringResource(R.string.err_forwarding_action))
+                }
             }
         }
     }

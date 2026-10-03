@@ -43,6 +43,11 @@ class TunnelNotifications(private val context: Context) {
                     ),
                 )
                 b.setSubText("↓ ${formatBytes(stats.bytesIn)} ↑ ${formatBytes(stats.bytesOut)}")
+                state.warnings.firstOrNull()?.let { code ->
+                    // On-state warnings: the warning in the text and a way to Diagnostics (handoff §6).
+                    b.setContentText(errorText(context, code, profile).first)
+                    b.addAction(Notification.Action.Builder(null, context.getString(R.string.notif_diagnostics), openDiagnostics(code)).build())
+                }
                 b.addAction(action(R.string.action_disconnect, SshovelVpnService.ACTION_DISCONNECT))
             }
             is TunnelState.Reconnecting -> {
@@ -91,6 +96,14 @@ class TunnelNotifications(private val context: Context) {
         context, 0,
         Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
         PendingIntent.FLAG_IMMUTABLE,
+    )
+
+    private fun openDiagnostics(code: String): PendingIntent = PendingIntent.getActivity(
+        context, 1,
+        Intent(context, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            .putExtra(MainActivity.EXTRA_DIAGNOSTICS_TAB, if (code == Codes.DNS_UNREACHABLE) 1 else 2),
+        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
     )
 
     private fun action(label: Int, serviceAction: String): Notification.Action {

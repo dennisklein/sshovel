@@ -7,6 +7,7 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLongArray
 
 /**
  * The three in-memory buffers behind Diagnostics (DESIGN_BRIEF §5.9): events, DNS queries and
@@ -19,6 +20,13 @@ class Diagnostics(
     val flows: FlowLog = FlowLog(),
 ) {
     private val watchers = AtomicInteger()
+
+    /**
+     * Per tab (Events, DNS, Connections): the time up to which its warnings and failures have
+     * been seen; newer ones count toward the tab's badge (handoff G1). Kept per process, like
+     * the buffers.
+     */
+    val seenUntil = AtomicLongArray(3)
 
     /** True while a Connections tab is on screen: the service then polls Engine.FlowsJSON. */
     val watchingFlows: Boolean get() = watchers.get() > 0

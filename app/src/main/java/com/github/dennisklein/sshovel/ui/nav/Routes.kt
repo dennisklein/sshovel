@@ -28,6 +28,9 @@ object Routes {
     /** S4, full screen. */
     @Serializable data object Mismatch
 
+    /** G1–G4; [tab] 0 Events, 1 DNS, 2 Connections. */
+    @Serializable data class Diagnostics(val tab: Int = 0)
+
     /** G5. */
     @Serializable data object Settings
 

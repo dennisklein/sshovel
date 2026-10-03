@@ -308,7 +308,7 @@
     <string name="copy_all">Copy all</string>
     <string name="share_text_file">Share as text file</string>
     <string name="cleared">Cleared</string>
-    <string name="dns_summary">%1$d tunneled · %2$d direct · %3$d failed</string>
+    <string name="dns_summary">%1$s tunneled · %2$s direct · %3$s failed</string>
     <string name="route_tunnel">Tunnel</string>
     <string name="route_direct">Direct</string>
     <string name="dns_outside_warning">Resolved outside routed subnets, so traffic won’t use the tunnel. Add %1$s or its subnet to the profile.</string>
@@ -327,6 +327,17 @@
     <string name="diag_none_body">Events appear here as sshovel connects and routes traffic.</string>
     <string name="diag_no_dns">No DNS queries yet</string>
     <string name="diag_no_conn">No connections yet</string>
+    <!-- Diagnostics: copy the handoff implies (DESIGN_BRIEF §8, M7 notes) -->
+    <string name="undo">Undo</string>
+    <string name="sev_debug">debug</string>
+    <string name="dns_no_records">No records</string>
+    <string name="dns_timeout">TIMEOUT</string>
+    <string name="age_s">%1$d s</string>
+    <string name="ago">%1$s ago</string>
+    <string name="conn_bytes">↓ %1$s ↑ %2$s</string>
+    <string name="diag_report_header">sshovel diagnostics</string>
+    <string name="diag_report_active">Active connections</string>
+    <string name="diag_report_failed">Failed connections</string>
 
     <!-- Settings -->
     <string name="settings">Settings</string>
@@ -432,6 +443,7 @@
     <string name="tunnel_state_disconnecting">Disconnecting…</string>
     <string name="err_internal_title">Something went wrong</string>
     <string name="err_internal_body">sshovel stopped because of an internal error. Details are in Diagnostics.</string>
+    <string name="err_internal_action">View diagnostics</string>
     <string name="reconnect_detail_lost">The connection to the server was lost. Attempt %1$d. Intranet connections fail until the tunnel is back.</string>
     <string name="net_wifi">Wi‑Fi</string>
     <string name="net_mobile">mobile data</string>

@@ -31,8 +31,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import com.github.dennisklein.sshovel.R
 import com.github.dennisklein.sshovel.ui.theme.MonoFamily
+import java.io.File
 
 /** The monospace variant of a type role (handoff §1.3): machine values only. */
 fun TextStyle.mono(): TextStyle = copy(fontFamily = MonoFamily)
@@ -83,6 +85,23 @@ suspend fun Clipboard.copyText(label: String, text: String) {
 /** Android's share sheet for a line of text (public keys; never private material). */
 fun Context.shareText(text: String) {
     val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text)
+    startActivity(Intent.createChooser(send, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+}
+
+/**
+ * Android's share sheet for a text file (Diagnostics export). The file lives in cache/diagnostics
+ * only from here until the next share, which replaces it.
+ */
+fun Context.shareTextFile(fileName: String, text: String) {
+    val dir = File(cacheDir, "diagnostics").apply { mkdirs() }
+    dir.listFiles()?.forEach { it.delete() }
+    val file = File(dir, fileName).apply { writeText(text) }
+    val uri = FileProvider.getUriForFile(this, "$packageName.files", file)
+    val send = Intent(Intent.ACTION_SEND)
+        .setType("text/plain")
+        .putExtra(Intent.EXTRA_STREAM, uri)
+        .putExtra(Intent.EXTRA_TITLE, fileName)
+        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     startActivity(Intent.createChooser(send, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
 }
 
