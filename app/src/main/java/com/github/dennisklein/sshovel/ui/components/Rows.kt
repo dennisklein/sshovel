@@ -373,7 +373,11 @@ fun AppRow(label: String, packageName: String, icon: Painter?, checked: Boolean,
             androidx.compose.foundation.Image(icon, null, Modifier.size(40.dp))
         } else {
             Surface(Modifier.size(40.dp), shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.tertiaryContainer) {
-                Box(contentAlignment = Alignment.Center) { Text(label.take(1).uppercase(), style = MaterialTheme.typography.titleMedium) }
+                // The initial is decoration in a fixed 40 dp tile: sized in dp so large fonts don't clip it.
+                val size = with(androidx.compose.ui.platform.LocalDensity.current) { 18.dp.toSp() }
+                Box(contentAlignment = Alignment.Center) {
+                    Text(label.take(1).uppercase(), style = MaterialTheme.typography.titleMedium.copy(fontSize = size, lineHeight = size))
+                }
             }
         }
         Column(Modifier.weight(1f)) {
