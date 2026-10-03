@@ -68,6 +68,7 @@ import com.github.dennisklein.sshovel.diagnostics.LogEvent
 import com.github.dennisklein.sshovel.ui.components.ActiveConnectionRow
 import com.github.dennisklein.sshovel.ui.components.DnsEntryRow
 import com.github.dennisklein.sshovel.ui.components.FailedConnectionRow
+import com.github.dennisklein.sshovel.ui.components.InfoNote
 import com.github.dennisklein.sshovel.ui.components.LogLine
 import com.github.dennisklein.sshovel.ui.components.SectionHeader
 import com.github.dennisklein.sshovel.ui.components.SymbolIcon
@@ -246,8 +247,21 @@ private fun EventsPage(ui: DiagnosticsUi, actions: DiagnosticsActions) {
 /** G2: counts, then queries newest first. */
 @Composable
 private fun DnsPage(ui: DiagnosticsUi, actions: DiagnosticsActions) {
-    if (ui.dns.isEmpty()) return EmptyState(R.drawable.ic_dns, R.string.diag_no_dns)
+    // Strict Private DNS bypasses split DNS: say so first (ARCHITECTURE §5, "Known interference").
+    val privateDns: @Composable () -> Unit = {
+        ui.privateDnsHost?.let { host ->
+            InfoNote(R.drawable.ic_info, stringResource(R.string.dns_private_strict, host), Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp))
+        }
+    }
+    if (ui.dns.isEmpty()) {
+        Column(Modifier.fillMaxSize()) {
+            privateDns()
+            EmptyState(R.drawable.ic_dns, R.string.diag_no_dns)
+        }
+        return
+    }
     LazyColumn(Modifier.fillMaxSize()) {
+        item { privateDns() }
         item {
             Text(
                 stringResource(
@@ -365,6 +379,9 @@ private fun PreviewTab(ui: DiagnosticsUi, tab: DiagTab) = SshovelTheme(dynamicCo
 
 @Preview(name = "G4 No events yet") @Preview(name = "G4 No events yet dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable private fun PreviewNoEvents() = PreviewTab(DiagnosticsUi(tunnelOff = false), DiagTab.EVENTS)
+
+@Preview(name = "G2 DNS with strict Private DNS") @Preview(name = "G2 DNS with strict Private DNS dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable private fun PreviewPrivateDns() = PreviewTab(sampleUi.copy(privateDnsHost = "dns.example.net"), DiagTab.DNS)
 
 @Preview(name = "G4 No DNS queries yet") @Preview(name = "G4 No DNS queries yet dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable private fun PreviewNoDns() = PreviewTab(DiagnosticsUi(tunnelOff = false), DiagTab.DNS)

@@ -310,6 +310,9 @@ class SshovelVpnService : android.net.VpnService() {
                     event(Level.INFO, "${p.dns.suffixes.joinToString(", ").ifEmpty { "no suffixes" }} → $server", Component.DNS)
                 }
                 if (isAlwaysOn) event(Level.INFO, if (isLockdownEnabled) "Always-on VPN with lockdown" else "Always-on VPN")
+                network.privateDnsHost.value?.let { host ->
+                    event(Level.WARN, "Private DNS is strict ($host): apps resolve through it, not through the tunnel", Component.DNS)
+                }
             }
         }
     }

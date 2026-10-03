@@ -51,6 +51,8 @@ data class DiagnosticsUi(
     val badges: Map<DiagTab, Int> = emptyMap(),
     /** For ages ("4 s ago"); ticks every second while on screen. */
     val now: Long = 0,
+    /** Strict Private DNS hostname: apps resolve through it, not through the tunnel. */
+    val privateDnsHost: String? = null,
 ) {
     companion object {
         const val DIRECT_SHOWN = 200
@@ -61,6 +63,7 @@ data class DiagnosticsUi(
 class DiagnosticsViewModel(
     private val d: Diagnostics,
     tunnelState: StateFlow<TunnelState>,
+    privateDnsHost: StateFlow<String?> = kotlinx.coroutines.flow.MutableStateFlow(null),
     private val clock: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
     private data class Data(val events: List<LogEvent>, val dns: List<DnsEvent>, val active: List<ActiveFlow>, val failed: List<FailedFlow>)
@@ -77,7 +80,7 @@ class DiagnosticsViewModel(
     private var watch: AutoCloseable? = null
     private var cleared: Diagnostics.Cleared? = null
 
-    val ui: StateFlow<DiagnosticsUi> = combine(live, view, ticker, tunnelState) { live, v, now, state ->
+    val ui: StateFlow<DiagnosticsUi> = combine(live, view, ticker, tunnelState, privateDnsHost) { live, v, now, state, privateDns ->
         val shown = v.frozen ?: live
         d.seenUntil.set(v.tab.ordinal, now) // the open tab is being read
         DiagnosticsUi(
@@ -104,6 +107,7 @@ class DiagnosticsViewModel(
                 DiagTab.CONNECTIONS to live.failed.count { it.ts > d.seenUntil[2] },
             ),
             now = now,
+            privateDnsHost = privateDns,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), DiagnosticsUi())
 
@@ -164,7 +168,7 @@ class DiagnosticsViewModel(
         }
 
         fun factory(container: AppContainer) = viewModelFactory {
-            initializer { DiagnosticsViewModel(container.diagnostics, container.tunnelController.state) }
+            initializer { DiagnosticsViewModel(container.diagnostics, container.tunnelController.state, container.networkMonitor.privateDnsHost) }
         }
     }
 }

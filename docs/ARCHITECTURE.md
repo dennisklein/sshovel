@@ -112,7 +112,12 @@ Rules:
   promiscuous, gVisor would otherwise answer echo requests for every address, making unreachable
   hosts look alive. Counted as `droppedIcmp`. Non-IPv4 packets are dropped the same way.
 - **Flow events:** every forwarded connection emits `open` and `close` (with byte counts and
-  duration), or `fail` with its reason, via `Platform.OnFlowEvent`.
+  duration), or `fail` with its reason, via `Platform.OnFlowEvent`. A `fail` is emitted before
+  the RST, while the app's socket still exists, so Kotlin can ask
+  `ConnectivityManager.getConnectionOwnerUid` which app it was (M7). Fail reasons:
+  `FORWARDING_DENIED`, `DEST_UNREACHABLE`, `DEST_TIMEOUT`, `TUNNEL_DOWN`.
+- **Open flows** with their bytes so far: `Engine.FlowsJSON()` (§8), polled by Diagnostics only
+  while its Connections tab is on screen.
 
 ## 5. DNS (split DNS)
 
@@ -345,8 +350,20 @@ Stats fields: `uptimeSec` (since the last transition to On; 0 otherwise), `bytes
 - **Notification channels**
   - `tunnel_status`: low importance, ongoing, with Disconnect / Retry now actions.
   - `tunnel_alerts`: default importance, for NeedsAttention.
-- **Diagnostics log:** an in-memory ring buffer (2000 events) fed by `Platform.Log`. It's never
-  persisted unless the user shares or exports it.
+- **Diagnostics** (M7, `diagnostics/`): three in-memory buffers, one per process, so a session's
+  events stay readable after it ends until the user clears them:
+  - events: a ring buffer (2000) fed by `Platform.Log` and by the service's Android-side events
+    (component `System`: connect requests, Always-on starts, network changes, revocation,
+    errors; `Tunnel`/`DNS`: the TUN and DNS setup);
+  - DNS queries (§5, 500);
+  - connections: open flows (from the flow events, with live bytes from `FlowsJSON` while
+    watched) and the last 200 failures, each with the app (`getConnectionOwnerUid`, labels via
+    `PackageManager`; apps hidden by package visibility stay unknown) and the name its IP was
+    resolved from (the DNS buffer).
+
+  None of it is persisted. "Share as text file" writes one export to `cache/diagnostics/`
+  (replaced by the next share) and hands it out through a `FileProvider`; "Copy all" puts the same
+  text on the clipboard.
 
 ## 8. Go ↔ Kotlin contract (`core/mobile`)
 
@@ -381,6 +398,7 @@ func (e *Engine) Stop()
 func (e *Engine) NetworkChanged()
 func (e *Engine) RetryNow()
 func (e *Engine) StatsJSON() string
+func (e *Engine) FlowsJSON() string // M7: open flows [{"id","src","dst","bytesIn","bytesOut","startTs"}]
 
 func FetchHostKey(platform Platform, configJSON string) (string, error) // {"type","fingerprint","line"}
 func DiscoverRoutes(platform Platform, configJSON string, importedKey []byte) (string, error) // [{"cidr","dev","isDefault","isLinkLocal"}]

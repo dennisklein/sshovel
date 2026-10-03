@@ -309,6 +309,25 @@ is back."
 - The license viewer joins the FSF text's hard-wrapped lines into paragraphs so it reads on a
   phone; the centred headings keep their lines. The text itself is unchanged.
 
+**M7 notes (Diagnostics and accessibility).**
+
+- "Clear" empties all three tabs (open connections stay: they're live, not history); the
+  "Cleared" snackbar's "Undo" brings them back. "Copy all" and "Share as text file" export all
+  three tabs as one text file.
+- Tab badges count warnings and failures the user hasn't seen on that tab yet (per app run).
+- The warning cards' "View diagnostics" opens the tab that explains them: DNS for
+  `DNS_UNREACHABLE`, Connections for `FORWARDING_DENIED`. The On notification carries a
+  "Diagnostics" action while a warning stands, and its text names the warning. `INTERNAL`'s fix
+  button is "View diagnostics" (its body says the details are there).
+- Strict Private DNS gets a note at the top of the DNS tab: "Private DNS is set to {host}, so apps
+  ask it directly and intranet names don’t resolve through the tunnel. Set Private DNS to
+  Automatic to use the intranet DNS server."
+- Copy added for these (end of `strings.xml`): Undo, the debug level word, "No records",
+  "TIMEOUT", ages ("4 s", "4 s ago"), bytes ("↓ … ↑ …"), the export's headings, and
+  "View diagnostics" for `INTERNAL`.
+- At large font sizes two buttons side by side (onboarding's bottom bar, Reconnecting's Retry now
+  and Disconnect) stack with the primary on top, as handoff §5 asks.
+
 ## 9. Handoff deliverables (what engineering needs from you)
 
 1. Every screen and state in §5, light and dark, plus the storyboards in §6.

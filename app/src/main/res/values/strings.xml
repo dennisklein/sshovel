@@ -335,6 +335,7 @@
     <string name="age_s">%1$d s</string>
     <string name="ago">%1$s ago</string>
     <string name="conn_bytes">↓ %1$s ↑ %2$s</string>
+    <string name="dns_private_strict">Private DNS is set to %1$s, so apps ask it directly and intranet names don’t resolve through the tunnel. Set Private DNS to Automatic to use the intranet DNS server.</string>
     <string name="diag_report_header">sshovel diagnostics</string>
     <string name="diag_report_active">Active connections</string>
     <string name="diag_report_failed">Failed connections</string>

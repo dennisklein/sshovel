@@ -72,7 +72,7 @@ android {
         minSdk = 36
         targetSdk = 36
         versionCode = 1
-        versionName = "0.6.0-m6"
+        versionName = "0.7.0-m7"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "SOURCE_URL", "\"${sourceUrl.get()}\"")
         // core.aar is built for these only (buildGoCore); drop other ABIs'

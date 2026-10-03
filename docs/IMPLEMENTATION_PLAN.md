@@ -296,8 +296,8 @@ through the carrier or Wi-Fi resolver (visible in the diagnostics DNS log). *Onl
 limits the tunnel to the chosen apps. A validation error blocks saving an overlapping tun subnet.
 
 Run it with `tools/android-env/run.sh m4`. The DNS diagnostics log is the in-memory `DnsLog`
-(ARCHITECTURE §5); the M7 Diagnostics screen shows it, and until then debug builds dump it with
-the adb `dns-log` command. Validation reaches Kotlin as `ValidationIssue`s from `ValidateConfig`;
+(ARCHITECTURE §5); the M7 Diagnostics screen shows it, and debug builds also dump it with the adb
+`dns-log` command. Validation reaches Kotlin as `ValidationIssue`s from `ValidateConfig`;
 `ProfileRepository.save` refuses errors. Mapping issues to the handoff's field messages
 (`err_cidr_*`, `err_tunnel_overlap`, …) is part of the M6 profile editor.
 
@@ -361,8 +361,8 @@ Implementation notes (M6):
   saving), as `ValidateConfig` reports it (ARCHITECTURE §8), shown with the warning accent.
 - The acceptance run never presses back to close the keyboard (with none showing, back leaves
   the onboarding step); it scrolls each field above the bottom actions before tapping it.
-- The Diagnostics entry (`troubleshoot`) and the "View diagnostics" actions arrive with the
-  Diagnostics screen in M7; until then the On-state warning card has no button.
+- The Diagnostics entry (`troubleshoot`) and the "View diagnostics" actions arrived with the
+  Diagnostics screen in M7.
 
 ### M7 — Diagnostics, accessibility, polish
 
@@ -375,6 +375,32 @@ error catalog strings wired to every error code.
 - 200 % font scale shows no clipping on any screen.
 - Accessibility Scanner reports no issues on main screens.
 - Predictive back works on every sub-screen and sheet.
+
+Run it with `tools/android-env/run.sh m7`. The instrumented tests carry most of the acceptance:
+`FontScaleTest` renders every `@Preview` at font scale 2 and fails on text that is cut off (laid
+out past its bounds without an ellipsis, or past the window's edge); `AccessibilityChecksTest`
+runs the Accessibility Test Framework, the checks behind Accessibility Scanner, over every screen
+preview (test-only `ui-test-junit4-accessibility`, Apache-2.0); `HeroAnnouncementsTest` drives the
+hero through the connect flow and checks each announcement and its politeness. A TalkBack
+walkthrough by ear stays a device check (§7). On the emulator the script walks DESIGN_BRIEF §6
+flow 6 against test-env, whose jump host forwards only to `10.77.0.20:80`, `10.77.0.53:53` and
+`10.77.0.21:80` (`PermitOpen`) and whose DNS resolves `git.corp.test` outside the routed subnet:
+`https://wiki.corp.test` is refused by server policy, `http://api.corp.test` is unreachable, and
+Diagnostics shows each with its reason, app and name (debug `diag-dump`). It then follows the
+warning card's "View diagnostics", shares the export, takes screenshots (light, dark, 200 % font)
+and does the back gesture on every sub-screen and on a sheet, with a screenshot halfway through.
+
+Implementation notes (M7):
+
+- Diagnostics keeps three in-memory buffers per process (ARCHITECTURE §7): events (Go's
+  `Platform.Log` plus the service's own System events), DNS queries, and connections. Open flows
+  get live bytes from the new `Engine.FlowsJSON()` only while the Connections tab is visible;
+  the app behind a flow comes from `getConnectionOwnerUid`, so the core now reports a failed
+  flow before its RST.
+- `ErrorCatalogTest` reads `core/errcode/errcode.go` and fails if a Go code has no Kotlin
+  constant or no copy, so the catalog stays wired to every code.
+- Strict Private DNS (ARCHITECTURE §5, "Known interference") is explained on the DNS tab and
+  logged as a DNS warning when the tunnel comes up.
 
 ### M8 — Hardening and release prep
 

@@ -5,6 +5,7 @@ package com.github.dennisklein.sshovel.tunnel
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.LinkProperties
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
@@ -30,6 +31,15 @@ class NetworkMonitor(context: Context, scope: CoroutineScope) {
     /** The current underlying network, or null while there is none. */
     val current: StateFlow<Network?> = _current.asStateFlow()
     val available: StateFlow<Boolean> = current.map { it != null }.stateIn(scope, SharingStarted.Eagerly, false)
+
+    private val _privateDnsHost = MutableStateFlow<String?>(null)
+
+    /**
+     * The Private DNS hostname when the underlying network uses Private DNS in strict mode: apps
+     * then resolve through it and never reach sshovel's resolver (ARCHITECTURE §5, "Known
+     * interference"). Null in Automatic or Off mode.
+     */
+    val privateDnsHost: StateFlow<String?> = _privateDnsHost.asStateFlow()
 
     /** Human-readable transport of the current network, for diagnostics ("Wi-Fi", "mobile"). */
     fun describe(network: Network?): String = network?.let { transportOf(it)?.label } ?: "none"
@@ -62,7 +72,14 @@ class NetworkMonitor(context: Context, scope: CoroutineScope) {
                 }
 
                 override fun onLost(network: Network) {
-                    if (_current.value == network) _current.value = null
+                    if (_current.value == network) {
+                        _current.value = null
+                        _privateDnsHost.value = null
+                    }
+                }
+
+                override fun onLinkPropertiesChanged(network: Network, lp: LinkProperties) {
+                    if (_current.value == network) _privateDnsHost.value = lp.privateDnsServerName
                 }
             },
             Handler(thread.looper),
