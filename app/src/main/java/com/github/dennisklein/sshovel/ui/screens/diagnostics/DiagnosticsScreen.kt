@@ -20,7 +20,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -119,9 +118,13 @@ fun DiagnosticsScreen(
                     Tab(
                         selected = pager.currentPage == tab.ordinal,
                         onClick = { scope.launch { pager.animateScrollToPage(tab.ordinal) } },
+                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                        unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         text = {
-                            BadgedBox(badge = { if (count > 0 && pager.currentPage != tab.ordinal) Badge { Text(count.toString()) } }) {
+                            // The badge follows the title, 6 dp apart, instead of covering it (handoff G1).
+                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                                 Text(stringResource(TAB_TITLES[tab.ordinal]), maxLines = 1)
+                                if (count > 0 && pager.currentPage != tab.ordinal) Badge { Text(count.toString()) }
                             }
                         },
                     )

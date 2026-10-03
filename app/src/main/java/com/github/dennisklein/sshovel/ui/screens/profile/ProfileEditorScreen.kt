@@ -61,6 +61,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.stateDescription
@@ -434,7 +435,7 @@ private fun ServerSection(ui: EditorUi, actions: EditorActions, targets: FocusTa
     Field(ui, actions, targets, Fields.NAME, R.string.field_profile_name, ui.draft.name, { d, v -> d.copy(name = v) })
     Field(ui, actions, targets, Fields.HOST, R.string.field_host, ui.draft.host, { d, v -> d.copy(host = v) }, mono = true, keyboard = KeyboardType.Uri)
     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        Field(ui, actions, targets, Fields.PORT, R.string.field_port, ui.draft.port, { d, v -> d.copy(port = v.filter(Char::isDigit).take(5)) }, Modifier.width(96.dp), mono = true, keyboard = KeyboardType.Number)
+        Field(ui, actions, targets, Fields.PORT, R.string.field_port, ui.draft.port, { d, v -> d.copy(port = v.filter(Char::isDigit).take(5)) }, Modifier.width(96.dp * LocalDensity.current.fontScale.coerceAtLeast(1f)), mono = true, keyboard = KeyboardType.Number)
         Field(ui, actions, targets, Fields.USER, R.string.field_username, ui.draft.user, { d, v -> d.copy(user = v) }, Modifier.weight(1f), mono = true, keyboard = KeyboardType.Ascii)
     }
 }

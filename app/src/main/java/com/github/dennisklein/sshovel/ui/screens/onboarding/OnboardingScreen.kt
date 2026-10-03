@@ -45,6 +45,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
@@ -367,7 +368,7 @@ private fun ServerStep(ui: OnboardingUi, actions: OnboardingActions) {
     F(Fields.NAME, R.string.field_profile_name, ui.draft.name, false, KeyboardType.Text) { d, v -> d.copy(name = v) }
     F(Fields.HOST, R.string.field_host, ui.draft.host, true, KeyboardType.Uri) { d, v -> d.copy(host = v) }
     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        F(Fields.PORT, R.string.field_port, ui.draft.port, true, KeyboardType.Number, Modifier.width(96.dp)) { d, v -> d.copy(port = v.filter(Char::isDigit).take(5)) }
+        F(Fields.PORT, R.string.field_port, ui.draft.port, true, KeyboardType.Number, Modifier.width(96.dp * LocalDensity.current.fontScale.coerceAtLeast(1f))) { d, v -> d.copy(port = v.filter(Char::isDigit).take(5)) }
         F(Fields.USER, R.string.field_username, ui.draft.user, true, KeyboardType.Ascii, Modifier.weight(1f)) { d, v -> d.copy(user = v) }
     }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
