@@ -30,6 +30,7 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
@@ -50,6 +51,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -111,7 +113,7 @@ fun DiagnosticsScreen(
         },
     ) { padding ->
         Column(Modifier.padding(padding).fillMaxSize()) {
-            PrimaryTabRow(selectedTabIndex = pager.currentPage) {
+            val tabs: @Composable () -> Unit = {
                 DiagTab.entries.forEach { tab ->
                     val count = ui.badges[tab] ?: 0
                     Tab(
@@ -119,11 +121,18 @@ fun DiagnosticsScreen(
                         onClick = { scope.launch { pager.animateScrollToPage(tab.ordinal) } },
                         text = {
                             BadgedBox(badge = { if (count > 0 && pager.currentPage != tab.ordinal) Badge { Text(count.toString()) } }) {
-                                Text(stringResource(TAB_TITLES[tab.ordinal]))
+                                Text(stringResource(TAB_TITLES[tab.ordinal]), maxLines = 1)
                             }
                         },
                     )
                 }
+            }
+            // Three equal tabs, or at large font sizes tabs as wide as their titles, scrolling
+            // sideways, so "Connections" is never cut off (handoff §5, 200 %).
+            if (LocalDensity.current.fontScale < 1.3f) {
+                PrimaryTabRow(selectedTabIndex = pager.currentPage, tabs = tabs)
+            } else {
+                PrimaryScrollableTabRow(selectedTabIndex = pager.currentPage, edgePadding = 0.dp, tabs = tabs)
             }
             if (ui.paused) {
                 Surface(color = MaterialTheme.colorScheme.surfaceContainer, modifier = Modifier.fillMaxWidth()) {
