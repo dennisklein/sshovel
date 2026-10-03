@@ -114,20 +114,14 @@ fun OnboardingScaffold(
  */
 @Composable
 fun BottomActions(secondary: (@Composable () -> Unit)?, primary: @Composable () -> Unit) {
-    androidx.compose.foundation.layout.FlowRow(
-        Modifier
+    // Side by side, or stacked with the primary on top when they don't fit (handoff §5).
+    AdaptiveButtonRow(
+        secondary = { secondary?.invoke() },
+        primary = primary,
+        modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = Spacing.onboarding, vertical = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        itemVerticalAlignment = Alignment.CenterVertically,
-    ) {
-        if (secondary != null) {
-            secondary()
-            androidx.compose.foundation.layout.Spacer(Modifier.weight(1f))
-        }
-        primary()
-    }
+    )
 }
 
 /** Headline and body of an onboarding or full-screen explainer (headlineMedium + bodyLarge). */

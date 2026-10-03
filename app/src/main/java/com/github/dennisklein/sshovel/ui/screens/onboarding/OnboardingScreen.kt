@@ -47,6 +47,7 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
@@ -506,7 +507,16 @@ private fun TestResults(ui: OnboardingUi, test: TestUi, actions: OnboardingActio
                     Row(Modifier.padding(horizontal = 8.dp, vertical = 12.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                         SymbolIcon(R.drawable.ic_cancel_filled)
                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Text(t, style = MaterialTheme.typography.titleMedium)
+                            // "{check} failed: {error title}" is announced as the step completes (handoff §5).
+                            val failed = stringResource(R.string.a11y_check_failed, label, t)
+                            Text(
+                                t,
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.semantics {
+                                    liveRegion = LiveRegionMode.Polite
+                                    contentDescription = failed
+                                },
+                            )
                             Text(errBody, style = MaterialTheme.typography.bodyMedium)
                             when (c.code) {
                                 Codes.AUTH_FAILED -> Button(

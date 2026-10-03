@@ -35,8 +35,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -335,10 +337,16 @@ fun CheckResultRow(title: String, status: CheckStatus, supporting: (@Composable 
             CheckStatus.NOT_RUN -> SymbolIcon(R.drawable.ic_radio_button_unchecked, tint = cs.onSurfaceVariant)
         }
         Column(Modifier.weight(1f)) {
+            // "{check} passed" is announced as the step completes (handoff §5).
+            val passed = stringResource(R.string.a11y_check_passed, title)
             Text(
                 if (status == CheckStatus.NOT_RUN) stringResource(R.string.test_not_tested, title) else title,
                 style = MaterialTheme.typography.bodyLarge,
                 color = if (status == CheckStatus.NOT_RUN) cs.onSurfaceVariant else cs.onSurface,
+                modifier = if (status == CheckStatus.PASSED) Modifier.semantics {
+                    liveRegion = LiveRegionMode.Polite
+                    contentDescription = passed
+                } else Modifier,
             )
             if (supporting != null && status == CheckStatus.PASSED) {
                 androidx.compose.runtime.CompositionLocalProvider(

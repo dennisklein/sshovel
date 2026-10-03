@@ -91,6 +91,8 @@ class TunnelTileService : TileService() {
         val tile = qsTile ?: return
         tile.label = getString(R.string.tile_label)
         tile.subtitle = c.subtitleText ?: getString(c.subtitleRes)
+        // TalkBack: label "sshovel", state = the subtitle, role Switch (handoff §5).
+        tile.stateDescription = tile.subtitle
         tile.state = if (c.active) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
         tile.icon = Icon.createWithResource(this, if (c.attention) R.drawable.ic_sshovel_attention else R.drawable.ic_sshovel)
         tile.updateTile()

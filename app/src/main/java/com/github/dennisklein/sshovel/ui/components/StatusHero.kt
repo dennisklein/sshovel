@@ -126,6 +126,13 @@ fun StatusHero(model: HeroModel, actions: HeroActions, modifier: Modifier = Modi
         label = "hero container",
     )
     val content = if (attention) cs.onErrorContainer else cs.onSurface
+    // The state before this one, for "Reconnected to {profile}" (handoff §5).
+    val history = remember { arrayOfNulls<TunnelState>(2) }
+    if (history[0]?.let { it::class } != model.state::class) {
+        history[1] = history[0]
+        history[0] = model.state
+    }
+    val reconnected = model.state is TunnelState.On && history[1] is TunnelState.Reconnecting
     Card(
         modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
@@ -146,25 +153,30 @@ fun StatusHero(model: HeroModel, actions: HeroActions, modifier: Modifier = Modi
                     .animateContentSize(spring(dampingRatio = 1f, stiffness = Spring.StiffnessMedium)),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                HeroBody(m, actions)
+                HeroBody(m, actions, reconnected)
             }
         }
     }
 }
 
 @Composable
-private fun HeroBody(m: HeroModel, actions: HeroActions) {
+private fun HeroBody(m: HeroModel, actions: HeroActions, reconnected: Boolean = false) {
     val context = LocalContext.current
     val state = m.state
     val profile = m.profile
     val attention = state is TunnelState.NeedsAttention
     val error = (state as? TunnelState.NeedsAttention)?.let { errorText(context, it.code, profile, m.keyName) }
+    // Worked out once per state (and error), so the live region speaks on changes only: the
+    // reconnect countdown is never re-announced (handoff §5).
+    val announce = remember(state::class, (state as? TunnelState.NeedsAttention)?.code, reconnected) {
+        announcement(context, m, error?.first, reconnected)
+    }
     StateIndicator(
         state.indicatorKind(),
         stateLabel(context, state, m.stats),
         modifier = Modifier.semantics {
             liveRegion = if (attention) LiveRegionMode.Assertive else LiveRegionMode.Polite
-            contentDescription = announcement(context, m, error?.first)
+            contentDescription = announce
         },
         onErrorSurface = attention,
         hostKeyError = state.isHostKeyError(),
@@ -214,13 +226,17 @@ private fun HeroBody(m: HeroModel, actions: HeroActions) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(actions.onRetryNow, Modifier.weight(1f), enabled = !offline) {
-                    ButtonIcon(R.drawable.ic_refresh)
-                    Text(stringResource(R.string.action_retry_now))
-                }
-                OutlinedButton(actions.onDisconnect, Modifier.weight(1f)) { Text(stringResource(R.string.action_disconnect)) }
-            }
+            AdaptiveButtonRow(
+                secondary = { OutlinedButton(actions.onDisconnect) { Text(stringResource(R.string.action_disconnect)) } },
+                primary = {
+                    Button(actions.onRetryNow, enabled = !offline) {
+                        ButtonIcon(R.drawable.ic_refresh)
+                        Text(stringResource(R.string.action_retry_now))
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                equalWidth = true,
+            )
         }
         is TunnelState.NeedsAttention -> {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -366,10 +382,10 @@ fun reconnectDetail(context: Context, s: TunnelState.Reconnecting, change: Netwo
 }
 
 /** What TalkBack announces for the hero's state (handoff §5). */
-private fun announcement(context: Context, m: HeroModel, errorTitle: String?): String = when (val s = m.state) {
+internal fun announcement(context: Context, m: HeroModel, errorTitle: String?, reconnected: Boolean = false): String = when (val s = m.state) {
     TunnelState.Off -> context.getString(R.string.a11y_disconnected)
     is TunnelState.Connecting -> context.getString(R.string.a11y_connecting, m.profile.name)
-    is TunnelState.On -> context.getString(R.string.a11y_connected, m.profile.name)
+    is TunnelState.On -> context.getString(if (reconnected) R.string.a11y_reconnected else R.string.a11y_connected, m.profile.name)
     is TunnelState.Reconnecting -> {
         val secs = s.nextRetryAtMillis?.let { ((it - System.currentTimeMillis()) / 1000).coerceAtLeast(0).toInt() } ?: 0
         context.getString(R.string.a11y_reconnecting, m.profile.name, secs)
