@@ -303,6 +303,11 @@ is back."
   way back to S4 while the error stands (after "Review in profile", or when S4 wasn't opened).
 - A subnet already covered by another is shown as a warning, not an error: the core reports it
   as one, and a covered subnet is harmless (ARCHITECTURE §8).
+- Keys the device keeps in Android's software keystore (no TEE or StrongBox, e.g. emulators)
+  get a "Software keystore" badge and their own onboarding note, instead of the handoff's
+  hardware wording, which would overstate their protection.
+- The license viewer joins the FSF text's hard-wrapped lines into paragraphs so it reads on a
+  phone; the centred headings keep their lines. The text itself is unchanged.
 
 ## 9. Handoff deliverables (what engineering needs from you)
 

@@ -359,6 +359,8 @@ Implementation notes (M6):
 - The profile editor keeps a string draft (`ProfileDraft`) and maps the Go core's
   `ValidateConfig` issues to fields; a subnet covered by another is a *warning* (it doesn't block
   saving), as `ValidateConfig` reports it (ARCHITECTURE §8), shown with the warning accent.
+- The acceptance run never presses back to close the keyboard (with none showing, back leaves
+  the onboarding step); it scrolls each field above the bottom actions before tapping it.
 - The Diagnostics entry (`troubleshoot`) and the "View diagnostics" actions arrive with the
   Diagnostics screen in M7; until then the On-state warning card has no button.
 
