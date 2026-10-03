@@ -336,6 +336,18 @@ func (e *Engine) Stats() Stats {
 	return s
 }
 
+// Flows returns the open flows (Diagnostics, Connections), oldest first; none
+// while there is no netstack.
+func (e *Engine) Flows() []netstack.FlowInfo {
+	e.mu.Lock()
+	ns := e.ns
+	e.mu.Unlock()
+	if ns == nil {
+		return []netstack.FlowInfo{}
+	}
+	return ns.Flows()
+}
+
 func (e *Engine) log(level int, comp, msg string) {
 	if e.cb.Log != nil {
 		e.cb.Log(level, comp, msg)

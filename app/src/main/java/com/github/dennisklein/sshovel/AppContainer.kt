@@ -11,12 +11,13 @@ import com.github.dennisklein.sshovel.data.InstalledApps
 import com.github.dennisklein.sshovel.data.ProfileRepository
 import com.github.dennisklein.sshovel.data.SettingsRepository
 import com.github.dennisklein.sshovel.data.VariantSeed
-import com.github.dennisklein.sshovel.diagnostics.DnsLog
+import com.github.dennisklein.sshovel.diagnostics.Diagnostics
 import com.github.dennisklein.sshovel.keys.GoKeyCodec
 import com.github.dennisklein.sshovel.keys.ImportedKeyVault
 import com.github.dennisklein.sshovel.keys.KeyRepository
 import com.github.dennisklein.sshovel.keys.KeystoreKeys
 import com.github.dennisklein.sshovel.tile.TunnelTileService
+import com.github.dennisklein.sshovel.tunnel.FlowAttribution
 import com.github.dennisklein.sshovel.tunnel.HostKeyVerifier
 import com.github.dennisklein.sshovel.tunnel.NetworkMonitor
 import com.github.dennisklein.sshovel.tunnel.ServerChecks
@@ -49,7 +50,9 @@ class AppContainer(context: Context) {
     )
     val hostKeys = HostKeyVerifier(networkMonitor, keys)
     val serverChecks = ServerChecks(networkMonitor, keys)
-    val dnsLog = DnsLog()
+    val diagnostics = Diagnostics()
+    val dnsLog get() = diagnostics.dns
+    val flowAttribution = FlowAttribution(context)
     val settings = SettingsRepository(store, appScope)
     val tunnelController = TunnelController(ServiceTunnelCommands(context), networkMonitor.available, appScope)
 

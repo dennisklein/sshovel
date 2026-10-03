@@ -169,10 +169,19 @@ func TestEcho(t *testing.T) {
 	e.waitStats(t, func(st netstack.Stats) bool {
 		return st.ActiveFlows == 1 && st.BytesIn == uint64(len(msg)) && st.BytesOut == uint64(len(msg))
 	})
+	// Diagnostics lists the open flow with its bytes so far.
+	fl := e.ns.Flows()
+	if len(fl) != 1 || fl[0].Dst != wiki.String() || fl[0].Src == "" || fl[0].StartTS == 0 ||
+		fl[0].BytesIn != uint64(len(msg)) || fl[0].BytesOut != uint64(len(msg)) {
+		t.Errorf("open flows %+v", fl)
+	}
 	c.Close()
 	ev := e.waitFlow(t, netstack.FlowClose)
 	if ev.BytesIn != uint64(len(msg)) || ev.BytesOut != uint64(len(msg)) {
 		t.Errorf("close event %+v", ev)
+	}
+	if fl := e.ns.Flows(); len(fl) != 0 {
+		t.Errorf("closed flow still listed: %+v", fl)
 	}
 }
 

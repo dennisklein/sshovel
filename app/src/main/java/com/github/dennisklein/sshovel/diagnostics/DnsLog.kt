@@ -44,17 +44,22 @@ class DnsLog(private val capacity: Int = CAPACITY) {
 
     fun add(event: DnsEvent) = _events.update { (it + event).takeLast(capacity) }
 
-    /** Parses and adds an OnDnsEvent payload; malformed payloads are ignored. */
-    fun addJson(json: String) {
-        try {
-            add(format.decodeFromString(DnsEvent.serializer(), json))
-        } catch (_: IllegalArgumentException) {
-        }
+    /** Parses and adds an OnDnsEvent payload; returns it, or null (and ignores it) if malformed. */
+    fun addJson(json: String): DnsEvent? = try {
+        format.decodeFromString(DnsEvent.serializer(), json).also(::add)
+    } catch (_: IllegalArgumentException) {
+        null
     }
 
     fun clear() {
         _events.value = emptyList()
     }
+
+    /** Puts back what [clear] removed (the "Undo" of "Cleared"); newer queries stay after them. */
+    fun restore(old: List<DnsEvent>) = _events.update { (old + it).takeLast(capacity) }
+
+    /** The name [ip] was last resolved from, to label connections ("Chrome · wiki.corp.example"). */
+    fun hostFor(ip: String): String? = _events.value.lastOrNull { ip in it.answers }?.name?.removeSuffix(".")
 
     companion object {
         const val CAPACITY = 500

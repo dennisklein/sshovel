@@ -20,6 +20,9 @@ import com.github.dennisklein.sshovel.data.Apps
 import com.github.dennisklein.sshovel.data.Auth
 import com.github.dennisklein.sshovel.data.Ipv4Prefix
 import com.github.dennisklein.sshovel.data.Profile
+import com.github.dennisklein.sshovel.diagnostics.Component
+import com.github.dennisklein.sshovel.diagnostics.FlowLog
+import com.github.dennisklein.sshovel.diagnostics.Level
 import com.github.dennisklein.sshovel.ui.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -90,6 +93,7 @@ class SshovelVpnService : android.net.VpnService() {
                 // The system starts us for Always-on VPN with this action (or a null intent after
                 // a restart): connect the default profile, TUN first (see connect).
                 SERVICE_INTERFACE, null -> {
+                    event(Level.INFO, "Started by Always-on VPN")
                     val p = app.container.profiles.defaultProfile()
                     if (p != null) connect(p.id, tunFirst = true) else fail(null, TunnelState.NeedsAttention(Codes.INTERNAL, "no default profile"))
                 }
@@ -101,6 +105,7 @@ class SshovelVpnService : android.net.VpnService() {
 
     override fun onRevoke() {
         // Another VPN took over, or the user revoked consent in Settings.
+        event(Level.WARN, "VPN permission revoked: another VPN took over or consent was withdrawn")
         scope.launch { fail(session, TunnelState.NeedsAttention(Codes.VPN_REVOKED)) }
     }
 
@@ -136,7 +141,10 @@ class SshovelVpnService : android.net.VpnService() {
         notifications.cancelAlert() // the previous error no longer applies
         report(TunnelState.Connecting("resolving"))
         lateinit var s: Session
-        val bridge = PlatformBridge(::protect, network, app.container.keys, app.container.dnsLog) { json -> scope.launch { onEngineStatus(s, json) } }
+        event(Level.INFO, "Connecting profile ${profile.name}")
+        val bridge = PlatformBridge(::protect, network, app.container.keys, app.container.diagnostics, app.container.flowAttribution::appFor) { json ->
+            scope.launch { onEngineStatus(s, json) }
+        }
         s = Session(profile, Mobile.newEngine(bridge), bridge)
         session = s
 
@@ -196,12 +204,16 @@ class SshovelVpnService : android.net.VpnService() {
     }
 
     private fun disconnect() {
-        session?.let { end(it, TunnelState.Off) } ?: finishIfIdle()
+        session?.let {
+            event(Level.INFO, "Disconnected by the user")
+            end(it, TunnelState.Off)
+        } ?: finishIfIdle()
     }
 
     /** Ends [s] (if current) with [state] shown, alerting for errors, and stops the service. */
     private fun fail(s: Session?, state: TunnelState.NeedsAttention) {
         if (s != null && session !== s) return
+        event(Level.ERROR, listOf(state.code, state.detail).filter { it.isNotEmpty() }.joinToString(": "))
         if (s != null) end(s, state) else {
             report(state)
             finishIfIdle()
@@ -216,6 +228,7 @@ class SshovelVpnService : android.net.VpnService() {
         if (state == TunnelState.Off) report(TunnelState.Disconnecting)
         s.engine.stop() // blocks until off; closes the TUN fd
         s.bridge.close()
+        app.container.diagnostics.flows.endSession()
         report(state)
         if (state == TunnelState.Off) controller.onProfile(null)
         if (!keepService) finishIfIdle()
@@ -226,6 +239,10 @@ class SshovelVpnService : android.net.VpnService() {
         if (BuildConfig.DEBUG) Log.i("sshovel/State", state.toString())
         controller.onState(state)
     }
+
+    /** An Android-side event for Diagnostics (component System). */
+    private fun event(level: Level, message: String, component: Component = Component.SYSTEM) =
+        app.container.diagnostics.events.add(level, component, message)
 
     private fun finishIfIdle() {
         if (session != null) return
@@ -242,8 +259,11 @@ class SshovelVpnService : android.net.VpnService() {
         val s = session ?: return
         if (s.tunUp) setUnderlyingNetworks(net?.let { arrayOf(it) } ?: emptyArray())
         // A new network (or the first one after none): the SSH socket is bound to the old one.
+        if (net == null && previous != null) event(Level.WARN, "No network")
         if (net != null && net != previous) {
-            controller.onNetworkChange(NetworkChange(previousTransport, network.transportOf(net)))
+            val to = network.transportOf(net)
+            event(Level.INFO, previousTransport?.let { "Network changed: ${it.label} → ${to?.label ?: "unknown"}" } ?: "Network available: ${to?.label ?: "unknown"}")
+            controller.onNetworkChange(NetworkChange(previousTransport, to))
             s.engine.networkChanged()
         }
         previousTransport = net?.let(network::transportOf) ?: previousTransport
@@ -252,6 +272,8 @@ class SshovelVpnService : android.net.VpnService() {
     private suspend fun pollStats(s: Session) {
         while (scope.isActive && session === s) {
             controller.onStats(TunnelStats.parse(s.engine.statsJSON()))
+            val d = app.container.diagnostics
+            if (d.watchingFlows) d.flows.onSnapshot(FlowLog.parseSnapshot(s.engine.flowsJSON()))
             delay(STATS_INTERVAL_MS)
         }
     }
@@ -281,6 +303,14 @@ class SshovelVpnService : android.net.VpnService() {
             // Only now can the system tell us about Always-on and lockdown (ARCHITECTURE §11).
             if (it != null) controller.onAlwaysOn(if (isAlwaysOn) AlwaysOn(isLockdownEnabled) else null)
             if (BuildConfig.DEBUG && it != null) Log.i(TAG, "established alwaysOn=$isAlwaysOn lockdown=$isLockdownEnabled")
+            if (it != null) {
+                val routes = p.routes.size
+                event(Level.INFO, "TUN up ${tun.firstHost().hostAddress}/${tun.length} mtu ${p.tun.mtu}, $routes route${if (routes == 1) "" else "s"}", Component.TUNNEL)
+                p.dns.server?.takeIf { it.isNotEmpty() }?.let { server ->
+                    event(Level.INFO, "${p.dns.suffixes.joinToString(", ").ifEmpty { "no suffixes" }} → $server", Component.DNS)
+                }
+                if (isAlwaysOn) event(Level.INFO, if (isLockdownEnabled) "Always-on VPN with lockdown" else "Always-on VPN")
+            }
         }
     }
 

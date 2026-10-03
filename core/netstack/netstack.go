@@ -6,12 +6,14 @@
 package netstack
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
 	"io"
 	"net"
 	"net/netip"
+	"slices"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -95,7 +97,7 @@ type Stack struct {
 	droppedUDP atomic.Uint64
 
 	mu    sync.Mutex
-	flows map[uint64]io.Closer
+	flows map[uint64]*flow
 	wg    sync.WaitGroup
 }
 
@@ -123,7 +125,7 @@ func New(ep stack.LinkEndpoint, o Options) (*Stack, error) {
 	s.SetTransportProtocolOption(tcp.ProtocolNumber, &moderate)
 
 	ctx, cancel := context.WithCancel(context.Background())
-	n := &Stack{o: o, s: s, ctx: ctx, cancel: cancel, flows: map[uint64]io.Closer{}}
+	n := &Stack{o: o, s: s, ctx: ctx, cancel: cancel, flows: map[uint64]*flow{}}
 	// Handlers go in before the NIC exists: a real TUN starts delivering
 	// packets the moment it is attached.
 	tf := tcp.NewForwarder(s, 0, 1024, n.handleTCP)
@@ -158,13 +160,44 @@ func (n *Stack) Close() {
 func (n *Stack) CloseFlows() {
 	n.mu.Lock()
 	cs := make([]io.Closer, 0, len(n.flows))
-	for _, c := range n.flows {
-		cs = append(cs, c)
+	for _, f := range n.flows {
+		cs = append(cs, f.closer)
 	}
 	n.mu.Unlock()
 	for _, c := range cs {
 		c.Close()
 	}
+}
+
+// flow is a forwarded TCP connection while it is open.
+type flow struct {
+	closer   io.Closer
+	src, dst string
+	start    time.Time
+	in, out  *atomic.Uint64
+}
+
+// FlowInfo is an open flow as Diagnostics lists it (ARCHITECTURE §8, FlowsJSON).
+type FlowInfo struct {
+	ID       uint64 `json:"id"`
+	Src      string `json:"src"`
+	Dst      string `json:"dst"`
+	BytesIn  uint64 `json:"bytesIn"`  // server → app so far
+	BytesOut uint64 `json:"bytesOut"` // app → server so far
+	StartTS  int64  `json:"startTs"`  // unix ms
+}
+
+// Flows returns the open flows, oldest first.
+func (n *Stack) Flows() []FlowInfo {
+	n.mu.Lock()
+	out := make([]FlowInfo, 0, len(n.flows))
+	for id, f := range n.flows {
+		out = append(out, FlowInfo{ID: id, Src: f.src, Dst: f.dst, BytesIn: f.in.Load(),
+			BytesOut: f.out.Load(), StartTS: f.start.UnixMilli()})
+	}
+	n.mu.Unlock()
+	slices.SortFunc(out, func(a, b FlowInfo) int { return cmp.Compare(a.ID, b.ID) })
+	return out
 }
 
 // Stats returns a snapshot of the counters.
@@ -225,11 +258,13 @@ func (n *Stack) handleTCP(r *tcp.ForwarderRequest) {
 	up, err := n.o.Dial(ctx, dst)
 	cancel()
 	if err != nil {
+		// The event goes out before the RST, while the app's socket still
+		// exists, so Kotlin can tell which app it was (getConnectionOwnerUid).
+		n.emit(FlowEvent{ID: fid, Event: FlowFail, Src: src.String(), Dst: dst.String(),
+			Reason: string(errcode.Of(err)), DurationMs: time.Since(start).Milliseconds()})
 		// Connect-then-accept: the app sees a RST, never a connection that
 		// dies after its SYN-ACK.
 		r.Complete(true)
-		n.emit(FlowEvent{ID: fid, Event: FlowFail, Src: src.String(), Dst: dst.String(),
-			Reason: string(errcode.Of(err)), DurationMs: time.Since(start).Milliseconds()})
 		return
 	}
 	conn := accept(r)
@@ -261,14 +296,15 @@ func (n *Stack) relay(id uint64, src, dst netip.AddrPort, app *gonet.TCPConn, up
 		once.Do(func() { app.Close(); up.Close() })
 		return nil
 	}
+	var in, out atomic.Uint64
+	start := time.Now()
 	n.mu.Lock()
-	n.flows[id] = closerFunc(closeBoth)
+	n.flows[id] = &flow{closer: closerFunc(closeBoth), src: src.String(), dst: dst.String(),
+		start: start, in: &in, out: &out}
 	n.mu.Unlock()
 	n.active.Add(1)
 	n.emit(FlowEvent{ID: id, Event: FlowOpen, Src: src.String(), Dst: dst.String()})
-	start := time.Now()
 
-	var in, out atomic.Uint64
 	var wg sync.WaitGroup
 	wg.Add(2)
 	pipe := func(dstW net.Conn, srcR net.Conn, ctr, total *atomic.Uint64) {

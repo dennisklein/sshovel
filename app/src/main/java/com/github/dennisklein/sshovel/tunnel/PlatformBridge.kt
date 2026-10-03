@@ -8,7 +8,12 @@ import android.os.CancellationSignal
 import android.util.Log
 import com.github.dennisklein.sshovel.BuildConfig
 import com.github.dennisklein.sshovel.core.mobile.Platform
-import com.github.dennisklein.sshovel.diagnostics.DnsLog
+import com.github.dennisklein.sshovel.diagnostics.Component
+import com.github.dennisklein.sshovel.diagnostics.Diagnostics
+import com.github.dennisklein.sshovel.diagnostics.FlowEvent
+import com.github.dennisklein.sshovel.diagnostics.FlowLog
+import com.github.dennisklein.sshovel.diagnostics.FlowOwner
+import com.github.dennisklein.sshovel.diagnostics.Level
 import com.github.dennisklein.sshovel.keys.KeyRepository
 import java.io.IOException
 import java.util.concurrent.CompletableFuture
@@ -24,7 +29,10 @@ class PlatformBridge(
     private val protectFd: (Int) -> Boolean,
     private val network: NetworkMonitor,
     private val keys: KeyRepository,
-    private val dnsLog: DnsLog? = null,
+    /** Session engines feed Diagnostics; one-off checks (host key, test) don't. */
+    private val diagnostics: Diagnostics? = null,
+    /** App label for a flow's src → dst, see [FlowAttribution]. */
+    private val appFor: (String, String) -> String? = { _, _ -> null },
     private val onEngineStatus: (String) -> Unit = {},
 ) : Platform {
     private val dnsExecutor = Executors.newCachedThreadPool()
@@ -64,19 +72,27 @@ class PlatformBridge(
     override fun onState(stateJSON: String) = onEngineStatus(stateJSON)
 
     // Messages and events name hosts and destinations, which may only live in the in-memory
-    // diagnostics buffers (ARCHITECTURE §9). DNS events have theirs (DnsLog, M4); log lines and
-    // flow events get theirs with the Diagnostics screen in M7 and until then go to logcat in
-    // debug builds only.
+    // diagnostics buffers (ARCHITECTURE §9); debug builds also log them for the emulator runbook.
     override fun log(level: Int, component: String, message: String) {
         if (BuildConfig.DEBUG) Log.println(PRIORITIES.getOrElse(level) { Log.INFO }, "sshovel/$component", message)
+        diagnostics?.events?.addFromCore(level, component, message)
     }
 
     override fun onDnsEvent(eventJSON: String) {
-        dnsLog?.addJson(eventJSON)
+        val d = diagnostics ?: return
+        val ev = d.dns.addJson(eventJSON) ?: return
+        if (ev.resolvedOutsideRoutes) {
+            d.events.add(Level.WARN, Component.DNS, "${ev.name.removeSuffix(".")} → ${ev.answers.joinToString(", ")} is outside routed subnets")
+        }
     }
 
     override fun onFlowEvent(eventJSON: String) {
         if (BuildConfig.DEBUG) Log.d("sshovel/Flow", eventJSON)
+        val d = diagnostics ?: return
+        val ev = FlowLog.parseEvent(eventJSON) ?: return
+        // Ask who owns the socket now: for failures the core waits with its RST until we return.
+        val owner = if (ev.event == FlowEvent.CLOSE) FlowOwner() else FlowOwner(appFor(ev.src, ev.dst), d.dns.hostFor(ev.dst.substringBeforeLast(':')))
+        d.flows.onEvent(ev, owner)
     }
 
     fun close() = dnsExecutor.shutdown()

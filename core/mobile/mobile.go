@@ -164,6 +164,15 @@ func (m *Engine) StatsJSON() string {
 	return mustJSON(s)
 }
 
+// FlowsJSON returns the open flows as JSON: [{"id","src","dst","bytesIn","bytesOut","startTs"}]
+// (ARCHITECTURE §8). Polled by Diagnostics while its Connections tab is visible.
+func (m *Engine) FlowsJSON() string {
+	if e := m.engine(); e != nil {
+		return mustJSON(e.Flows())
+	}
+	return "[]"
+}
+
 func (m *Engine) engine() *engine.Engine {
 	m.mu.Lock()
 	defer m.mu.Unlock()
