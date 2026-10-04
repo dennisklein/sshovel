@@ -42,12 +42,12 @@ class AppContainer(context: Context) {
     val hasHardwareKeystore: Boolean = hasStrongBox || context.packageManager.hasSystemFeature(android.content.pm.PackageManager.FEATURE_HARDWARE_KEYSTORE)
     val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     val networkMonitor = NetworkMonitor(context, appScope)
-    val store = AppStore(context.dataStoreFile("sshovel.json"), CoroutineScope(SupervisorJob() + Dispatchers.IO))
+    val store = AppStore({ context.dataStoreFile("sshovel.json") }, CoroutineScope(SupervisorJob() + Dispatchers.IO))
     val profiles = ProfileRepository(store, appScope, GoProfileValidator())
     val keys = KeyRepository(
         store = store,
         hardware = KeystoreKeys(),
-        vault = ImportedKeyVault(File(context.noBackupFilesDir, "vault")) { ImportedKeyVault.keystoreKey() },
+        vault = ImportedKeyVault({ File(context.noBackupFilesDir, "vault") }) { ImportedKeyVault.keystoreKey() },
         codec = GoKeyCodec(),
         scope = appScope,
     )

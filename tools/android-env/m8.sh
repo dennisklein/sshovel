@@ -222,8 +222,20 @@ grep -q "com.android.chrome" <<<"$top" &&
     result PASS "Source code opens tree/$TAG in the browser (about-source.png; it resolves once the tag is pushed)" ||
     result FAIL "Source code didn't open a browser: $top"
 home; tap_desc "Settings"; sleep 2; tap_visible "Open-source licenses"; sleep 4; shot licenses
-lic_ui=$(ui_dump)
-grep -qF "Android libraries" <<<"$lic_ui" && grep -qF "Go modules" <<<"$lic_ui" && lic_screen=1 || lic_screen=0
+# The Android list comes first (about 100 rows); scroll down to the Go modules and the font/icons.
+lic_seen=""
+H=$(adb shell wm size | grep -o '[0-9]*x[0-9]*' | tail -n1 | cut -dx -f2)
+for _ in $(seq 1 60); do
+    lic_ui=$(ui_dump)
+    for t in "Android libraries" "Go modules" "golang.org/x/crypto" "Fonts and icons" "Roboto Mono"; do
+        grep -qF "text=\"$t" <<<"$lic_ui" && [[ "$lic_seen" != *"[$t]"* ]] && lic_seen="$lic_seen[$t]"
+    done
+    [[ "$lic_seen" == *"[Go modules]"* ]] && [ -z "${lic_go_shot:-}" ] && { shot licenses-go; lic_go_shot=1; }
+    [[ "$lic_seen" == *"[Roboto Mono]"* ]] && break
+    adb shell input swipe 500 $(( H * 80 / 100 )) 500 $(( H * 20 / 100 )) 200; sleep 1
+done
+echo "licenses screen shows: $lic_seen"
+[ "$(grep -o '\[' <<<"$lic_seen" | wc -l)" = 5 ] && lic_screen=1 || lic_screen=0
 # The screen is generated from two data files in the APK: compare them with the tools' output.
 go_report=$(cd /build/sshovel/core && GOOS=android GOARCH=arm64 go-licenses report ./mobile --ignore github.com/dennisklein/sshovel 2>/dev/null | cut -d, -f1 | sort)
 go_apk=$(unzip -p "$REL_APK" assets/go_licenses.json | python3 -c 'import json,sys; [print(e["module"]) for e in json.load(sys.stdin)[1:]]' | sort)
@@ -236,9 +248,9 @@ done
 al_built=$([ -f "$al_build" ] && al_count "$al_build")
 echo "go-licenses report:"; echo "$go_report"; echo "AboutLibraries: build $al_built, APK $al_apk"
 if [ "$lic_screen" = 1 ] && [ -n "$go_report" ] && [ "$go_report" = "$go_apk" ] && [ -n "$al_apk" ] && [ "$al_apk" = "$al_built" ]; then
-    result PASS "licenses screen (Android libraries, Go modules): the APK's Go list = go-licenses report ($(echo "$go_report" | wc -l) modules, plus the Go runtime); its Android list = the AboutLibraries output ($al_apk libraries)"
+    result PASS "licenses screen (Android libraries, then Go modules, then fonts and icons; licenses*.png): the APK's Go list = go-licenses report ($(echo "$go_report" | wc -l) modules, plus the Go runtime); its Android list = the AboutLibraries output ($al_apk libraries)"
 else
-    result FAIL "licenses: screen sections=$lic_screen, Go report vs APK equal=$([ "$go_report" = "$go_apk" ] && echo yes || echo no), AboutLibraries build=$al_built APK=$al_apk (licenses.png)"
+    result FAIL "licenses: screen showed $lic_seen, Go report vs APK equal=$([ "$go_report" = "$go_apk" ] && echo yes || echo no), AboutLibraries build=$al_built APK=$al_apk (licenses.png)"
 fi
 home
 
@@ -333,51 +345,86 @@ home
 
 say "Matrix: tile on the lock screen × require unlock"
 adb shell locksettings set-pin 1111 >/dev/null
-lock() { adb shell svc power stayon false; adb shell input keyevent KEYCODE_SLEEP; sleep 2; adb shell input keyevent KEYCODE_WAKEUP; sleep 2; }
+# ActivityTaskManager's KeyguardController knows whether the lock screen is up.
+keyguard() { adb shell dumpsys activity activities 2>/dev/null | tr -d '\r' | grep -o 'mKeyguardShowing=[a-z]*' | head -n1 | cut -d= -f2; }
+lock() { adb shell svc power stayon false; adb shell input keyevent KEYCODE_SLEEP; sleep 3; adb shell input keyevent KEYCODE_WAKEUP; sleep 2; }
 unlock() {
     local h; h=$(adb shell wm size | grep -o '[0-9]*x[0-9]*' | tail -n1 | cut -dx -f2)
-    adb shell input keyevent KEYCODE_WAKEUP; adb shell input swipe 500 $(( h * 85 / 100 )) 500 $(( h * 30 / 100 )) 300; sleep 2
-    adb shell input text 1111; adb shell input keyevent KEYCODE_ENTER; sleep 3; adb shell svc power stayon true
+    for _ in 1 2; do
+        adb shell input keyevent KEYCODE_WAKEUP; adb shell input swipe 500 $(( h * 85 / 100 )) 500 $(( h * 30 / 100 )) 300; sleep 2
+        adb shell input text 1111; adb shell input keyevent KEYCODE_ENTER; sleep 3
+        [ "$(keyguard)" = true ] || break
+    done
+    adb shell svc power stayon true
 }
-keyguard() { adb shell dumpsys window 2>/dev/null | tr -d '\r' | grep -o 'mKeyguardShowing=[a-z]*\|isKeyguardShowing=[a-z]*' | head -n1; }
-locked_case() { # locked_case <label>: off, lock, tile, observe, unlock, observe
-    click_tile; tun_down 20 >/dev/null
-    lock; echo "locked: $(keyguard)" >&2; click_tile; sleep 8; shot "m-locked-$1"
-    local while_locked=no; no_tun || while_locked=yes
-    unlock; echo "after unlock: $(keyguard)" >&2; sleep 5
+tunnel_off() { no_tun || { click_tile; tun_down 20 >/dev/null; }; }
+# require_unlock true|false: sets Settings' switch and reads it back from its checked state.
+require_unlock() {
+    local st=""
+    home; tap_desc "Settings"; sleep 2
+    for _ in 1 2 3; do
+        st=$(ui_dump | tr '>' '\n' | grep -F 'text="Require unlock to use the tile' | grep -o 'checked="[a-z]*"' | head -n1 | cut -d'"' -f2)
+        [ "$st" = "$1" ] && return 0
+        tap_visible "Require unlock to use the tile"; sleep 1
+    done
+    echo "require unlock: wanted $1, switch reads ${st:-nothing}"; return 1
+}
+# locked_case <label>: tunnel off, lock, tap the tile, look, unlock with the PIN, look.
+# Prints "<locked?> <connected while locked> <locked after PIN?> <connected after>".
+locked_case() {
+    tunnel_off
+    lock; local kg; kg=$(keyguard)
+    click_tile; sleep 8; shot "m-locked-$1"
+    local wl=no; no_tun || wl=yes
+    unlock; local kg2; kg2=$(keyguard); sleep 5
     local after=no; no_tun || after=yes
-    echo "$while_locked $after"
+    echo "${kg:-?} $wl ${kg2:-?} $after"
 }
-r_off=$(locked_case unlock-off | tail -n1)
-home; tap_desc "Settings"; sleep 2; tap_visible "Require unlock to use the tile"; sleep 1; shot m-require-unlock-on
-r_on=$(locked_case unlock-on | tail -n1)
-echo "require unlock off: connected while locked / after unlock = $r_off; on: $r_on"
-case "$r_on" in
-    "no yes") result PASS "matrix: require unlock on: the locked tile asks to unlock and connects only after the PIN (m-locked-unlock-on.png)" ;;
-    "no no")  result INFO "matrix: require unlock on: no connection while locked; nothing after unlocking either (SystemUI drops the click; check on a device)" ;;
-    *)        result FAIL "matrix: require unlock on, but the locked tile connected ($r_on)" ;;
-esac
-result INFO "matrix: require unlock off, secure lock screen: connected while locked=${r_off% *}, after unlock=${r_off#* } (on this emulator SystemUI asks for the PIN before any custom tile, ARCHITECTURE §11.2; lock screen on a device stays in the device checklist)"
-home; tap_desc "Settings"; sleep 2; tap_visible "Require unlock to use the tile"; sleep 1
+require_unlock false && r_off=$(locked_case unlock-off | tail -n1) || r_off="? ? ? ?"
+require_unlock true && { shot m-require-unlock-on; r_on=$(locked_case unlock-on | tail -n1); } || r_on="? ? ? ?"
+echo "lock screen shown / connected while locked / still locked after PIN / connected after: require unlock off: $r_off; on: $r_on"
+set -- $r_on
+if [ "$1" != true ]; then
+    result INFO "matrix: require unlock on: couldn't bring up the lock screen by script ($r_on)"
+elif [ "$2" = yes ]; then
+    result FAIL "matrix: require unlock on, but the tile connected on the lock screen (m-locked-unlock-on.png)"
+elif [ "$3" != false ]; then
+    result INFO "matrix: require unlock on: no connection while locked; the script couldn't unlock with the PIN ($r_on)"
+elif [ "$4" = yes ]; then
+    result PASS "matrix: require unlock on: the tile on the lock screen asks for the PIN and connects only after it (m-locked-unlock-on.png)"
+else
+    result INFO "matrix: require unlock on: no connection while locked, none after the PIN either (SystemUI drops the pending click on this emulator)"
+fi
+set -- $r_off
+result INFO "matrix: require unlock off, PIN lock screen: lock screen=$1, connected while locked=$2, after the PIN=$4 (this emulator's SystemUI asks for the PIN before any custom tile, ARCHITECTURE §11.2; the lock screen stays in the device checklist)"
+require_unlock false >/dev/null
 adb shell locksettings clear --old 1111 >/dev/null
+adb shell wm dismiss-keyguard; adb shell svc power stayon true
 home; connected 5 >/dev/null || { click_tile; connected 60 >/dev/null; }
 
 say "Matrix: reboot with Always-on"
+reboot_device() {
+    kill "$LOGCAT_PID" 2>/dev/null; adb reboot; sleep 5
+    timeout 600 adb wait-for-device
+    for _ in $(seq 1 300); do [ "$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = 1 ] && break; sleep 2; done
+    adb root >/dev/null 2>&1; sleep 2; adb wait-for-device
+    adb logcat -v time -v uid >> "$OUT/logcat.txt" 2>/dev/null & LOGCAT_PID=$!
+    adb shell input keyevent KEYCODE_WAKEUP; adb shell wm dismiss-keyguard; adb shell svc power stayon true
+    chrome_setup >/dev/null 2>&1
+}
 adb shell settings put secure always_on_vpn_app "$PKG"
 adb shell settings put secure always_on_vpn_lockdown 0
-kill "$LOGCAT_PID" 2>/dev/null; adb reboot; sleep 5
-timeout 600 adb wait-for-device
-for _ in $(seq 1 300); do [ "$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = 1 ] && break; sleep 2; done
-adb root >/dev/null 2>&1; sleep 2; adb wait-for-device
-adb logcat -v time -v uid >> "$OUT/logcat.txt" 2>/dev/null & LOGCAT_PID=$!
-adb shell input keyevent KEYCODE_WAKEUP; adb shell wm dismiss-keyguard; adb shell svc power stayon true
+reboot_device
 if connected 180; then
     shot m-always-on; result PASS "matrix: reboot with Always-on → connected with the default profile ($NAME) without opening the app"
 else
     shot m-always-on; result FAIL "matrix: no connection after reboot with Always-on (m-always-on.png)"
 fi
+# The system reads the Always-on setting at boot only: clearing it takes another reboot, or it
+# would keep other VPNs out and restart sshovel for the rest of the run.
 adb shell settings delete secure always_on_vpn_app; adb shell settings delete secure always_on_vpn_lockdown
-chrome_setup >/dev/null 2>&1
+reboot_device
+click_tile; connected 60 >/dev/null || result INFO "the tile didn't connect after the second reboot"
 
 say "Battery: idle connected tunnel for $IDLE_MIN min"
 connected 30 >/dev/null || { click_tile; connected 60 >/dev/null; }
@@ -509,8 +556,8 @@ app disconnect; sleep 3
 since strict | grep -A25 "StrictMode policy violation" > "$OUT/strictmode.txt"
 n=$(grep -c "StrictMode policy violation" "$OUT/strictmode.txt")
 kinds=$(grep -o "android.os.strictmode.[A-Za-z]*" "$OUT/strictmode.txt" | sort | uniq -c | sort -rn | awk '{printf "%s %s, ", $1, $2}')
-[ "$n" = 0 ] && result PASS "StrictMode (debug build, detectAll): no violations over connect, every screen, a page load, disconnect" ||
-    result INFO "StrictMode (debug build, detectAll): $n violations: ${kinds%, } (strictmode.txt)"
+[ "$n" = 0 ] && result PASS "StrictMode (debug build, detectAll): no violations over app start, connect, every screen, a page load, disconnect" ||
+    result FAIL "StrictMode (debug build, detectAll): $n violations: ${kinds%, } (strictmode.txt)"
 
 say "connectedDebugAndroidTest"
 XML=/work/app/build/outputs/androidTest-results/connected/debug

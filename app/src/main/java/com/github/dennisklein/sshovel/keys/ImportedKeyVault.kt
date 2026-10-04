@@ -25,7 +25,11 @@ import javax.crypto.spec.GCMParameterSpec
  *
  * Plaintext exists only in the arrays passed to [put] and returned by [get]; callers zero them.
  */
-class ImportedKeyVault(private val dir: File, private val secretKey: () -> SecretKey) {
+class ImportedKeyVault(dir: () -> File, private val secretKey: () -> SecretKey) {
+    constructor(dir: File, secretKey: () -> SecretKey) : this({ dir }, secretKey)
+
+    /** Resolved on first use, off the main thread: getting it touches the disk (StrictMode, M8). */
+    private val dir by lazy(dir)
 
     fun put(id: String, plaintext: ByteArray) {
         val cipher = Cipher.getInstance(TRANSFORMATION)

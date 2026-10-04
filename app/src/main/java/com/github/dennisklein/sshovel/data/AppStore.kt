@@ -65,9 +65,14 @@ internal object StoredDataSerializer : Serializer<StoredData> {
     }
 }
 
-/** The DataStore plus a hot [state] for synchronous readers (UI). */
-class AppStore(file: File, scope: CoroutineScope) {
-    private val store: DataStore<StoredData> = DataStoreFactory.create(StoredDataSerializer, scope = scope) { file }
+/**
+ * The DataStore plus a hot [state] for synchronous readers (UI). [produceFile] runs on [scope]'s
+ * first read, not here: resolving the app's files directory touches the disk (StrictMode, M8).
+ */
+class AppStore(produceFile: () -> File, scope: CoroutineScope) {
+    constructor(file: File, scope: CoroutineScope) : this({ file }, scope)
+
+    private val store: DataStore<StoredData> = DataStoreFactory.create(StoredDataSerializer, scope = scope, produceFile = produceFile)
 
     /** Null until the file has been read once. */
     val state: StateFlow<StoredData?> = store.data.stateIn(scope, SharingStarted.Eagerly, null)

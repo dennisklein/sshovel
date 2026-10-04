@@ -445,7 +445,9 @@ Implementation notes (M8):
 - Release logs name only exception classes; host names, destinations and JSON stay in the
   Diagnostics buffers. `LogAuditTest` fails on a non-debug `Log` call that interpolates anything
   else or passes a throwable.
-- StrictMode (`detectAll`, log only) runs in debug builds.
+- StrictMode (`detectAll`, log only) runs in debug builds. Its first run found the app start
+  resolving the files directories on the main thread (`AppContainer`); the store and the key vault
+  now resolve them on first use, on their IO threads.
 - Release signing reads `sshovel.signing.*` Gradle properties; without them the release build is
   signed with the debug key (the placeholder this milestone asks for).
 - Reproducible builds: the Go library is built with `-trimpath` (gomobile's random work directory

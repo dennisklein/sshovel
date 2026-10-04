@@ -5,6 +5,7 @@ package com.github.dennisklein.sshovel.ui
 
 import android.app.Activity
 import android.content.Intent
+import android.net.TrafficStats
 import android.util.Log
 import com.github.dennisklein.sshovel.SshovelApplication
 import com.github.dennisklein.sshovel.data.Apps
@@ -49,6 +50,7 @@ import kotlin.concurrent.thread
  */
 object DebugCommands {
     private const val TAG = "sshovel/Debug"
+    private const val FETCH_TAG = 0x5355
 
     fun handle(activity: Activity, intent: Intent?, connect: (String?) -> Unit, open: (String, String?) -> Unit) {
         val container = (activity.application as SshovelApplication).container
@@ -197,6 +199,7 @@ object DebugCommands {
     /** Fetches a URL from the app's own UID (which the VPN covers) and logs status, size, time. */
     private fun fetch(url: String) = thread(name = "debug-fetch") {
         val start = System.nanoTime()
+        TrafficStats.setThreadStatsTag(FETCH_TAG) // tagged, so StrictMode's untagged-socket check stays quiet
         try {
             val c = URL(url).openConnection() as HttpURLConnection
             c.connectTimeout = 10_000
