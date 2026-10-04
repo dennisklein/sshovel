@@ -12,3 +12,16 @@ dependencies are listed in the app's "Open-source licenses" screen instead.
 
 The fonts and icons ship in the APK, so their licenses are also shown in Settings → About →
 Open-source licenses ("Fonts and icons").
+
+## Copied or adapted code
+
+None. No source code in this repository is copied or adapted from another project; the rows above
+are the only third-party files. (ARCHITECTURE §12 allows adapting `xjasonlyu/tun2socks` under MIT;
+it wasn't needed: `core/netstack` uses gVisor's own forwarders.)
+
+## Approved license exceptions
+
+None. Every shipped dependency is on the allowed list in ARCHITECTURE §12, as `checkLicenses`
+enforces. The one library outside that list, JUnit 4 (EPL-1.0), is test-only
+(`testImplementation`, and pulled in by the `androidTestImplementation` test libraries) and never
+reaches the APK.

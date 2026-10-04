@@ -199,7 +199,7 @@ val buildGoCore = tasks.register<Exec>("buildGoCore") {
         "go install golang.org/x/mobile/cmd/gobind && " +
             "PATH=\"\$(go env GOPATH)/bin:\$PATH\" go tool gomobile bind " +
             "-target=android/arm64,android/amd64 -androidapi 26 " +
-            "-javapkg=com.github.dennisklein.sshovel.core -ldflags='$ldflags' " +
+            "-javapkg=com.github.dennisklein.sshovel.core -trimpath -ldflags='$ldflags' " +
             "-o '${coreAar.asFile.absolutePath}' ./mobile",
     )
 }

@@ -1,0 +1,1 @@
+First release candidate: split tunnel and split DNS over SSH, Keystore keys, host key pinning, Quick Settings tile, Always-on VPN, automatic reconnect, and Diagnostics. Signed with a placeholder key: reinstall for the first signed release.

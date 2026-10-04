@@ -1,0 +1,20 @@
+sshovel lets you reach your company or home intranet from any app on your phone, through an SSH jump host you already have access to. Traffic to the intranet subnets goes through one SSH connection, intranet hostnames resolve correctly, and everything else keeps using the normal connection.
+
+Nothing to install on the server: a stock OpenSSH server and one authorized_keys line are enough.
+
+<b>Features</b>
+<ul>
+<li>Split tunnel: only the subnets you route go through SSH, as TCP forwards (sshuttle-style)</li>
+<li>Split DNS: intranet domains are resolved by the intranet DNS server, through the tunnel</li>
+<li>Per-app control: all apps, only some, or all but some</li>
+<li>Keys created in the Android Keystore (StrongBox where available) that never leave the phone, or imported OpenSSH keys, stored encrypted</li>
+<li>Host keys pinned on first use; a changed host key stops the connection until you accept it</li>
+<li>Quick Settings tile and Always-on VPN support</li>
+<li>Reconnects by itself after network changes</li>
+<li>Diagnostics: events, DNS queries and connections, with the app that opened each one and why it failed</li>
+</ul>
+
+<b>Limitations</b>
+Only TCP and DNS are tunneled (no other UDP, no ping), IPv4 only. Requires Android 16.
+
+No accounts, no ads, no analytics, no tracking. Free software under the GNU GPL v3 or later.

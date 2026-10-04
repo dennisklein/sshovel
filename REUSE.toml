@@ -32,3 +32,10 @@ path = ["app/src/main/res/font/roboto_mono_*.ttf"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2015 The Roboto Mono Project Authors (https://github.com/googlefonts/robotomono)"
 SPDX-License-Identifier = "OFL-1.1"
+
+# F-Droid metadata (fastlane layout): plain text that can't carry a header.
+[[annotations]]
+path = ["fastlane/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Dennis Klein"
+SPDX-License-Identifier = "GPL-3.0-or-later"

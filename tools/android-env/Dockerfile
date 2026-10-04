@@ -46,9 +46,13 @@ ARG COMPILE_PLATFORM="platforms;android-37.0"
 # Must match android.buildToolsVersion in app/build.gradle.kts.
 ARG BUILD_TOOLS="build-tools;36.1.0"
 ARG SYSTEM_IMAGE="system-images;android-36;google_apis;x86_64"
+# Empty: the newest stable NDK. To rebuild a release byte for byte, set it to the NDK recorded in
+# its release-<tag>.txt (SSHOVEL_NDK=28.2.13676358 tools/android-env/run.sh release <tag>).
+ARG NDK=""
 RUN set -eux; \
     list=$(sdkmanager --list 2>/dev/null | awk '{print $1}' | tr '/' ';' | sort -u); \
-    ndk=$(echo "$list" | grep -E '^ndk;[0-9]+\.[0-9]+\.[0-9]+$' | sort -t';' -k2 -V | tail -n1 || true); \
+    if [ -n "$NDK" ]; then ndk=$(echo "$list" | grep -Fx "ndk;$NDK" || true); else \
+    ndk=$(echo "$list" | grep -E '^ndk;[0-9]+\.[0-9]+\.[0-9]+$' | sort -t';' -k2 -V | tail -n1 || true); fi; \
     bt=$(echo "$list" | grep -Fx "$BUILD_TOOLS" || true); \
     if [ -z "$ndk" ] || [ -z "$bt" ] || ! echo "$list" | grep -Fxq "$SYSTEM_IMAGE" \
             || ! echo "$list" | grep -Fxq "$COMPILE_PLATFORM"; then \
