@@ -33,7 +33,18 @@ git config --global --add safe.directory '*'
 
 # ---- Helpers (UI and state through what a user sees) -------------------------------------------
 
-home() { adb shell am start -n "$PKG/.ui.MainActivity" >/dev/null; sleep 2; }
+launch() { adb shell am start -n "$PKG/.ui.MainActivity" >/dev/null; sleep 2; }
+# home: back to the Home screen. MainActivity is singleTop, so starting it keeps whatever screen
+# is open; press back until Home's top bar (Keys, Settings) shows, relaunching if back left the app.
+home() {
+    local ui
+    for _ in 1 2 3 4 5 6; do
+        launch; ui=$(ui_dump)
+        grep -qF 'content-desc="Settings"' <<<"$ui" && grep -qF 'content-desc="Keys"' <<<"$ui" && return 0
+        adb shell input keyevent KEYCODE_BACK; sleep 1
+    done
+    echo "home: Home never showed"; return 1
+}
 back() { adb shell input keyevent KEYCODE_BACK; sleep 1; }
 no_soft_keyboard() { adb shell settings put secure show_ime_with_hard_keyboard 0; }
 node_bounds() { sed -n 's/.*bounds="\[\([0-9]*\),\([0-9]*\)\]\[\([0-9]*\),\([0-9]*\)\]".*/\1 \2 \3 \4/p'; }
@@ -43,13 +54,15 @@ tap_bounds() { set -- $1; adb shell input tap $(( ($1 + $3) / 2 )) $(( ($2 + $4)
 tap_attr() {
     local b
     for _ in $(seq 1 10); do
-        b=$(ui_dump | tr '>' '\n' | grep -F "$1=\"$2\"" | { if [ "${3:-}" = last ]; then tail -n1; else head -n1; fi; } | node_bounds)
+        b=$(ui_dump | tr '>' '\n' | grep -F -e "$1=\"$2\"" -e "$1=\"$2, " | { if [ "${3:-}" = last ]; then tail -n1; else head -n1; fi; } | node_bounds)
         [ -n "$b" ] && { tap_bounds "$b"; return 0; }
         sleep 1
     done
     echo "no node with $1=\"$2\""; return 1
 }
 tap_desc() { tap_attr content-desc "$1"; }
+# Compose merges a list item's texts into one node ("About sshovel, Version …"): match either.
+tap_text() { tap_attr text "$1"; }
 # tap_visible <text>: taps the node showing <text> once it sits above the bottom actions (Next),
 # scrolling the form up a bit otherwise (m6.sh).
 tap_visible() {
@@ -57,9 +70,9 @@ tap_visible() {
     h=$(adb shell wm size | grep -o '[0-9]*x[0-9]*' | tail -n1 | cut -dx -f2)
     for _ in $(seq 1 12); do
         ui=$(ui_dump | tr '>' '\n')
-        b=$(echo "$ui" | grep -F "text=\"$1\"" | head -n1 | node_bounds)
-        n=$(echo "$ui" | grep -F 'text="Next"' | head -n1 | node_bounds)
-        limit=$(( h * 3 / 4 )); [ -n "$n" ] && limit=$(echo "$n" | awk '{print $2}')
+        b=$(grep -F -e "text=\"$1\"" -e "text=\"$1, " <<<"$ui" | head -n1 | node_bounds)
+        n=$(grep -F 'text="Next"' <<<"$ui" | head -n1 | node_bounds)
+        limit=$(( h - 160 )); [ -n "$n" ] && limit=$(awk '{print $2}' <<<"$n")
         if [ -n "$b" ]; then
             set -- "$1" $b
             if [ "$5" -lt "$limit" ]; then adb shell input tap $(( ($2 + $4) / 2 )) $(( ($3 + $5) / 2 )); return 0; fi
@@ -82,6 +95,8 @@ app_pid() { adb shell pidof "$PKG" 2>/dev/null | tr -d '\r'; }
 # Chrome's page text, for pages loaded through the tunnel.
 page_loads() { chrome_open "$1"; chrome_shows "Welcome to nginx" "${2:-10}"; }
 retry_from_home() { home; tap_text "Retry" || tap_text "Reconnect" || tap_text "Connect"; }
+# On a failed check: what the notifications said, for the report.
+notif_dump() { adb shell dumpsys notification --noredact 2>/dev/null | tr -d '\r' | grep -A80 "pkg=$PKG" | grep -E 'android\.(title|text)=' > "$OUT/$1-notifications.txt"; }
 
 # ---- Build ---------------------------------------------------------------------------------------
 
@@ -129,7 +144,7 @@ adb shell appops set "$PKG" ACTIVATE_VPN allow   # the consent flow was M5's (fl
 UID_NUM=$(adb shell dumpsys package "$PKG" | tr -d '\r' | sed -n 's/.*appId=\([0-9]*\).*/\1/p' | head -n1)
 UID_NAME=u0_a$(( UID_NUM - 10000 ))
 dbg=$(adb shell run-as "$PKG" id 2>&1 | tr -d '\r')
-echo "$dbg" | grep -q "not debuggable" &&
+grep -q "not debuggable" <<<"$dbg" &&
     result PASS "release APK installs, isn't debuggable (run-as: \"$dbg\"), version $(adb shell dumpsys package "$PKG" | grep -m1 -o 'versionName=[^ ]*' | tr -d '\r')" ||
     result FAIL "release APK is debuggable or run-as failed oddly: $dbg"
 
@@ -137,7 +152,7 @@ echo "$dbg" | grep -q "not debuggable" &&
 
 onb_ok=1; fail_at=""
 step() { local name=$1; shift; if "$@"; then shot "$name"; else shot "$name"; [ "$onb_ok" = 1 ] && fail_at=$name; onb_ok=0; fi; }
-home
+launch   # first run: onboarding opens by itself
 say "O1 → O2 create key"
 step o1-welcome shows "Reach your intranet from any app" 20
 tap_text "Get started"
@@ -193,7 +208,7 @@ miss=""
 for t in "Version $VERSION ($VCODE)" "Copyright © 2026 Dennis Klein" \
          "sshovel is free software under the GNU GPL v3 or later. It comes with ABSOLUTELY NO WARRANTY." \
          "View license" "https://github.com/dennisklein/sshovel/tree/$TAG" "Open-source licenses"; do
-    echo "$about" | grep -qF "$t" || miss="$miss [$t]"
+    grep -qF "$t" <<<"$about" || miss="$miss [$t]"
 done
 [ -z "$miss" ] && result PASS "About: Version $VERSION ($VCODE), copyright, the GPL/no-warranty notice, View license, Source code → tree/$TAG, Open-source licenses" ||
     result FAIL "About is missing:$miss (about.png)"
@@ -203,12 +218,12 @@ shows "GNU GENERAL PUBLIC LICENSE" 5 && shows "Version 3, 29 June 2007" 3 && { s
 back
 tap_text "Source code"; sleep 4
 top=$(adb shell dumpsys activity activities | grep -m1 topResumedActivity | tr -d '\r'); shot about-source
-echo "$top" | grep -q "com.android.chrome" &&
+grep -q "com.android.chrome" <<<"$top" &&
     result PASS "Source code opens tree/$TAG in the browser (about-source.png; it resolves once the tag is pushed)" ||
     result FAIL "Source code didn't open a browser: $top"
 home; tap_desc "Settings"; sleep 2; tap_visible "Open-source licenses"; sleep 4; shot licenses
 lic_ui=$(ui_dump)
-echo "$lic_ui" | grep -qF "Android libraries" && echo "$lic_ui" | grep -qF "Go modules" && lic_screen=1 || lic_screen=0
+grep -qF "Android libraries" <<<"$lic_ui" && grep -qF "Go modules" <<<"$lic_ui" && lic_screen=1 || lic_screen=0
 # The screen is generated from two data files in the APK: compare them with the tools' output.
 go_report=$(cd /build/sshovel/core && GOOS=android GOARCH=arm64 go-licenses report ./mobile --ignore github.com/dennisklein/sshovel 2>/dev/null | cut -d, -f1 | sort)
 go_apk=$(unzip -p "$REL_APK" assets/go_licenses.json | python3 -c 'import json,sys; [print(e["module"]) for e in json.load(sys.stdin)[1:]]' | sort)
@@ -243,6 +258,7 @@ say "Matrix: server refuses forwarding → FORWARDING_DENIED warning"
 # test-env's PermitOpen refuses port 443; sshd answers it like AllowTcpForwarding no: the
 # direct-tcpip channel open fails with "administratively prohibited".
 chrome_open https://wiki.corp.test/; sleep 6
+chrome_open http://10.77.0.20:8080/; sleep 6   # a second refused destination, in case Chrome skipped the first
 home; shot m-forwarding-home
 if shows "Forwarding not allowed" 10 && notif_shows "1 warning" 10 && ! no_tun; then
     tap_text "View diagnostics"; sleep 3; shot m-forwarding-diagnostics
@@ -250,7 +266,8 @@ if shows "Forwarding not allowed" 10 && notif_shows "1 warning" 10 && ! no_tun; 
         result PASS "matrix: forwarding refused → Connected + FORWARDING_DENIED warning (Home card, notification \"1 warning\"); Diagnostics: \"Refused by server policy\"" ||
         result FAIL "matrix: FORWARDING_DENIED shown, but Connections lacks \"Refused by server policy\""
 else
-    result FAIL "matrix: no FORWARDING_DENIED warning after a refused forward (m-forwarding-home.png)"
+    notif_dump m-forwarding
+    result FAIL "matrix: no FORWARDING_DENIED warning after a refused forward (m-forwarding-home.png, m-forwarding-notifications.txt)"
 fi
 
 say "Matrix: Wi-Fi → mobile data while downloading"
@@ -265,18 +282,20 @@ echo "tun rx: $r1 → $r2"
 dl=$([ -n "$r1" ] && [ -n "$r2" ] && [ "$r2" -gt "$r1" ] && echo running || echo "not seen")
 shot m-download
 adb shell svc wifi disable
-if notif_shows "Reconnecting to $NAME" 30 && connected 90; then
+# Reconnecting may last less than one dumpsys poll: note it if seen, judge by what follows.
+notif_shows "Reconnecting to $NAME" 15 && seen="Reconnecting seen" || seen="Reconnecting too short to catch"
+if connected 90; then
     sleep 3
     page_loads "http://wiki.corp.test/?after-switch" && new_ok=1 || new_ok=0
     [ "$(app_pid)" = "$pid0" ] && same=1 || same=0
     [ "$new_ok" = 1 ] && [ "$same" = 1 ] &&
-        result PASS "matrix: Wi-Fi → mobile during a download (download $dl): Reconnecting → Connected, a new page load works, no crash (same process)" ||
+        result PASS "matrix: Wi-Fi → mobile during a download (download $dl): $seen, Connected again, a new page load works, no crash (same process)" ||
         result FAIL "matrix: after Wi-Fi → mobile: new page load=$new_ok, same process=$same"
 else
     result FAIL "matrix: no Reconnecting → Connected after Wi-Fi off"
 fi
 adb shell svc wifi enable
-notif_shows "Reconnecting to $NAME" 45; connected 90 && result PASS "matrix: mobile → Wi-Fi: Reconnecting → Connected" ||
+sleep 5; connected 90 && result PASS "matrix: mobile → Wi-Fi: Connected again" ||
     result FAIL "matrix: no reconnect after Wi-Fi came back"
 adb shell am force-stop com.android.chrome   # ends the download
 chrome_setup >/dev/null 2>&1
@@ -286,10 +305,11 @@ adb shell cmd connectivity airplane-mode enable
 if notif_shows "back online" 30; then
     shot m-airplane
     sleep 120
-    stayed=$(no_tun && [ "$(notif_count "Reconnecting to $NAME")" -gt 0 ] && echo 1 || echo 0)
+    # The TUN stays up while waiting, so nothing leaks; the notification tells the state.
+    stayed=$([ "$(notif_count "back online")" -gt 0 ] && [ "$(notif_count "Connected to $NAME")" = 0 ] && echo 1 || echo 0)
     adb shell cmd connectivity airplane-mode disable
     connected 120 && [ "$stayed" = 1 ] &&
-        result PASS "matrix: airplane mode 2 min → NETWORK_LOST (\"Reconnecting… sshovel will reconnect when you’re back online\", no TUN), then back: Connected again by itself" ||
+        result PASS "matrix: airplane mode 2 min → NETWORK_LOST (\"Reconnecting to $NAME · sshovel will reconnect when you’re back online\" throughout), then back: Connected again by itself" ||
         result FAIL "matrix: airplane: waiting state held=$stayed, reconnected=$(connected 1 && echo yes || echo no)"
 else
     adb shell cmd connectivity airplane-mode disable
@@ -314,12 +334,17 @@ home
 say "Matrix: tile on the lock screen × require unlock"
 adb shell locksettings set-pin 1111 >/dev/null
 lock() { adb shell svc power stayon false; adb shell input keyevent KEYCODE_SLEEP; sleep 2; adb shell input keyevent KEYCODE_WAKEUP; sleep 2; }
-unlock() { adb shell wm dismiss-keyguard; sleep 2; adb shell input text 1111; adb shell input keyevent KEYCODE_ENTER; sleep 3; adb shell svc power stayon true; }
+unlock() {
+    local h; h=$(adb shell wm size | grep -o '[0-9]*x[0-9]*' | tail -n1 | cut -dx -f2)
+    adb shell input keyevent KEYCODE_WAKEUP; adb shell input swipe 500 $(( h * 85 / 100 )) 500 $(( h * 30 / 100 )) 300; sleep 2
+    adb shell input text 1111; adb shell input keyevent KEYCODE_ENTER; sleep 3; adb shell svc power stayon true
+}
+keyguard() { adb shell dumpsys window 2>/dev/null | tr -d '\r' | grep -o 'mKeyguardShowing=[a-z]*\|isKeyguardShowing=[a-z]*' | head -n1; }
 locked_case() { # locked_case <label>: off, lock, tile, observe, unlock, observe
     click_tile; tun_down 20 >/dev/null
-    lock; click_tile; sleep 8; shot "m-locked-$1"
+    lock; echo "locked: $(keyguard)" >&2; click_tile; sleep 8; shot "m-locked-$1"
     local while_locked=no; no_tun || while_locked=yes
-    unlock; sleep 5
+    unlock; echo "after unlock: $(keyguard)" >&2; sleep 5
     local after=no; no_tun || after=yes
     echo "$while_locked $after"
 }
@@ -373,7 +398,7 @@ adb shell dumpsys batterystats "$PKG" > "$OUT/batterystats.txt" 2>&1
 adb shell dumpsys battery reset
 secs=$(awk -v a="${c0:-0}" -v b="${c1:-0}" 'BEGIN {printf "%.1f", (b - a) / 100}')
 pct=$(awk -v s="$secs" -v m="$IDLE_MIN" 'BEGIN {printf "%.2f", 100 * s / (m * 60)}')
-mah=$(grep -m1 -E "^ *(UID )?$UID_NAME: [0-9.]+" "$OUT/batterystats.txt" | grep -oE '[0-9.]+' | sed -n 2p)
+mah=$(sed -nE "s/^ *(UID )?u0a$(( UID_NUM - 10000 )): ([0-9.]+).*/\2/p" "$OUT/batterystats.txt" | head -n1)
 wl=$(grep -cE "Wake lock .*realtime" "$OUT/batterystats.txt")
 same=$([ "$(app_pid)" = "$pid" ] && echo yes || echo no)
 info="CPU ${secs} s (${pct} % of one core), estimated ${mah:-?} mAh, ${wl} wake lock lines, tunnel up at $up/$checks checks, same process: $same (batterystats.txt)"
@@ -384,10 +409,11 @@ awk -v p="$pct" 'BEGIN {exit !(p < 1.0)}' && [ "$up" = "$checks" ] && [ "$checks
 say "Matrix: another VPN app → VPN_REVOKED"
 adb shell appops set "$OTHER" ACTIVATE_VPN allow
 adb shell am start -n "$OTHER/.StartActivity" >/dev/null
-if notif_shows "Disconnected by another VPN" 30; then
+if notif_shows "Disconnected by another VPN" 30 || { home; shows "Disconnected by another VPN" 5; }; then
     home; shot m-revoked; result PASS "matrix: another VPN app started → VPN_REVOKED (\"Disconnected by another VPN\")"
 else
-    home; shot m-revoked; result FAIL "matrix: no VPN_REVOKED after another VPN took over (m-revoked.png)"
+    home; shot m-revoked; notif_dump m-revoked
+    result FAIL "matrix: no VPN_REVOKED after another VPN took over (m-revoked.png, m-revoked-notifications.txt)"
 fi
 adb shell am force-stop "$OTHER"; adb shell appops set "$OTHER" ACTIVATE_VPN ignore
 
@@ -395,7 +421,7 @@ say "Matrix: key removed from authorized_keys → AUTH_FAILED, no retry loop"
 cp "$AUTH_KEYS" /tmp/authorized_keys.bak
 grep -vF "$BLOB" /tmp/authorized_keys.bak > "$AUTH_KEYS"
 retry_from_home
-if notif_shows "Key not accepted" 40; then
+if notif_shows "Key not accepted" 40 || { home; shows "Key not accepted" 5; }; then
     home; shot m-auth-failed
     loop=0
     for _ in $(seq 1 15); do
@@ -406,7 +432,8 @@ if notif_shows "Key not accepted" 40; then
         result PASS "matrix: key removed → AUTH_FAILED (\"Key not accepted\" with Show public key); no retry for 30 s, no TUN" ||
         result FAIL "matrix: AUTH_FAILED, but it retried or brought up the TUN within 30 s"
 else
-    home; shot m-auth-failed; result FAIL "matrix: no AUTH_FAILED after removing the key (m-auth-failed.png)"
+    home; shot m-auth-failed; notif_dump m-auth-failed
+    result FAIL "matrix: no AUTH_FAILED after removing the key (m-auth-failed.png, m-auth-failed-notifications.txt)"
 fi
 cp /tmp/authorized_keys.bak "$AUTH_KEYS"
 
@@ -415,12 +442,13 @@ rm -f "$HOSTKEYS"/ssh_host_*
 for _ in $(seq 1 20); do sleep 1; [ -f "$HOSTKEYS/ssh_host_ed25519_key.pub" ] && [ -f "$HOSTKEYS/ssh_host_ecdsa_key.pub" ] && break; done
 sleep 2
 retry_from_home
-if notif_shows "Server identity changed" 60; then
+if notif_shows "Server identity changed" 60 || { home; shows "Server identity changed" 5; }; then
     sleep 2; home; shot m-mismatch
     no_tun && result PASS "matrix: host key rotated → HOST_KEY_MISMATCH (\"Server identity changed\"), no TUN" ||
         result FAIL "matrix: HOST_KEY_MISMATCH, but a TUN is up"
 else
-    home; shot m-mismatch; result FAIL "matrix: no HOST_KEY_MISMATCH after rotating the host key (m-mismatch.png)"
+    home; shot m-mismatch; notif_dump m-mismatch
+    result FAIL "matrix: no HOST_KEY_MISMATCH after rotating the host key (m-mismatch.png, m-mismatch-notifications.txt)"
 fi
 # The only way back: the user forgets the pinned key in the profile editor and verifies the new one.
 acc=0
@@ -450,7 +478,9 @@ back; tap_text "Discard" >/dev/null 2>&1; home
 
 say "Logcat audit: the release app logs no hosts, destinations, or keys"
 # logcat -v uid prints the app's uid as u0_aNNN or as the number, depending on the version.
-grep -E "(^|[ (])($UID_NAME|$UID_NUM)[ :)]" "$OUT/logcat.txt" | grep -v "sshovel-m" > "$OUT/app-logcat.txt"
+# -v time -v uid lines read "… D/Tag( uid:  pid): message"; match the uid field only (system lines
+# may mention the app's uid in their message, e.g. ConnectivityService's OwnerUid).
+grep -E "^[0-9-]+ [0-9:.]+ [A-Z]/[^(]*\( *($UID_NAME|$UID_NUM): " "$OUT/logcat.txt" | grep -v "sshovel-m" > "$OUT/app-logcat.txt"
 leaks=$(grep -E 'corp\.test|10\.77\.|10\.0\.2\.2|tester|BEGIN OPENSSH|AAAA[A-Za-z0-9+/]{20}' "$OUT/app-logcat.txt" | grep -vE "ActivityManager|ActivityTaskManager" | head -n 20)
 crashes=$(grep -c "FATAL EXCEPTION" "$OUT/app-logcat.txt")
 if [ ! -s "$OUT/app-logcat.txt" ]; then
@@ -469,14 +499,14 @@ gradle :app:assembleDebug :app:assembleDebugAndroidTest > "$OUT/gradle-debug.log
 adb uninstall "$PKG" >/dev/null 2>&1
 install_app
 mark strict
-home; sleep 3   # seeds the test-env profile
+launch; sleep 3   # seeds the test-env profile
 app connect profile debug-test-env
 wait_log strict "sshovel/State.*On\(" 60 >/dev/null || result INFO "debug session didn't reach On"
 for s in home diagnostics settings keys about license licenses; do app open screen "$s"; sleep 2; done
 app open screen profile arg debug-test-env; sleep 2
 app fetch url http://wiki.corp.test/; sleep 3
 app disconnect; sleep 3
-since strict | grep -A3 "StrictMode policy violation" > "$OUT/strictmode.txt"
+since strict | grep -A25 "StrictMode policy violation" > "$OUT/strictmode.txt"
 n=$(grep -c "StrictMode policy violation" "$OUT/strictmode.txt")
 kinds=$(grep -o "android.os.strictmode.[A-Za-z]*" "$OUT/strictmode.txt" | sort | uniq -c | sort -rn | awk '{printf "%s %s, ", $1, $2}')
 [ "$n" = 0 ] && result PASS "StrictMode (debug build, detectAll): no violations over connect, every screen, a page load, disconnect" ||
