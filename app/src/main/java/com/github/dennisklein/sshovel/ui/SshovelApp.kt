@@ -263,7 +263,7 @@ fun SshovelApp(
                 ui, onBack = { nav.popBackStack() }, onOpen = { nav.navigate(Routes.KeyDetail(it.id)) },
                 onCreate = { vm.open(KeySheet.Create) }, onImport = { vm.open(KeySheet.Import) }, snackbar = snackbar,
             )
-            KeySheets(vm, ui.sheet, ui.busy, ui.importError, ui.hasStrongBox)
+            KeySheets(vm, ui.sheet, ui.busy, ui.importError, ui.hasStrongBox, ui.hasHardwareKeystore)
         }
 
         composable<Routes.KeyDetail> { entry ->
@@ -291,7 +291,7 @@ fun SshovelApp(
                 onCopied = { scope.launch { snackbar.showSnackbar(resources.getString(R.string.copied)) } },
                 snackbar = snackbar,
             )
-            KeySheets(vm, ui.sheet, ui.busy, ui.importError, ui.hasStrongBox)
+            KeySheets(vm, ui.sheet, ui.busy, ui.importError, ui.hasStrongBox, ui.hasHardwareKeystore)
             when (val d = ui.dialog) {
                 is KeyDialog.Rename -> RenameKeyDialog(d.key, { vm.rename(d.key, it) }, vm::dismissDialog)
                 is KeyDialog.InUse -> KeyInUseDialog(d.key, d.profiles, { p -> vm.dismissDialog(); nav.navigate(Routes.Profile(p.id)) }, vm::dismissDialog)
@@ -389,9 +389,9 @@ fun SshovelApp(
 }
 
 @Composable
-private fun KeySheets(vm: KeysViewModel, sheet: KeySheet?, busy: Boolean, importError: String?, hasStrongBox: Boolean) {
+private fun KeySheets(vm: KeysViewModel, sheet: KeySheet?, busy: Boolean, importError: String?, hasStrongBox: Boolean, hardware: Boolean) {
     when (sheet) {
-        KeySheet.Create -> CreateKeySheet(hasStrongBox, busy, androidx.compose.ui.res.stringResource(R.string.key_new_default_name), vm::create, vm::closeSheet)
+        KeySheet.Create -> CreateKeySheet(hasStrongBox, busy, androidx.compose.ui.res.stringResource(R.string.key_new_default_name), vm::create, vm::closeSheet, hardware)
         KeySheet.Import -> ImportKeySheet(busy, importError, vm::import, vm::clearImportError, vm::closeSheet)
         is KeySheet.Qr -> QrSheet(sheet.line, vm::closeSheet)
         null -> {}

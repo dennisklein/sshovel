@@ -94,7 +94,7 @@ private fun SheetActions(busy: Boolean, primary: String, enabled: Boolean, onCan
 
 /** K4: name the key; the note says the private key can never leave this device. */
 @Composable
-fun CreateKeyContent(hasStrongBox: Boolean, busy: Boolean, defaultName: String, onCreate: (String) -> Unit, onCancel: () -> Unit) {
+fun CreateKeyContent(hasStrongBox: Boolean, busy: Boolean, defaultName: String, onCreate: (String) -> Unit, onCancel: () -> Unit, hardware: Boolean = true) {
     var name by remember { mutableStateOf(defaultName) }
     Text(stringResource(R.string.create_key), style = MaterialTheme.typography.headlineSmall)
     OutlinedTextField(
@@ -104,13 +104,19 @@ fun CreateKeyContent(hasStrongBox: Boolean, busy: Boolean, defaultName: String, 
         supportingText = { Text(stringResource(R.string.key_name_helper)) },
         singleLine = true,
     )
-    InfoNote(R.drawable.ic_memory, stringResource(if (hasStrongBox) R.string.create_key_note_strongbox else R.string.create_key_note_tee), corner = 12.dp)
+    // Where the key will live, known before it exists (the badge after creation says the same).
+    val note = when {
+        hasStrongBox -> R.string.create_key_note_strongbox
+        hardware -> R.string.create_key_note_tee
+        else -> R.string.create_key_note_software
+    }
+    InfoNote(if (hardware) R.drawable.ic_memory else R.drawable.ic_key, stringResource(note), corner = 12.dp)
     SheetActions(busy, stringResource(R.string.create), name.isNotBlank(), onCancel) { onCreate(name.trim()) }
 }
 
 @Composable
-fun CreateKeySheet(hasStrongBox: Boolean, busy: Boolean, defaultName: String, onCreate: (String) -> Unit, onDismiss: () -> Unit) {
-    KeySheetFrame(onDismiss) { CreateKeyContent(hasStrongBox, busy, defaultName, onCreate, onDismiss) }
+fun CreateKeySheet(hasStrongBox: Boolean, busy: Boolean, defaultName: String, onCreate: (String) -> Unit, onDismiss: () -> Unit, hardware: Boolean = true) {
+    KeySheetFrame(onDismiss) { CreateKeyContent(hasStrongBox, busy, defaultName, onCreate, onDismiss, hardware) }
 }
 
 /**
@@ -260,6 +266,9 @@ private fun SheetPreview(content: @Composable ColumnScope.() -> Unit) = SshovelT
 
 @Preview(name = "K4 Create key") @Preview(name = "K4 Create key dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable private fun PreviewCreate() = SheetPreview { CreateKeyContent(true, false, "Pixel StrongBox 2", {}, {}) }
+
+@Preview(name = "K4 Create key, software keystore") @Preview(name = "K4 Create key, software keystore dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable private fun PreviewCreateSoftware() = SheetPreview { CreateKeyContent(false, false, "sshovel key", {}, {}, hardware = false) }
 
 @Preview(name = "K5 Import key") @Preview(name = "K5 Import key dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable private fun PreviewImport() = SheetPreview { ImportKeyContent(false, null, { _, _, _ -> }, {}, {}) }

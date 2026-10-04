@@ -245,6 +245,7 @@
     <string name="rename_key">Rename key</string>
     <string name="key_renamed">Key renamed</string>
     <string name="create_key_note_strongbox">ECDSA P-256, generated in StrongBox. The private key can never leave this device — not in backups, not to another phone. If the phone is reset, the key is gone.</string>
+    <string name="create_key_note_software">ECDSA P-256, kept in Android’s software keystore: this device has no secure hardware for keys. The private key still can’t be exported — not in backups, not to another phone. If the phone is reset, the key is gone.</string>
     <string name="create_key_note_tee">ECDSA P-256, generated in secure hardware. The private key can never leave this device — not in backups, not to another phone. If the phone is reset, the key is gone.</string>
     <string name="create">Create</string>
     <string name="key_created_toast">Key created</string>

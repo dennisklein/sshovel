@@ -48,6 +48,7 @@ data class KeysUi(
     /** Import error code: KEY_PASSPHRASE, KEY_UNSUPPORTED, KEY_PUTTY. */
     val importError: String? = null,
     val hasStrongBox: Boolean = false,
+    val hasHardwareKeystore: Boolean = true,
 )
 
 sealed interface KeysEvent {
@@ -59,7 +60,7 @@ sealed interface KeysEvent {
 
 /** Keys list and detail (DESIGN_BRIEF §5.6). Private keys never pass through here as Strings kept in state. */
 class KeysViewModel(private val container: AppContainer) : ViewModel() {
-    private val local = MutableStateFlow(KeysUi(hasStrongBox = container.hasStrongBox))
+    private val local = MutableStateFlow(KeysUi(hasStrongBox = container.hasStrongBox, hasHardwareKeystore = container.hasHardwareKeystore))
     private val events = Channel<KeysEvent>(Channel.BUFFERED)
     val keysEvents: Flow<KeysEvent> = events.receiveAsFlow()
 
@@ -70,7 +71,7 @@ class KeysViewModel(private val container: AppContainer) : ViewModel() {
             keys = stored?.keys.orEmpty(),
             usedBy = profiles.groupBy { it.auth.alias },
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), KeysUi(hasStrongBox = container.hasStrongBox))
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), KeysUi(hasStrongBox = container.hasStrongBox, hasHardwareKeystore = container.hasHardwareKeystore))
 
     fun open(sheet: KeySheet) = local.update { it.copy(sheet = sheet, importError = null) }
 

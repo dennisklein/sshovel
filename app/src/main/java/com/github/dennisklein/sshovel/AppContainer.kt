@@ -37,6 +37,9 @@ class AppContainer(context: Context) {
 
     /** Keys are created in StrongBox when the device has it (KeystoreKeys). */
     val hasStrongBox: Boolean = context.packageManager.hasSystemFeature(android.content.pm.PackageManager.FEATURE_STRONGBOX_KEYSTORE)
+
+    /** A TEE- or StrongBox-backed keystore; without one, keys live in the software keystore. */
+    val hasHardwareKeystore: Boolean = hasStrongBox || context.packageManager.hasSystemFeature(android.content.pm.PackageManager.FEATURE_HARDWARE_KEYSTORE)
     val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     val networkMonitor = NetworkMonitor(context, appScope)
     val store = AppStore(context.dataStoreFile("sshovel.json"), CoroutineScope(SupervisorJob() + Dispatchers.IO))

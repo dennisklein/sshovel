@@ -152,7 +152,7 @@ class SshovelVpnService : android.net.VpnService() {
             try {
                 app.container.keys.importedKey(profile)
             } catch (e: Exception) {
-                Log.e(TAG, "vault entry unreadable", e)
+                Log.e(TAG, "vault entry unreadable: ${e.javaClass.simpleName}")
                 null
             } ?: return fail(s, TunnelState.NeedsAttention(Codes.KEY_UNAVAILABLE, "imported key missing or unreadable"))
         } else {
@@ -179,14 +179,14 @@ class SshovelVpnService : android.net.VpnService() {
         val status = try {
             EngineStatus.parse(json)
         } catch (e: Exception) {
-            Log.e(TAG, "bad engine status", e)
+            Log.e(TAG, "bad engine status: ${e.javaClass.simpleName}") // its message may quote the JSON, hosts included
             return
         }
         if (status.state == "sshReady" && !s.tunUp) {
             val pfd = try {
                 establish(s.profile)
             } catch (e: Exception) {
-                Log.e(TAG, "establish failed", e)
+                Log.e(TAG, "establish failed: ${e.javaClass.simpleName}")
                 null
             } ?: return fail(s, TunnelState.NeedsAttention(Codes.VPN_PERMISSION))
             try {
@@ -321,7 +321,7 @@ class SshovelVpnService : android.net.VpnService() {
         try {
             add(pkg)
         } catch (_: PackageManager.NameNotFoundException) {
-            Log.w(TAG, "app not installed, skipped: $pkg")
+            if (BuildConfig.DEBUG) Log.w(TAG, "app not installed, skipped: $pkg")
         }
     }
 

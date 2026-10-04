@@ -72,7 +72,7 @@ android {
         minSdk = 36
         targetSdk = 36
         versionCode = 1
-        versionName = "0.7.0-m7"
+        versionName = "0.8.0-m8"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "SOURCE_URL", "\"${sourceUrl.get()}\"")
         // core.aar is built for these only (buildGoCore); drop other ABIs'
@@ -81,12 +81,26 @@ android {
         ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
     }
 
+    // docs/RELEASE.md: sshovel.signing.storeFile / storePassword / keyAlias / keyPassword.
+    val releaseSigning = providers.gradleProperty("sshovel.signing.storeFile").orNull?.let { store ->
+        signingConfigs.create("release") {
+            storeFile = file(store)
+            storePassword = providers.gradleProperty("sshovel.signing.storePassword").get()
+            keyAlias = providers.gradleProperty("sshovel.signing.keyAlias").get()
+            keyPassword = providers.gradleProperty("sshovel.signing.keyPassword").get()
+        }
+    }
+
     buildTypes {
         debug {
             val pub = debugHostKeyPub.orNull
             buildConfigField("String", "DEBUG_HOST_KEY_FP", if (pub != null) "\"${sshFingerprint(pub)}\"" else "\"\"")
         }
         release {
+            // Placeholder (M8): the debug keystore, so the release build installs for testing.
+            // A real release key is given through Gradle properties (docs/RELEASE.md) and
+            // never committed.
+            signingConfig = releaseSigning ?: signingConfigs.getByName("debug")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
