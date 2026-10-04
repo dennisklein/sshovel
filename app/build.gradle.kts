@@ -118,6 +118,12 @@ android {
         // Keep .so files uncompressed and 16 KB-aligned in the APK.
         jniLibs { useLegacyPackaging = false }
     }
+    // No dependency-metadata block in the signing block: it's encrypted for Google Play, differs on
+    // every build (so the APK wouldn't be reproducible), and F-Droid rejects it.
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
     lint {
         abortOnError = true
         warningsAsErrors = false
