@@ -44,6 +44,7 @@ docker compose -f test-env/compose.yaml up --build
 # Toolbox (SDK, NDK, emulator, go-licenses, reuse) + test-env + milestone acceptance on the emulator
 tools/android-env/run.sh m2        # results in tools/android-env/out/summary.txt
 tools/android-env/run.sh shell     # interactive shell in the toolbox
+tools/android-env/run.sh release v0.8.0   # release APK from a clean checkout of a tag (docs/RELEASE.md)
 ```
 
 ## Rules

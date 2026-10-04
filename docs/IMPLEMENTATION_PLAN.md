@@ -426,6 +426,37 @@ GPL release compliance:
 About screen shows the correct version, legal notices, and a source link to the matching tag. The
 licenses screen matches `go-licenses report` plus the AboutLibraries output. `reuse lint` passes.
 
+Run (M8): `tools/android-env/run.sh m8 [idle minutes]` (default 60). It builds the release APK
+with `tools/android-env/release.sh` from a clean checkout of `v<versionName>` (HEAD's tag, or a
+scratch tag in a clone that is never pushed) and runs everything with that APK, which has no debug
+commands and logs no states: states come from the app's notifications, the TUN interface and the
+screen. It walks onboarding, checks About and the license data (the APK's Go list against
+`go-licenses report`, its Android list against the AboutLibraries output), then the §7 matrix:
+tile off/on, a refused forward (test-env's `PermitOpen`, which sshd answers exactly like
+`AllowTcpForwarding no`), Wi-Fi ↔ mobile during a throttled download (`test-env/wiki`), airplane
+mode for 2 min, strict Private DNS, the tile on a PIN lock screen with "Require unlock" off and on,
+reboot with Always-on, an idle hour with the screen off (CPU from `/proc`, `batterystats`),
+another VPN, the key removed, the host key rotated (and recovered through the editor), and a
+subnet that overlaps the emulator's Wi-Fi. Last, a logcat audit of the release app's uid, a debug
+session counting StrictMode violations, and the instrumented tests.
+
+Implementation notes (M8):
+
+- Release logs name only exception classes; host names, destinations and JSON stay in the
+  Diagnostics buffers. `LogAuditTest` fails on a non-debug `Log` call that interpolates anything
+  else or passes a throwable.
+- StrictMode (`detectAll`, log only) runs in debug builds.
+- Release signing reads `sshovel.signing.*` Gradle properties; without them the release build is
+  signed with the debug key (the placeholder this milestone asks for).
+- Reproducible builds: the Go library is built with `-trimpath` (gomobile's random work directory
+  was compiled in), and `dependenciesInfo` is off (an encrypted, per-build blob in the signing
+  block; F-Droid rejects it too). Two builds of the same tag gave the same APK hash. The toolbox
+  takes `SSHOVEL_NDK` to rebuild with the NDK a release recorded.
+- Keys created on a device without TEE or StrongBox get their own create-key note (software
+  keystore), as onboarding already did.
+- The profile editor warns when a subnet overlaps the current Wi-Fi or Ethernet network
+  (ARCHITECTURE §10, §7 matrix); it was missing. The copy is new (DESIGN_BRIEF §8 deviations).
+
 ## 7. Manual test matrix (run at M5 and M8)
 
 | Scenario | Expected |

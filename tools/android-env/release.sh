@@ -47,7 +47,8 @@ cp "$SRC/app/build/outputs/apk/release/app-release.apk" "$apk"
 url="https://github.com/dennisklein/sshovel/tree/$tag"
 # (grep -c, not -q: under pipefail, grep quitting early would fail unzip with SIGPIPE.)
 [ "$(unzip -p "$apk" 'classes*.dex' | grep -acF "$url")" -gt 0 ] || { echo "APK doesn't carry the source link $url" >&2; exit 1; }
-signer=$("$ANDROID_HOME"/build-tools/*/apksigner verify --print-certs "$apk" | grep -m1 'certificate DN' || true)
+apksigner=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -n1)
+signer=$("$apksigner" verify --print-certs "$apk" | grep -m1 'certificate DN' || true)
 {
     echo "sshovel $tag ($(git -C "$SRC" rev-parse HEAD)), built $(date -u +%FT%TZ)"
     echo "source link: $url"

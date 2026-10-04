@@ -18,6 +18,9 @@ services:
     networks: { intranet: { ipv4_address: 10.77.0.53 } }
   wiki:
     image: nginx:alpine
+    volumes:
+      - ./wiki/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./wiki/files:/usr/share/nginx/html/files:ro   # m8.sh puts a large file here
     networks: { intranet: { ipv4_address: 10.77.0.20 } }
 networks:
   public: {}
