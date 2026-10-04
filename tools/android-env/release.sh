@@ -6,8 +6,8 @@
 #   tools/android-env/run.sh release v0.8.0
 # The tag must exist in /work (the repo the toolbox mounts) and match versionName ("v" + it).
 # The checkout always lands at /build/sshovel: the Go library records its build directory, so
-# the same tag, toolchain, and path give the same libgojni.so (checked in M8: two builds of the
-# same commit at the same path were byte-identical).
+# the same tag, toolchain, path, and key give the same APK (checked in M8: two builds of the same
+# tag were byte-identical).
 # Signing: with SSHOVEL_SIGNING_STORE_FILE, _STORE_PASSWORD, _KEY_ALIAS and _KEY_PASSWORD set
 # (the store file under /work), the release key; otherwise the debug key, a placeholder.
 # Results: tools/android-env/out/sshovel-<tag>.apk, release-<tag>.txt (toolchain, hashes).

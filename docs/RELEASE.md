@@ -80,10 +80,12 @@ The script hands them to Gradle as `sshovel.signing.*` properties (`ORG_GRADLE_P
 passwords don't show up in the process list). Outside the toolbox, put the same four properties in
 `~/.gradle/gradle.properties`. Never commit the keystore or its passwords.
 
-**Reproducibility.** The Go library is built with `-trimpath`, and gomobile's own temporary
-directory doesn't end up in it, so the same tag, toolchain (NDK included) and checkout path give a
-byte-identical `libgojni.so`. Compare the hashes in `release-<tag>.txt` against a rebuild. The
-APK's own hash also depends on the signing key.
+**Reproducibility.** The Go library is built with `-trimpath`, and the APK carries no
+dependency-metadata block (`dependenciesInfo`, which is encrypted and differs on every build), so
+the same tag, toolchain (NDK included), checkout path and signing key give a byte-identical APK.
+In M8, two builds of the same tag produced the same APK hash. Compare the hashes in
+`release-<tag>.txt` against a rebuild; with a different key, compare the native libraries' hashes
+and the unzipped contents instead.
 
 ## 4. Check the result
 
