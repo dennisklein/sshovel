@@ -105,6 +105,8 @@ class ProfileEditorViewModel(private val container: AppContainer, private val pr
     val apps = MutableStateFlow<List<AppInfo>?>(null)
 
     init {
+        // Joining or leaving a Wi-Fi network changes which routes overlap it.
+        viewModelScope.launch { container.networkMonitor.localSubnets.collect { revalidate() } }
         // Keys and the pin can change under us (Keys screen, verify); the tunnel sets read-only.
         viewModelScope.launch {
             combine(container.store.state.filterNotNull(), container.tunnelController.state, container.tunnelController.activeProfile) { s, t, a ->
@@ -227,7 +229,8 @@ class ProfileEditorViewModel(private val container: AppContainer, private val pr
         if (!u.loaded) return
         val profile = u.draft.toProfile(u.keys)
         val issues = runCatching { container.profiles.validate(profile) }.getOrDefault(emptyList())
-        _ui.update { it.copy(messages = fieldMessages(it.draft, issues)) }
+        val lan = container.networkMonitor.localSubnets.value
+        _ui.update { it.copy(messages = fieldMessages(it.draft, issues, lan)) }
     }
 
     // ---- Save, back, delete ----------------------------------------------------------
@@ -250,7 +253,7 @@ class ProfileEditorViewModel(private val container: AppContainer, private val pr
                 _ui.update { it.copy(draft = draft, saved = draft, isNew = false) }
                 events.send(EditorEvent.Saved)
             } catch (e: ProfileInvalidException) {
-                _ui.update { it.copy(showAll = true, messages = fieldMessages(it.draft, e.issues)) }
+                _ui.update { it.copy(showAll = true, messages = fieldMessages(it.draft, e.issues, container.networkMonitor.localSubnets.value)) }
             }
         }
     }

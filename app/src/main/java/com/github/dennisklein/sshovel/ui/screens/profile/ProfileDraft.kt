@@ -127,7 +127,7 @@ data class Cidr(val network: Long, val bits: Int, val address: Long) {
 data class FieldMsg(val kind: Kind, val args: List<String> = emptyList(), val warning: Boolean = false) {
     enum class Kind {
         REQUIRED, HOST, PORT, KEY, ROUTES_REQUIRED, CIDR_INVALID, CIDR_NOT_CANONICAL, COVERED, DUPLICATE,
-        TUN_OVERLAP, DNS_REQUIRED, IP_INVALID, DOMAIN_INVALID, NO_APPS, RANGE, NUMBER, MTU,
+        TUN_OVERLAP, LAN_OVERLAP, DNS_REQUIRED, IP_INVALID, DOMAIN_INVALID, NO_APPS, RANGE, NUMBER, MTU,
     }
 }
 
@@ -177,9 +177,10 @@ object Fields {
 
 /**
  * Field messages for [draft]: local checks (numbers, name, key) plus the Go core's issues for the
- * built profile. Errors block saving; warnings (a subnet already covered by another) don't.
+ * built profile. Errors block saving; warnings (a subnet already covered by another, or one that
+ * overlaps the phone's current Wi-Fi or Ethernet network in [localSubnets]) don't.
  */
-fun fieldMessages(draft: ProfileDraft, issues: List<ValidationIssue>): Map<String, FieldMsg> {
+fun fieldMessages(draft: ProfileDraft, issues: List<ValidationIssue>, localSubnets: List<String> = emptyList()): Map<String, FieldMsg> {
     val out = linkedMapOf<String, FieldMsg>()
     fun put(key: String, msg: FieldMsg) {
         val old = out[key]
@@ -242,6 +243,14 @@ fun fieldMessages(draft: ProfileDraft, issues: List<ValidationIssue>): Map<Strin
             )
             "tun.dnsVirtualIp" -> put(Fields.TUN, FieldMsg(FieldMsg.Kind.CIDR_INVALID, listOf("198.18.0.0")))
             "tun.mtu" -> put(Fields.MTU, FieldMsg(FieldMsg.Kind.RANGE, listOf("1280", "9000")))
+        }
+    }
+    // Devices on the local network in that range become unreachable for tunneled apps (ARCHITECTURE §10).
+    val lans = localSubnets.mapNotNull(Cidr::parse)
+    draft.routes.forEachIndexed { i, route ->
+        val c = Cidr.parse(route)?.takeIf { it.canonical } ?: return@forEachIndexed
+        lans.firstOrNull { it.contains(c) || c.contains(it) }?.let { lan ->
+            put(Fields.route(i), FieldMsg(FieldMsg.Kind.LAN_OVERLAP, listOf(lan.toString()), warning = true))
         }
     }
     return out

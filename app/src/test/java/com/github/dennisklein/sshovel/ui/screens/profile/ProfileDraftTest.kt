@@ -86,6 +86,22 @@ class ProfileDraftTest {
         assertNull(m[Fields.route(1)])
     }
 
+    @Test fun routesOverlappingTheLocalNetworkWarn() {
+        // Either way round: the route covers the Wi-Fi subnet, or the Wi-Fi subnet covers the route.
+        val d = ProfileDraft.of(profile, false).copy(routes = listOf("192.168.0.0/16", "10.20.0.0/16", "10.20.7.0/24"))
+        val m = fieldMessages(d, emptyList(), listOf("192.168.1.0/24", "10.20.7.0/25"))
+        assertEquals(FieldMsg(FieldMsg.Kind.LAN_OVERLAP, listOf("192.168.1.0/24"), warning = true), m[Fields.route(0)])
+        assertEquals(FieldMsg(FieldMsg.Kind.LAN_OVERLAP, listOf("10.20.7.0/25"), warning = true), m[Fields.route(1)])
+        assertEquals(FieldMsg.Kind.LAN_OVERLAP, m[Fields.route(2)]?.kind)
+        assertTrue(fieldMessages(d, emptyList(), listOf("172.16.0.0/24")).isEmpty())
+    }
+
+    @Test fun localSubnetOfAnAddress() {
+        assertEquals("192.168.1.0/24", com.github.dennisklein.sshovel.tunnel.NetworkMonitor.subnetOf("192.168.1.23", 24))
+        assertEquals("10.0.2.0/24", com.github.dennisklein.sshovel.tunnel.NetworkMonitor.subnetOf("10.0.2.16", 24))
+        assertEquals("172.16.0.0/12", com.github.dennisklein.sshovel.tunnel.NetworkMonitor.subnetOf("172.20.1.1", 12))
+    }
+
     @Test fun errorsWinOverWarnings() {
         val d = ProfileDraft.of(profile, false).copy(routes = listOf("10.20.0.0/16", "10.20.0.0/16"))
         val m = fieldMessages(

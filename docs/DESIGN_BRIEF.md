@@ -303,6 +303,10 @@ is back."
   way back to S4 while the error stands (after "Review in profile", or when S4 wasn't opened).
 - A subnet already covered by another is shown as a warning, not an error: the core reports it
   as one, and a covered subnet is harmless (ARCHITECTURE §8).
+- A subnet that overlaps the Wi-Fi or Ethernet network the phone is on gets a warning on its row
+  (M8; the handoff has no frame for it): "Overlaps your local network 192.168.1.0/24. Devices
+  there are unreachable for tunneled apps while connected." It doesn't block saving: the overlap
+  depends on where the phone is, and routing a remote subnet that happens to match is valid.
 - Keys the device keeps in Android's software keystore (no TEE or StrongBox, e.g. emulators)
   get a "Software keystore" badge and their own onboarding note, instead of the handoff's
   hardware wording, which would overstate their protection.

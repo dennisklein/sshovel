@@ -174,6 +174,7 @@
     <string name="err_cidr_invalid">Not a valid CIDR. Prefix length must be 0–32, e.g. %1$s</string>
     <string name="err_cidr_covered">Already covered by %1$s</string>
     <string name="err_cidr_overlap">Overlaps %1$s partially. Use one or the other.</string>
+    <string name="err_lan_overlap">Overlaps your local network %1$s. Devices there are unreachable for tunneled apps while connected.</string>
     <string name="err_tunnel_overlap">Overlaps routed subnet %1$s. Default is %2$s</string>
     <string name="err_dns_required">Required when domain suffixes are set</string>
     <string name="err_ip_invalid">Must be an IPv4 address, e.g. 10.20.0.53</string>
