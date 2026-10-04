@@ -326,7 +326,9 @@ is back."
   "TIMEOUT", ages ("4 s", "4 s ago"), bytes ("↓ … ↑ …"), the export's headings, and
   "View diagnostics" for `INTERNAL`.
 - At large font sizes two buttons side by side (onboarding's bottom bar, Reconnecting's Retry now
-  and Disconnect) stack with the primary on top, as handoff §5 asks.
+  and Disconnect) stack with the primary on top, as handoff §5 asks. Also at large sizes: the
+  Diagnostics tabs scroll sideways, fingerprint groups wrap to fewer per row (groups stay whole),
+  the port field grows with the font, and the app picker's initial tile keeps a fixed letter size.
 
 ## 9. Handoff deliverables (what engineering needs from you)
 

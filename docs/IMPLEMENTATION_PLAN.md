@@ -377,8 +377,9 @@ error catalog strings wired to every error code.
 - Predictive back works on every sub-screen and sheet.
 
 Run it with `tools/android-env/run.sh m7`. The instrumented tests carry most of the acceptance:
-`FontScaleTest` renders every `@Preview` at font scale 2 and fails on text that is cut off (laid
-out past its bounds without an ellipsis, or past the window's edge); `AccessibilityChecksTest`
+`FontScaleTest` sets the device's font scale to 2 (so dialogs scale too), renders every
+`@Preview`, measures each text again at its node's width and fails when the node got less height
+than its text needs, a line is cut without an ellipsis, or text runs past the window's edge; `AccessibilityChecksTest`
 runs the Accessibility Test Framework, the checks behind Accessibility Scanner, over every screen
 preview (test-only `ui-test-junit4-accessibility`, Apache-2.0); `HeroAnnouncementsTest` drives the
 hero through the connect flow and checks each announcement and its politeness. A TalkBack
