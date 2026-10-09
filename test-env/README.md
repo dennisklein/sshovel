@@ -5,7 +5,9 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 # test-env: a fake intranet behind a jump host
 
-`docker compose up --build` starts:
+`./build.sh && docker compose up` starts the services below. (`build.sh` builds the images
+through `docker buildx bake` with host networking allowed, which `docker compose build` can't
+grant on newer Docker versions; see the script.)
 
 | Service | Address | Reachable from |
 |---|---|---|
@@ -36,7 +38,7 @@ bridge, so run the CLI in a network namespace that can only reach the jump host
 ssh-keygen -t ed25519 -N '' -f cli_key            # the CLI uses an unencrypted key file
 echo "restrict,port-forwarding $(cat cli_key.pub)" >> keys/authorized_keys
 cp cli-profile.example.json cli-profile.json
-docker compose up -d --build
+./build.sh && docker compose up -d
 
 sudo ./cli-netns.sh setup
 sudo ./cli-netns.sh run -profile cli-profile.json hostkey

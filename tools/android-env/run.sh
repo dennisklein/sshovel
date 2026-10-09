@@ -22,8 +22,9 @@ cd "$(dirname "$0")"
 docker compose version >/dev/null 2>&1 || { echo "Needs Docker with the compose plugin (v2.20+)." >&2; exit 1; }
 
 compose="docker compose -f compose.yaml"
-$compose --profile tools build
-$compose up -d --build jumphost dns wiki
+# Through bake directly: compose can't allow the builds' host networking (test-env/build.sh).
+../../test-env/build.sh -f compose.yaml --profile tools
+$compose up -d --no-build jumphost dns wiki
 trap '$compose down' EXIT
 case "${1:-}" in
     shell) $compose --profile tools run --rm android bash ;;
