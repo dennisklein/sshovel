@@ -27,7 +27,7 @@ die() { echo "FATAL: $*"; result FAIL "$*"; exit 1; }
 gradle() { (cd /work && ./gradlew --no-daemon --console=plain "$@"); }
 
 toolchain() {
-    cat /opt/sdk-versions; java -version 2>&1 | head -n1; (cd /work/core && go version)
+    cat /opt/sdk-versions; emulator -version 2>/dev/null | head -n1; java -version 2>&1 | head -n1; (cd /work/core && go version)
     go-licenses --help >/dev/null 2>&1 && echo "go-licenses OK"; reuse --version | head -n1
 }
 
@@ -42,9 +42,27 @@ host_fps() { for k in "$HOSTKEYS"/*.pub; do ssh-keygen -lf "$k" | awk '{print $2
 
 boot_emulator() {
     timeout 3 bash -c '</dev/tcp/127.0.0.1/2222' || die "test-env jump host not reachable on 127.0.0.1:2222"
-    emulator -avd sshovel -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader_indirect -accel on \
-        >> "$OUT/emulator.log" 2>&1 &
-    timeout 600 adb wait-for-device || die "emulator did not come up"
+    emulator -version 2>/dev/null | head -n1
+    # Software rendering, first choice first. Emulator releases have changed which of these work
+    # headless (one crashed at start); fall back while the process dies within its first minute.
+    local gpu pid up=0
+    for gpu in swiftshader_indirect swangle_indirect guest; do
+        echo "emulator -gpu $gpu" | tee -a "$OUT/emulator.log"
+        emulator -avd sshovel -no-window -no-audio -no-boot-anim -no-snapshot -gpu "$gpu" -accel on \
+            >> "$OUT/emulator.log" 2>&1 &
+        pid=$!
+        for _ in $(seq 1 60); do
+            kill -0 "$pid" 2>/dev/null || break
+            [ "$(adb devices | grep -c 'emulator-')" -gt 0 ] && { up=1; break; }
+            sleep 1
+        done
+        [ "$up" = 1 ] && break
+        kill -0 "$pid" 2>/dev/null && { up=1; break; }   # still starting: give it the full wait below
+        echo "emulator -gpu $gpu exited at start:"; tail -n 15 "$OUT/emulator.log"
+    done
+    [ "$up" = 1 ] || die "emulator did not come up with any GPU mode (emulator.log)"
+    echo "emulator -gpu $gpu" > "$OUT/emulator-gpu.txt"
+    timeout 600 adb wait-for-device || { tail -n 30 "$OUT/emulator.log"; die "emulator did not come up (emulator.log)"; }
     for _ in $(seq 1 300); do [ "$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = 1 ] && break; sleep 2; done
     sleep 10
     adb shell input keyevent KEYCODE_WAKEUP; adb shell wm dismiss-keyguard; adb shell svc power stayon true

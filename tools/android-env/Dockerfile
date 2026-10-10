@@ -66,6 +66,19 @@ RUN set -eux; \
     echo "$ndk $bt" > /opt/sdk-versions
 ENV ANDROID_NDK_HOME=/opt/ndk
 
+# Empty: the emulator sdkmanager installed above (the newest stable). Set to a build ID (the
+# number in emulator-linux_x64-<build>.zip; `emulator -version` prints it as "build_id") to run a
+# known-good one: SSHOVEL_EMULATOR_BUILD=16428233 tools/android-env/run.sh m8
+ARG EMULATOR_BUILD=""
+RUN set -eux; \
+    if [ -n "$EMULATOR_BUILD" ]; then \
+        curl -fsSL -o /tmp/emu.zip "https://dl.google.com/android/repository/emulator-linux_x64-$EMULATOR_BUILD.zip"; \
+        cp "$ANDROID_HOME/emulator/package.xml" /tmp/emu-package.xml 2>/dev/null || true; \
+        rm -rf "$ANDROID_HOME/emulator"; unzip -q /tmp/emu.zip -d "$ANDROID_HOME"; rm /tmp/emu.zip; \
+        cp /tmp/emu-package.xml "$ANDROID_HOME/emulator/package.xml" 2>/dev/null || true; \
+    fi; \
+    "$ANDROID_HOME/emulator/emulator" -version | head -n1 || true
+
 RUN set -eux; \
     echo no | avdmanager create avd -n sshovel -k "$SYSTEM_IMAGE" -d pixel_7; \
     printf 'hw.ramSize=4096\ndisk.dataPartition.size=6G\nhw.keyboard=yes\n' >> /root/.android/avd/sshovel.avd/config.ini
