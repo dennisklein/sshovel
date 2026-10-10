@@ -44,26 +44,26 @@ boot_emulator() {
     timeout 3 bash -c '</dev/tcp/127.0.0.1/2222' || die "test-env jump host not reachable on 127.0.0.1:2222"
     emulator -version 2>/dev/null | head -n1
     # Software rendering, first choice first. Emulator releases have changed which of these work
-    # headless (one crashed at start); fall back while the process dies within its first minute.
-    local gpu pid up=0
+    # headless (37.2.12 segfaulted with swiftshader_indirect); if the emulator dies before Android
+    # has booted, try the next. adb lists the emulator long before boot, so wait for the boot.
+    local gpu pid booted=0
     for gpu in swiftshader_indirect swangle_indirect guest; do
         echo "emulator -gpu $gpu" | tee -a "$OUT/emulator.log"
         emulator -avd sshovel -no-window -no-audio -no-boot-anim -no-snapshot -gpu "$gpu" -accel on \
             >> "$OUT/emulator.log" 2>&1 &
         pid=$!
-        for _ in $(seq 1 60); do
+        for _ in $(seq 1 450); do
             kill -0 "$pid" 2>/dev/null || break
-            [ "$(adb devices | grep -c 'emulator-')" -gt 0 ] && { up=1; break; }
-            sleep 1
+            [ "$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = 1 ] && { booted=1; break; }
+            sleep 2
         done
-        [ "$up" = 1 ] && break
-        kill -0 "$pid" 2>/dev/null && { up=1; break; }   # still starting: give it the full wait below
-        echo "emulator -gpu $gpu exited at start:"; tail -n 15 "$OUT/emulator.log"
+        [ "$booted" = 1 ] && break
+        if kill -0 "$pid" 2>/dev/null; then tail -n 30 "$OUT/emulator.log"; die "emulator -gpu $gpu didn't boot in 15 min (emulator.log)"; fi
+        echo "emulator -gpu $gpu exited before boot:"; tail -n 8 "$OUT/emulator.log"
+        adb kill-server >/dev/null 2>&1
     done
-    [ "$up" = 1 ] || die "emulator did not come up with any GPU mode (emulator.log)"
+    [ "$booted" = 1 ] || die "the emulator crashed before boot with every GPU mode (emulator.log)"
     echo "emulator -gpu $gpu" > "$OUT/emulator-gpu.txt"
-    timeout 600 adb wait-for-device || { tail -n 30 "$OUT/emulator.log"; die "emulator did not come up (emulator.log)"; }
-    for _ in $(seq 1 300); do [ "$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = 1 ] && break; sleep 2; done
     sleep 10
     adb shell input keyevent KEYCODE_WAKEUP; adb shell wm dismiss-keyguard; adb shell svc power stayon true
     for s in window_animation_scale transition_animation_scale animator_duration_scale; do adb shell settings put global $s 0; done
