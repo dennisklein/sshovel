@@ -263,15 +263,18 @@ class OnboardingViewModel(private val container: AppContainer, startStep: Int) :
                 val pinned = container.profiles.trustHostKey(ready.profile.id, ready.key)
                 _ui.update { it.copy(profile = pinned, verify = null) }
                 events.send(OnboardingEvent.ServerTrusted)
-                runTest()
+                // The pinned profile itself: the store's hot copy may not have caught up yet, and
+                // testing that one fails with "Verify server first" (M8 acceptance run).
+                runTest(pinned)
             } catch (_: HostKeyAlreadyPinnedException) {
                 _ui.update { it.copy(verify = VerifyUi.Failed(ready.profile, Codes.HOST_KEY_MISMATCH)) }
             }
         }
     }
 
-    fun runTest() {
-        val p = currentProfile() ?: return
+    fun runTest() = currentProfile()?.let(::runTest)
+
+    private fun runTest(p: Profile) {
         _ui.update { it.copy(test = TestUi(running = true)) }
         viewModelScope.launch {
             val checks = try {

@@ -91,6 +91,16 @@ notif_shows() { for _ in $(seq 1 "${2:-30}"); do [ "$(notif_count "$1")" -gt 0 ]
 connected() { notif_shows "Connected to $NAME" "${1:-60}" && ! no_tun; }
 tun_down() { for _ in $(seq 1 "${1:-20}"); do no_tun && return 0; sleep 1; done; return 1; }
 click_tile() { adb shell cmd statusbar click-tile "$TILE"; sleep 2; }
+# ensure_on: connected via the tile, tapping only while there is no TUN (a tap while connecting
+# would cancel), twice at most: right after boot SystemUI may not have bound the tile yet.
+ensure_on() {
+    connected 5 && return 0
+    for _ in 1 2; do
+        no_tun && click_tile
+        connected 60 && return 0
+    done
+    return 1
+}
 app_pid() { adb shell pidof "$PKG" 2>/dev/null | tr -d '\r'; }
 # Chrome's page text, for pages loaded through the tunnel.
 page_loads() { chrome_open "$1"; chrome_shows "Welcome to nginx" "${2:-10}"; }
@@ -258,6 +268,7 @@ home
 # ---- Manual test matrix (§7) --------------------------------------------------------------------
 
 say "Matrix: tile on/off (unlocked)"
+ensure_on >/dev/null
 click_tile
 if tun_down 20; then
     click_tile
@@ -328,7 +339,7 @@ else
     adb shell cmd connectivity airplane-mode disable
     result FAIL "matrix: no NETWORK_LOST notification in airplane mode (m-airplane.png)"
 fi
-connected 60 >/dev/null
+ensure_on >/dev/null
 
 say "Matrix: Private DNS strict"
 adb shell settings put global private_dns_specifier dns.google
@@ -412,7 +423,7 @@ result INFO "matrix: require unlock off, PIN lock screen: lock screen=$1, connec
 require_unlock false >/dev/null
 adb shell locksettings clear --old 1111 >/dev/null
 adb shell wm dismiss-keyguard; adb shell svc power stayon true
-home; connected 5 >/dev/null || { click_tile; connected 60 >/dev/null; }
+home; ensure_on >/dev/null
 
 say "Matrix: reboot with Always-on"
 reboot_device() {
@@ -436,10 +447,10 @@ fi
 # would keep other VPNs out and restart sshovel for the rest of the run.
 adb shell settings delete secure always_on_vpn_app; adb shell settings delete secure always_on_vpn_lockdown
 reboot_device
-click_tile; connected 60 >/dev/null || result INFO "the tile didn't connect after the second reboot"
+ensure_on || result INFO "the tile didn't connect after the second reboot"
 
 say "Battery: idle connected tunnel for $IDLE_MIN min"
-connected 30 >/dev/null || { click_tile; connected 60 >/dev/null; }
+ensure_on >/dev/null
 pid=$(app_pid)
 cpu() { adb shell cat "/proc/$1/stat" 2>/dev/null | tr -d '\r' | awk '{print $14 + $15}'; }
 adb shell dumpsys batterystats --reset >/dev/null
