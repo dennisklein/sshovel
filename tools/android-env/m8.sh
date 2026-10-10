@@ -232,7 +232,8 @@ for _ in $(seq 1 60); do
     done
     [[ "$lic_seen" == *"[Go modules]"* ]] && [ -z "${lic_go_shot:-}" ] && { shot licenses-go; lic_go_shot=1; }
     [[ "$lic_seen" == *"[Roboto Mono]"* ]] && break
-    adb shell input swipe 500 $(( H * 80 / 100 )) 500 $(( H * 20 / 100 )) 200; sleep 1
+    # Slow and half a screen, so it doesn't fling past a section header between two dumps.
+    adb shell input swipe 500 $(( H * 75 / 100 )) 500 $(( H * 25 / 100 )) 1500; sleep 1
 done
 echo "licenses screen shows: $lic_seen"
 [ "$(grep -o '\[' <<<"$lic_seen" | wc -l)" = 5 ] && lic_screen=1 || lic_screen=0
@@ -348,13 +349,24 @@ adb shell locksettings set-pin 1111 >/dev/null
 # ActivityTaskManager's KeyguardController knows whether the lock screen is up.
 keyguard() { adb shell dumpsys activity activities 2>/dev/null | tr -d '\r' | grep -o 'mKeyguardShowing=[a-z]*' | head -n1 | cut -d= -f2; }
 lock() { adb shell svc power stayon false; adb shell input keyevent KEYCODE_SLEEP; sleep 3; adb shell input keyevent KEYCODE_WAKEUP; sleep 2; }
+# unlock: enters the PIN on the bouncer. If the script can't get past the lock screen, it
+# removes the PIN and dismisses the lock screen, so the run can go on (the case then reports it).
 unlock() {
     local h; h=$(adb shell wm size | grep -o '[0-9]*x[0-9]*' | tail -n1 | cut -dx -f2)
-    for _ in 1 2; do
-        adb shell input keyevent KEYCODE_WAKEUP; adb shell input swipe 500 $(( h * 85 / 100 )) 500 $(( h * 30 / 100 )) 300; sleep 2
+    UNLOCKED_BY=pin
+    for _ in 1 2 3; do
+        adb shell input keyevent KEYCODE_WAKEUP; sleep 1
+        adb shell wm dismiss-keyguard; sleep 1          # on a PIN lock screen: shows the bouncer
+        adb shell input keyevent KEYCODE_MENU; sleep 1
+        adb shell input swipe 500 $(( h * 85 / 100 )) 500 $(( h * 30 / 100 )) 300; sleep 2
         adb shell input text 1111; adb shell input keyevent KEYCODE_ENTER; sleep 3
         [ "$(keyguard)" = true ] || break
     done
+    if [ "$(keyguard)" = true ]; then
+        shot m-unlock-stuck; UNLOCKED_BY=cleared
+        adb shell locksettings clear --old 1111 >/dev/null; adb shell wm dismiss-keyguard; sleep 2
+        adb shell locksettings set-pin 1111 >/dev/null
+    fi
     adb shell svc power stayon true
 }
 tunnel_off() { no_tun || { click_tile; tun_down 20 >/dev/null; }; }
@@ -376,7 +388,7 @@ locked_case() {
     lock; local kg; kg=$(keyguard)
     click_tile; sleep 8; shot "m-locked-$1"
     local wl=no; no_tun || wl=yes
-    unlock; local kg2; kg2=$(keyguard); sleep 5
+    unlock; local kg2; kg2=$(keyguard); [ "$UNLOCKED_BY" = cleared ] && kg2=stuck; sleep 5
     local after=no; no_tun || after=yes
     echo "${kg:-?} $wl ${kg2:-?} $after"
 }

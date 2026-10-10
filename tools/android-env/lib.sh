@@ -44,10 +44,11 @@ boot_emulator() {
     timeout 3 bash -c '</dev/tcp/127.0.0.1/2222' || die "test-env jump host not reachable on 127.0.0.1:2222"
     emulator -version 2>/dev/null | head -n1
     # Software rendering, first choice first. Emulator releases have changed which of these work
-    # headless (37.2.12 segfaulted with swiftshader_indirect); if the emulator dies before Android
-    # has booted, try the next. adb lists the emulator long before boot, so wait for the boot.
+    # headless (37.2.12 segfaults with swiftshader_indirect, boots with swangle_indirect); if the
+    # emulator dies before Android has booted, try the next. adb lists the emulator long before
+    # boot, so wait for the boot.
     local gpu pid booted=0
-    for gpu in swiftshader_indirect swangle_indirect guest; do
+    for gpu in swangle_indirect swiftshader_indirect guest; do
         echo "emulator -gpu $gpu" | tee -a "$OUT/emulator.log"
         emulator -avd sshovel -no-window -no-audio -no-boot-anim -no-snapshot -gpu "$gpu" -accel on \
             >> "$OUT/emulator.log" 2>&1 &
