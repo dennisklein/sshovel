@@ -458,6 +458,19 @@ Implementation notes (M8):
   keystore), as onboarding already did.
 - The profile editor warns when a subnet overlaps the current Wi-Fi or Ethernet network
   (ARCHITECTURE §10, §7 matrix); it was missing. The copy is new (DESIGN_BRIEF §8 deviations).
+- The acceptance run found a race in onboarding: "Trust this server" started the connection
+  test with the store's hot copy of the profile, which could still lack the new pin ("Verify
+  server first"). The test now gets the pinned profile.
+- Toolbox: Compose v5 builds through buildx bake, which newer buildx refuses for host-network
+  builds unless allowed; `test-env/build.sh` runs bake with `--allow network.host`. Emulator
+  37.2.12 segfaults with `-gpu swiftshader_indirect`; `boot_emulator` uses `swangle_indirect`
+  and falls back if the emulator dies before boot. `SSHOVEL_EMULATOR_BUILD` pins a build.
+- Result (2026-10-12, emulator 37.2.12, API 36 x86_64): every §7 row an emulator can run passes
+  with the release APK; idle hour 7.2 s CPU (0.2 % of a core), tunnel up throughout; StrictMode
+  clean; 320 instrumented tests. Left for a physical device: the tile on a PIN lock screen with
+  "Require unlock" on and off (this emulator's SystemUI asks for the PIN before any custom
+  tile), TalkBack by ear, a real Wi-Fi ↔ cellular handover. The script can't yet walk the
+  editor's forget-and-verify path after a host key change (the mismatch itself passes).
 
 ## 7. Manual test matrix (run at M5 and M8)
 
