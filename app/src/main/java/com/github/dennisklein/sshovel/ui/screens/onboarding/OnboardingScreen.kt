@@ -224,7 +224,7 @@ fun OnboardingScreen(ui: OnboardingUi, actions: OnboardingActions, snackbar: Sna
             BottomActions(null) { Button(actions.onNext) { Text(stringResource(R.string.onb_install_done)) } }
         }, snackbar = snackbar) { InstallKeyStep(ui, actions) }
         4 -> OnboardingScaffold(4, steps, back, skip, {
-            BottomActions(null) { Button(actions.onSaveServer, enabled = ui.serverReady && !ui.saving) { Text(stringResource(R.string.onb_next)) } }
+            BottomActions(null) { Button(actions.onSaveServer, enabled = !ui.saving) { Text(stringResource(R.string.onb_next)) } }
         }, snackbar = snackbar, topDivider = true) { ServerStep(ui, actions) }
         5 -> OnboardingScaffold(5, steps, back, skip, { VerifyActions(ui, actions) }, snackbar = snackbar) { VerifyStep(ui, actions) }
         6 -> OnboardingScaffold(6, steps, back, skip, {
@@ -373,6 +373,7 @@ private fun ServerStep(ui: OnboardingUi, actions: OnboardingActions) {
     }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(stringResource(R.string.onb_subnets_label), style = MaterialTheme.typography.titleSmall)
+        ui.messageFor(Fields.ROUTES)?.let { Text(it.text(context), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error) }
         ChipField(ui.draft.routes, stringResource(R.string.add_subnet), actions.onRemoveRoute, actions.onAddRoute, placeholder = stringResource(R.string.add_subnet_hint))
     }
     F(Fields.DNS, R.string.field_dns_server, ui.draft.dnsServer, true, KeyboardType.Uri) { d, v -> d.copy(dnsServer = v.trim()) }
