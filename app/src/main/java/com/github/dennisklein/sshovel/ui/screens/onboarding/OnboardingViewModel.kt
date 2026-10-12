@@ -71,7 +71,7 @@ data class OnboardingUi(
     val tile: TileOutcome? = null,
     val declines: Int = 0,
 ) {
-    /** O4: "Next" needs name, host, user, and one valid subnet. */
+    /** O4: what "Next" needs: name, host, user, and one valid subnet. Next is always tappable; tapping it with these missing shows the errors. */
     val serverReady: Boolean
         get() = draft.name.isNotBlank() && draft.host.isNotBlank() && draft.user.isNotBlank() && draft.routes.isNotEmpty() &&
             messages.filterValues { !it.warning }.keys.none { it in SERVER_FIELDS || it.startsWith("routes") }
