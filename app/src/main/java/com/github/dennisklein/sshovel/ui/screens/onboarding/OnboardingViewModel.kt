@@ -62,6 +62,11 @@ data class OnboardingUi(
     val draft: ProfileDraft = ProfileDraft(),
     val messages: Map<String, FieldMsg> = emptyMap(),
     val shown: Set<String> = emptySet(),
+    /** Text left in the subnet and suffix boxes; "Next" adds it (the check mark is easy to miss). */
+    val pendingRoute: String = "",
+    val pendingSuffix: String = "",
+    val pendingRouteError: FieldMsg? = null,
+    val pendingSuffixError: FieldMsg? = null,
     val saving: Boolean = false,
     val profile: Profile? = null,
     // Step 5
@@ -190,6 +195,10 @@ class OnboardingViewModel(private val container: AppContainer, startStep: Int) :
         revalidate()
     }
 
+    fun setPendingRoute(v: String) = _ui.update { it.copy(pendingRoute = v, pendingRouteError = null) }
+
+    fun setPendingSuffix(v: String) = _ui.update { it.copy(pendingSuffix = v, pendingSuffixError = null) }
+
     fun touched(field: String) = _ui.update { it.copy(shown = it.shown + field) }
 
     /** A subnet chip; returns an error, or null when added. */
@@ -218,11 +227,25 @@ class OnboardingViewModel(private val container: AppContainer, startStep: Int) :
         _ui.update { it.copy(messages = fieldMessages(it.draft, issues)) }
     }
 
+    private fun commitPending() {
+        val route = _ui.value.pendingRoute.trim()
+        if (route.isNotEmpty()) {
+            val err = addRoute(route)
+            _ui.update { it.copy(pendingRoute = if (err == null) "" else it.pendingRoute, pendingRouteError = err) }
+        }
+        val suffix = _ui.value.pendingSuffix.trim()
+        if (suffix.isNotEmpty()) {
+            val err = addSuffix(suffix)
+            _ui.update { it.copy(pendingSuffix = if (err == null) "" else it.pendingSuffix, pendingSuffixError = err) }
+        }
+    }
+
     /** "Next" on O4: saves the profile (the first one becomes the default). */
     fun saveServer() {
+        commitPending()
         val u = _ui.value
         _ui.update { it.copy(shown = it.shown + OnboardingUi.SERVER_FIELDS, saving = true) }
-        if (!u.serverReady) {
+        if (!u.serverReady || u.pendingRouteError != null || u.pendingSuffixError != null) {
             _ui.update { it.copy(saving = false) }
             return
         }
