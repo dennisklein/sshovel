@@ -136,21 +136,31 @@ fun ChipField(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     placeholder: String? = null,
+    /** Hoisted box text and a forced error, for a screen that commits it itself (e.g. on Next). */
+    pendingText: String? = null,
+    onPendingTextChange: ((String) -> Unit)? = null,
+    pendingError: String? = null,
 ) {
     var adding by rememberSaveable { mutableStateOf(false) }
-    var text by rememberSaveable { mutableStateOf("") }
-    var error by rememberSaveable { mutableStateOf<String?>(null) }
+    var localText by rememberSaveable { mutableStateOf("") }
+    var localError by rememberSaveable { mutableStateOf<String?>(null) }
+    val text = pendingText ?: localText
+    fun setText(v: String) {
+        localText = v
+        onPendingTextChange?.invoke(v)
+    }
+    val error = pendingError ?: localError
     val focus = remember { FocusRequester() }
     fun submit() {
         val v = text.trim()
         if (v.isEmpty()) {
             adding = false
-            error = null
+            localError = null
             return
         }
-        error = onAdd(v)
-        if (error == null) {
-            text = ""
+        localError = onAdd(v)
+        if (localError == null) {
+            setText("")
             adding = false
         }
     }
@@ -168,7 +178,7 @@ fun ChipField(
                     trailingIcon = if (enabled) ({ SymbolIcon(R.drawable.ic_close, removeLabel, size = InputChipDefaults.IconSize) }) else null,
                 )
             }
-            if (enabled && !adding) {
+            if (enabled && !adding && text.isEmpty()) {
                 AssistChip(
                     onClick = { adding = true },
                     label = { Text(addLabel) },
@@ -177,11 +187,11 @@ fun ChipField(
                 )
             }
         }
-        if (adding) {
+        if (adding || text.isNotEmpty()) {
             LaunchedEffect(Unit) { focus.requestFocus() }
             OutlinedTextField(
                 text,
-                { text = it; error = null },
+                { setText(it); localError = null },
                 Modifier.fillMaxWidth().focusRequester(focus),
                 label = { Text(addLabel) },
                 placeholder = placeholder?.let { { Text(it) } },

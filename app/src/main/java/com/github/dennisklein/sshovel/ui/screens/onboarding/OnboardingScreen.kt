@@ -137,6 +137,8 @@ fun OnboardingRoute(vm: OnboardingViewModel, onFinished: () -> Unit, onConnect: 
             onShowQr = { vm.showQr(it) },
             edit = vm::edit,
             touched = vm::touched,
+            onPendingRoute = vm::setPendingRoute,
+            onPendingSuffix = vm::setPendingSuffix,
             onAddRoute = { vm.addRoute(it)?.text(context) },
             onRemoveRoute = vm::removeRoute,
             onAddSuffix = { vm.addSuffix(it)?.text(context) },
@@ -184,6 +186,8 @@ data class OnboardingActions(
     val onShowQr: (String) -> Unit = {},
     val edit: ((ProfileDraft) -> ProfileDraft) -> Unit = {},
     val touched: (String) -> Unit = {},
+    val onPendingRoute: (String) -> Unit = {},
+    val onPendingSuffix: (String) -> Unit = {},
     val onAddRoute: (String) -> String? = { null },
     val onRemoveRoute: (String) -> Unit = {},
     val onAddSuffix: (String) -> String? = { null },
@@ -374,12 +378,12 @@ private fun ServerStep(ui: OnboardingUi, actions: OnboardingActions) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(stringResource(R.string.onb_subnets_label), style = MaterialTheme.typography.titleSmall)
         ui.messageFor(Fields.ROUTES)?.let { Text(it.text(context), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error) }
-        ChipField(ui.draft.routes, stringResource(R.string.add_subnet), actions.onRemoveRoute, actions.onAddRoute, placeholder = stringResource(R.string.add_subnet_hint))
+        ChipField(ui.draft.routes, stringResource(R.string.add_subnet), actions.onRemoveRoute, actions.onAddRoute, placeholder = stringResource(R.string.add_subnet_hint), pendingText = ui.pendingRoute, onPendingTextChange = actions.onPendingRoute, pendingError = ui.pendingRouteError?.text(context))
     }
     F(Fields.DNS, R.string.field_dns_server, ui.draft.dnsServer, true, KeyboardType.Uri) { d, v -> d.copy(dnsServer = v.trim()) }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(stringResource(R.string.onb_suffixes_label), style = MaterialTheme.typography.titleSmall)
-        ChipField(ui.draft.suffixes, stringResource(R.string.add_suffix), actions.onRemoveSuffix, actions.onAddSuffix, placeholder = stringResource(R.string.dns_suffix_hint))
+        ChipField(ui.draft.suffixes, stringResource(R.string.add_suffix), actions.onRemoveSuffix, actions.onAddSuffix, placeholder = stringResource(R.string.dns_suffix_hint), pendingText = ui.pendingSuffix, onPendingTextChange = actions.onPendingSuffix, pendingError = ui.pendingSuffixError?.text(context))
     }
 }
 
