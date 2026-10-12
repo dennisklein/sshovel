@@ -16,13 +16,15 @@ needs and puts the checkout at the same path each time.
 | AGP, Kotlin, libraries | `gradle/libs.versions.toml` | as pinned |
 | Android build-tools | `app/build.gradle.kts` (`buildToolsVersion`), toolbox `Dockerfile` | 36.1.0 |
 | compile SDK | `app/build.gradle.kts`, toolbox `Dockerfile` | android-37.0 |
-| NDK | toolbox `Dockerfile`: the newest stable (r28+), or `SSHOVEL_NDK`; recorded per release | see `release-<tag>.txt` |
+| NDK | toolbox `Dockerfile` and `compose.yaml` (override: `SSHOVEL_NDK`); recorded per release | 30.0.16248370 |
+| Android emulator (acceptance runs only) | toolbox `Dockerfile` and `compose.yaml` (override: `SSHOVEL_EMULATOR_BUILD`) | 37.2.12 (build 16428233) |
 | JDK | toolbox `Dockerfile` (Ubuntu 24.04 `openjdk-21-jdk-headless`) | 21 |
 | go-licenses, reuse | toolbox `Dockerfile` | v1.6.0, latest |
 
 The NDK compiles the cgo glue in `libgojni.so`, so a rebuild that should match a published APK
 byte for byte needs the NDK recorded in that release's `release-<tag>.txt` ("SDK packages"). Pass
-it when building the toolbox: `SSHOVEL_NDK=28.2.13676358 tools/android-env/run.sh release <tag>`
+it when building the toolbox if it differs from the pinned one:
+`SSHOVEL_NDK=28.2.13676358 tools/android-env/run.sh release <tag>`
 (the version without the `ndk;` prefix).
 
 ## 1. Prepare the release commit

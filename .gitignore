@@ -7,6 +7,8 @@
 build/
 local.properties
 *.apk
+# Personal signing keys for builds installed on a phone (docs/RELEASE.md); never committed.
+/.signing/
 /tools/android-env/out/
 /test-env/wiki/files/
 /spikes/

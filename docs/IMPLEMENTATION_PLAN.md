@@ -464,7 +464,9 @@ Implementation notes (M8):
 - Toolbox: Compose v5 builds through buildx bake, which newer buildx refuses for host-network
   builds unless allowed; `test-env/build.sh` runs bake with `--allow network.host`. Emulator
   37.2.12 segfaults with `-gpu swiftshader_indirect`; `boot_emulator` uses `swangle_indirect`
-  and falls back if the emulator dies before boot. `SSHOVEL_EMULATOR_BUILD` pins a build.
+  and falls back if the emulator dies before boot. The toolbox pins NDK 30.0.16248370 and emulator
+  37.2.12 (build 16428233), the versions of the passing run; `SSHOVEL_NDK` and
+  `SSHOVEL_EMULATOR_BUILD` override them (`latest` for the newest stable).
 - Result (2026-10-12, emulator 37.2.12, API 36 x86_64): every §7 row an emulator can run passes
   with the release APK; idle hour 7.2 s CPU (0.2 % of a core), tunnel up throughout; StrictMode
   clean; 320 instrumented tests. Left for a physical device: the tile on a PIN lock screen with

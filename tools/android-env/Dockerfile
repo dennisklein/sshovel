@@ -46,12 +46,13 @@ ARG COMPILE_PLATFORM="platforms;android-37.0"
 # Must match android.buildToolsVersion in app/build.gradle.kts.
 ARG BUILD_TOOLS="build-tools;36.1.0"
 ARG SYSTEM_IMAGE="system-images;android-36;google_apis;x86_64"
-# Empty: the newest stable NDK. To rebuild a release byte for byte, set it to the NDK recorded in
-# its release-<tag>.txt (SSHOVEL_NDK=28.2.13676358 tools/android-env/run.sh release <tag>).
-ARG NDK=""
+# The NDK the M8 acceptance and release builds used (compose.yaml passes the same default).
+# Override with SSHOVEL_NDK=<version>, e.g. the one a release-<tag>.txt records, to rebuild that
+# release byte for byte; SSHOVEL_NDK=latest takes the newest stable.
+ARG NDK="30.0.16248370"
 RUN set -eux; \
     list=$(sdkmanager --list 2>/dev/null | awk '{print $1}' | tr '/' ';' | sort -u); \
-    if [ -n "$NDK" ]; then ndk=$(echo "$list" | grep -Fx "ndk;$NDK" || true); else \
+    if [ "$NDK" != latest ]; then ndk=$(echo "$list" | grep -Fx "ndk;$NDK" || true); else \
     ndk=$(echo "$list" | grep -E '^ndk;[0-9]+\.[0-9]+\.[0-9]+$' | sort -t';' -k2 -V | tail -n1 || true); fi; \
     bt=$(echo "$list" | grep -Fx "$BUILD_TOOLS" || true); \
     if [ -z "$ndk" ] || [ -z "$bt" ] || ! echo "$list" | grep -Fxq "$SYSTEM_IMAGE" \
@@ -66,12 +67,14 @@ RUN set -eux; \
     echo "$ndk $bt" > /opt/sdk-versions
 ENV ANDROID_NDK_HOME=/opt/ndk
 
-# Empty: the emulator sdkmanager installed above (the newest stable). Set to a build ID (the
-# number in emulator-linux_x64-<build>.zip; `emulator -version` prints it as "build_id") to run a
-# known-good one: SSHOVEL_EMULATOR_BUILD=16428233 tools/android-env/run.sh m8
-ARG EMULATOR_BUILD=""
+# The emulator build the M8 acceptance ran on (37.2.12; compose.yaml passes the same default).
+# sdkmanager installs only the newest, so another build comes straight from its zip. Override
+# with SSHOVEL_EMULATOR_BUILD=<build id> (`emulator -version` prints it as "build_id");
+# SSHOVEL_EMULATOR_BUILD=latest keeps the newest stable.
+ARG EMULATOR_BUILD="16428233"
 RUN set -eux; \
-    if [ -n "$EMULATOR_BUILD" ]; then \
+    installed=$(sed -n 's/^Pkg.BuildId=//p' "$ANDROID_HOME/emulator/source.properties" 2>/dev/null || true); \
+    if [ "$EMULATOR_BUILD" != latest ] && [ "$EMULATOR_BUILD" != "$installed" ]; then \
         curl -fsSL -o /tmp/emu.zip "https://dl.google.com/android/repository/emulator-linux_x64-$EMULATOR_BUILD.zip"; \
         cp "$ANDROID_HOME/emulator/package.xml" /tmp/emu-package.xml 2>/dev/null || true; \
         rm -rf "$ANDROID_HOME/emulator"; unzip -q /tmp/emu.zip -d "$ANDROID_HOME"; rm /tmp/emu.zip; \
