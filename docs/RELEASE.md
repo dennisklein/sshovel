@@ -106,3 +106,37 @@ and the unzipped contents instead.
 Create a GitHub release for the tag with the notes from `docs/RELEASE_NOTES.md`, and attach the APK
 and `release-<tag>.txt`. F-Droid builds from the tag itself, using the fastlane metadata in the
 repository.
+
+## Test builds on your own phone
+
+For trying a build on a phone without tagging. The phone needs Android 16 or newer (arm64).
+
+1. **A signing key you keep.** The phone only updates an app signed with the same key, and
+   uninstalling deletes sshovel's keys (they can't leave the Keystore). Create one once, in the
+   ignored `.signing/` folder, from `tools/android-env/run.sh shell`:
+   ```bash
+   mkdir -p /work/.signing
+   keytool -genkeypair -keystore /work/.signing/sshovel.jks -alias sshovel \
+       -keyalg EC -groupname secp256r1 -validity 10000 -dname "CN=sshovel test"
+   cat >> /root/.gradle/gradle.properties <<'PROPS'
+   sshovel.signing.storeFile=/work/.signing/sshovel.jks
+   sshovel.signing.storePassword=<the password>
+   sshovel.signing.keyAlias=sshovel
+   sshovel.signing.keyPassword=<the password>
+   PROPS
+   ```
+   `/root/.gradle` is the toolbox's persistent Gradle volume, so later builds pick the key up.
+2. **Build** in the toolbox shell: `./gradlew :app:assembleRelease`. The APK is
+   `app/build/outputs/apk/release/app-release.apk`. (The debug build seeds a test-env profile for
+   the emulator and isn't meant for a phone.)
+3. **Install.** On the phone: Settings → About phone → tap "Build number" seven times, then
+   Developer options → Wireless debugging (same Wi-Fi as the computer). The toolbox shares the
+   host's network, so in the toolbox shell:
+   ```bash
+   adb pair <ip>:<pairing port>      # "Pair device with pairing code", enter the code
+   adb connect <ip>:<port>           # the address on the Wireless debugging screen
+   adb install -r app/build/outputs/apk/release/app-release.apk
+   ```
+   Or copy the APK to the phone and open it (Android asks to allow installs from that app).
+4. **Set up the server** as in `docs/SERVER_SETUP.md`; the app's onboarding shows the
+   `authorized_keys` line for the key it creates.
