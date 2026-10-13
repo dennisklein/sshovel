@@ -82,6 +82,29 @@ func TestDefaults(t *testing.T) {
 	}
 }
 
+func TestJumpDefaults(t *testing.T) {
+	p, err := Parse([]byte(`{"server":{"host":"inner","user":"u"},"jump":{"host":"login"},"auth":{"kind":"imported","alias":"a"},"routes":["10.0.0.0/8"]}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if p.Jump.Port != 22 || p.JumpUser() != "u" {
+		t.Errorf("jump defaults: %+v, user %q", p.Jump, p.JumpUser())
+	}
+	p.Jump.User = "j"
+	if p.JumpUser() != "j" {
+		t.Errorf("jump user %q", p.JumpUser())
+	}
+	if issues := p.Validate(); issues != nil {
+		t.Errorf("issues: %+v", issues)
+	}
+	// No jump: the field stays out of the JSON, so old profiles round-trip.
+	q, _ := Parse([]byte(exampleJSON(t)))
+	b, _ := json.Marshal(q)
+	if strings.Contains(string(b), `"jump"`) {
+		t.Errorf("jump encoded without one: %s", b)
+	}
+}
+
 func TestValidate(t *testing.T) {
 	type issue struct{ field, code, sev, sugg string }
 	cases := []struct {
@@ -127,6 +150,11 @@ func TestValidate(t *testing.T) {
 			[]issue{{"auth.publicKeyPkix", CodeInvalidPublicKey, SeverityError, ""}}},
 		{"mtu", func(p *Profile) { p.Tun.MTU = 500 },
 			[]issue{{"tun.mtu", CodeInvalidMTU, SeverityError, ""}}},
+		{"jump without host", func(p *Profile) { p.Jump = &Jump{Port: 22} },
+			[]issue{{"jump.host", CodeRequired, SeverityError, ""}}},
+		{"jump bad host and port", func(p *Profile) { p.Jump = &Jump{Host: "bad host", Port: 0} },
+			[]issue{{"jump.host", CodeInvalidHost, SeverityError, ""}, {"jump.port", CodeInvalidPort, SeverityError, ""}}},
+		{"jump ok", func(p *Profile) { p.Jump = &Jump{Host: "login.example.com", Port: 2222} }, nil},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {

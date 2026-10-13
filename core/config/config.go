@@ -20,6 +20,7 @@ type Profile struct {
 	Server            Server   `json:"server"`
 	Auth              Auth     `json:"auth"`
 	HostKey           *HostKey `json:"hostKey,omitempty"`
+	Jump              *Jump    `json:"jump,omitempty"`
 	Routes            []string `json:"routes"`
 	ExcludedRoutes    []string `json:"excludedRoutes"`
 	DNS               DNS      `json:"dns"`
@@ -48,6 +49,16 @@ type Auth struct {
 	// PublicKeyPkix is the base64 PKIX (SubjectPublicKeyInfo) public key of a
 	// Keystore key. encoding/json decodes base64 into []byte.
 	PublicKeyPkix []byte `json:"publicKeyPkix,omitempty"`
+}
+
+// Jump is an optional jump host: sshovel logs into it first and reaches the
+// server through it, like ssh -J (ARCHITECTURE §6). Server.Host is then
+// resolved by the jump host.
+type Jump struct {
+	Host    string   `json:"host"`
+	Port    int      `json:"port"`
+	User    string   `json:"user"` // empty: Server.User
+	HostKey *HostKey `json:"hostKey,omitempty"`
 }
 
 // HostKey is the pinned server identity.
@@ -108,6 +119,9 @@ func (p *Profile) applyDefaults() {
 	if p.Server.Port == 0 {
 		p.Server.Port = DefaultPort
 	}
+	if p.Jump != nil && p.Jump.Port == 0 {
+		p.Jump.Port = DefaultPort
+	}
 	if p.Apps.Mode == "" {
 		p.Apps.Mode = AppsAll
 	}
@@ -148,6 +162,14 @@ func (p *Profile) DNSServer() netip.Addr {
 		return netip.Addr{}
 	}
 	return netip.MustParseAddr(p.DNS.Server)
+}
+
+// JumpUser is the user on the jump host: its own, else the server's.
+func (p *Profile) JumpUser() string {
+	if p.Jump == nil || p.Jump.User == "" {
+		return p.Server.User
+	}
+	return p.Jump.User
 }
 
 func (p *Profile) Keepalive() time.Duration { return time.Duration(p.KeepaliveSec) * time.Second }
