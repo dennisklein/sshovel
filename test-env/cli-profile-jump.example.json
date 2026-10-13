@@ -1,0 +1,8 @@
+{
+  "name": "test-env via bastion",
+  "server": { "host": "jumphost", "port": 22, "user": "tester" },
+  "jump": { "host": "192.168.100.1", "port": 2223 },
+  "auth": { "kind": "imported", "alias": "cli" },
+  "routes": ["10.77.0.0/24"],
+  "dns": { "server": "10.77.0.53", "suffixes": ["corp.test"], "reverseLookups": true, "hideAAAA": true }
+}

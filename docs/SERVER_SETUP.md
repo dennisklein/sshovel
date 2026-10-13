@@ -1,6 +1,6 @@
 <!-- SPDX-FileCopyrightText: 2026 Dennis Klein -->
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
-# Setting up the jump host for sshovel
+# Setting up the server for sshovel
 
 sshovel needs one thing from the server: an OpenSSH account that accepts its key and lets that key
 open TCP forwards (`direct-tcpip` channels) to the intranet. It never runs a shell or commands,
@@ -70,7 +70,21 @@ instead (for example `10.20.0.0/16`, DNS `10.20.0.53`, suffixes `corp.example`).
 Names that resolve to addresses outside the routed subnets are flagged in Diagnostics ("Resolved
 outside routed subnets"); add those subnets to the profile or fix the DNS records.
 
-## 5. Known limitations users may report
+## 5. Behind a login host
+
+If users can only reach the server by logging in to another host first (`ssh -J login server`),
+they add that host as the profile's jump host. The jump host needs to accept the same key and
+forward to the server's SSH port, nothing else:
+
+```
+restrict,port-forwarding,permitopen="server.corp.example:22" ecdsa-sha2-nistp256 AAAA… sshovel key
+```
+
+The server's name is resolved by the jump host. Users verify both host keys, so publish both
+sets of fingerprints. A jump host that refuses to forward to the server makes the connection stop
+with "Jump host won't forward" instead of retrying.
+
+## 6. Known limitations users may report
 
 - Only TCP (and DNS) goes through the tunnel; no other UDP, and no ICMP (ping).
 - IPv4 only.

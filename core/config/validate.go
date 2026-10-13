@@ -76,6 +76,18 @@ func (p *Profile) Validate() []Issue {
 		v.err("server.user", CodeRequired)
 	}
 
+	// Jump host
+	if j := p.Jump; j != nil {
+		if strings.TrimSpace(j.Host) == "" {
+			v.err("jump.host", CodeRequired)
+		} else if !validHost(j.Host) {
+			v.err("jump.host", CodeInvalidHost)
+		}
+		if j.Port < 1 || j.Port > 65535 {
+			v.err("jump.port", CodeInvalidPort)
+		}
+	}
+
 	// Auth
 	switch p.Auth.Kind {
 	case AuthKeystore:

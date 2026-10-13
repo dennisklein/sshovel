@@ -1,0 +1,20 @@
+# SPDX-FileCopyrightText: 2026 Dennis Klein
+# SPDX-License-Identifier: GPL-3.0-or-later
+# A login host in front of the jump host (M9): it can reach nothing but the
+# jump host's SSH port, by a name only it resolves, like a site's public login
+# node in front of its intranet machines.
+Port 22
+HostKey /etc/ssh/hostkeys/ssh_host_ecdsa_key
+HostKey /etc/ssh/hostkeys/ssh_host_ed25519_key
+AuthorizedKeysFile /etc/ssh/keys/authorized_keys /etc/ssh/keys/debug_authorized_keys /etc/ssh/keys/acceptance_authorized_keys
+StrictModes no
+PubkeyAuthentication yes
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PermitRootLogin no
+AllowTcpForwarding yes
+# Anything else is "administratively prohibited" (FORWARDING_DENIED).
+PermitOpen jumphost:22
+AllowAgentForwarding no
+X11Forwarding no
+LogLevel VERBOSE

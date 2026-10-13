@@ -17,11 +17,12 @@ type HostKeyInfo struct {
 	Type        string `json:"type"`
 	Fingerprint string `json:"fingerprint"`
 	Line        string `json:"line"` // known_hosts-style "type base64"
+	Hop         string `json:"hop"`  // HopServer or HopJump: whose key this is
 }
 
-func infoOf(k ssh.PublicKey) HostKeyInfo {
+func infoOf(k ssh.PublicKey, hop string) HostKeyInfo {
 	line := string(ssh.MarshalAuthorizedKey(k))
-	return HostKeyInfo{Type: k.Type(), Fingerprint: ssh.FingerprintSHA256(k), Line: line[:len(line)-1]}
+	return HostKeyInfo{Type: k.Type(), Fingerprint: ssh.FingerprintSHA256(k), Line: line[:len(line)-1], Hop: hop}
 }
 
 // HostKeyError is the cause of HOST_KEY_UNVERIFIED and HOST_KEY_MISMATCH. It
@@ -41,16 +42,16 @@ func (e *HostKeyError) Error() string {
 
 // pinnedCallback enforces the profile's pin. There is deliberately no way to
 // accept a changed key here (CLAUDE.md, Host keys).
-func pinnedCallback(pin *config.HostKey, seen func(ssh.PublicKey)) ssh.HostKeyCallback {
+func pinnedCallback(pin *config.HostKey, seen func(ssh.PublicKey), hop string) ssh.HostKeyCallback {
 	return func(_ string, _ net.Addr, k ssh.PublicKey) error {
 		if seen != nil {
 			seen(k)
 		}
 		if pin == nil || pin.Fingerprint == "" {
-			return errcode.New(errcode.HostKeyUnverified, &HostKeyError{Received: infoOf(k)})
+			return errcode.New(errcode.HostKeyUnverified, &HostKeyError{Received: infoOf(k, hop)})
 		}
 		if k.Type() != pin.Type || ssh.FingerprintSHA256(k) != pin.Fingerprint {
-			return errcode.New(errcode.HostKeyMismatch, &HostKeyError{Received: infoOf(k), pinned: true})
+			return errcode.New(errcode.HostKeyMismatch, &HostKeyError{Received: infoOf(k, hop), pinned: true})
 		}
 		return nil
 	}

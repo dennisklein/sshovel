@@ -1,7 +1,9 @@
 # SPDX-FileCopyrightText: 2026 Dennis Klein
 # SPDX-License-Identifier: GPL-3.0-or-later
 hostkeys/
+hostkeys-bastion/
 cli-profile.json
+cli-profile-jump.json
 cli_key
 cli_key.pub
 keys/debug_client_key

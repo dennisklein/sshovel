@@ -274,6 +274,45 @@ func TestFetchHostKeyAndDiscoverRoutes(t *testing.T) {
 	}
 }
 
+func TestFetchServerHostKeyThroughJumpHost(t *testing.T) {
+	p := newFakePlatform(t)
+	srv, jump := newServer(t, p), newServer(t, p)
+	jump.Dial = func(addr string) (net.Conn, error) {
+		if addr == "inner.test:22" {
+			return net.Dial("tcp", srv.Addr)
+		}
+		return nil, errors.New("no route")
+	}
+	var prof map[string]any
+	if err := json.Unmarshal([]byte(profileJSON(t, p, jump, false)), &prof); err != nil {
+		t.Fatal(err)
+	}
+	jk := jump.HostSigner.PublicKey()
+	prof["jump"] = map[string]any{"host": "jump.example.test", "port": jump.Port}
+	prof["server"] = map[string]any{"host": "inner.test", "port": 22, "user": "tester"}
+	fetch := func(f func(Platform, string) (string, error)) (hk struct{ Fingerprint, Hop string }, err error) {
+		b, _ := json.Marshal(prof)
+		out, err := f(p, string(b))
+		if err == nil {
+			err = json.Unmarshal([]byte(out), &hk)
+		}
+		return hk, err
+	}
+	server := func(p Platform, j string) (string, error) { return FetchServerHostKey(p, j, nil) }
+
+	// The first hop's key comes first, then the server's needs it pinned.
+	if hk, err := fetch(FetchHostKey); err != nil || hk.Hop != "jump" || hk.Fingerprint != ssh.FingerprintSHA256(jk) {
+		t.Errorf("jump host key %+v, %v", hk, err)
+	}
+	if _, err := fetch(server); err == nil || !strings.HasPrefix(err.Error(), "HOST_KEY_UNVERIFIED") {
+		t.Errorf("server key with the jump host unpinned: %v", err)
+	}
+	prof["jump"].(map[string]any)["hostKey"] = map[string]any{"type": jk.Type(), "fingerprint": ssh.FingerprintSHA256(jk)}
+	if hk, err := fetch(server); err != nil || hk.Hop != "server" || hk.Fingerprint != ssh.FingerprintSHA256(srv.HostSigner.PublicKey()) {
+		t.Errorf("server host key %+v, %v", hk, err)
+	}
+}
+
 func TestTestConnection(t *testing.T) {
 	p := newFakePlatform(t)
 	srv := newServer(t, p)

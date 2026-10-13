@@ -57,13 +57,17 @@ type Status struct {
 	State       State    `json:"state"`
 	Code        string   `json:"code"`
 	Detail      string   `json:"detail"`
-	Step        string   `json:"step,omitempty"`        // Connecting: resolving, identity, auth, tunnel
+	Step        string   `json:"step,omitempty"`        // Connecting: resolving, identity, jump, auth, tunnel
 	Reason      string   `json:"reason,omitempty"`      // Reconnecting
 	Attempt     int      `json:"attempt,omitempty"`     // Reconnecting
 	NextRetryAt int64    `json:"nextRetryAt,omitempty"` // Reconnecting, unix ms; 0 while dialing
 	Warnings    []string `json:"warnings,omitempty"`    // On: FORWARDING_DENIED, DNS_UNREACHABLE
+	// NeedsAttention and Reconnecting, with a jump host: which host Code is
+	// about, sshx.HopJump or sshx.HopServer.
+	Hop string `json:"hop,omitempty"`
 	// NeedsAttention with HOST_KEY_UNVERIFIED or HOST_KEY_MISMATCH: the key
-	// the server presented. Never used to pin anything automatically.
+	// the server or the jump host presented (HostKey.Hop says which). Never
+	// used to pin anything automatically.
 	HostKey *sshx.HostKeyInfo `json:"hostKey,omitempty"`
 }
 
@@ -381,7 +385,7 @@ func (e *Engine) setStatus(s Status) {
 }
 
 func sameStatus(a, b Status) bool {
-	return a.State == b.State && a.Code == b.Code && a.Detail == b.Detail && a.Step == b.Step &&
+	return a.State == b.State && a.Code == b.Code && a.Detail == b.Detail && a.Step == b.Step && a.Hop == b.Hop &&
 		a.Reason == b.Reason && a.Attempt == b.Attempt && a.NextRetryAt == b.NextRetryAt &&
 		slices.Equal(a.Warnings, b.Warnings) &&
 		(a.HostKey == nil) == (b.HostKey == nil) && (a.HostKey == nil || *a.HostKey == *b.HostKey)
@@ -469,7 +473,8 @@ func (e *Engine) run() {
 		if first {
 			e.setStatus(Status{State: Connecting, Step: string(sshx.StepResolving)})
 		} else {
-			e.setStatus(Status{State: Reconnecting, Reason: reason, Attempt: attempt, Code: e.Status().Code})
+			prev := e.Status()
+			e.setStatus(Status{State: Reconnecting, Reason: reason, Attempt: attempt, Code: prev.Code, Hop: prev.Hop})
 		}
 		ctx := e.enter(phaseDial)
 		opts := e.sshOpts
@@ -478,11 +483,18 @@ func (e *Engine) run() {
 			if isFirst {
 				e.setStatus(Status{State: Connecting, Step: string(s)})
 			}
-			if s == sshx.StepAuth {
+			switch s {
+			case sshx.StepJump:
+				e.log(LevelInfo, CompSSH, "jump host key verified")
+			case sshx.StepAuth:
 				e.log(LevelInfo, CompSSH, "host key verified")
 			}
 		}
-		e.log(LevelInfo, CompSSH, fmt.Sprintf("connecting to %s@%s:%d", opts.User, opts.Host, opts.Port))
+		via := ""
+		if j := opts.Jump; j != nil {
+			via = fmt.Sprintf(" via %s@%s:%d", j.User, j.Host, j.Port)
+		}
+		e.log(LevelInfo, CompSSH, fmt.Sprintf("connecting to %s@%s:%d%s", opts.User, opts.Host, opts.Port, via))
 		c, err := sshx.Dial(ctx, opts)
 		cause := e.leave(ctx)
 		if e.ctx.Err() != nil {
@@ -512,10 +524,11 @@ func (e *Engine) run() {
 			first = false
 			attempt++
 			reason = ReasonDialFailed
+			hop := sshx.HopOf(err)
 			e.mu.Lock()
-			e.status.Code = string(code)
+			e.status.Code, e.status.Hop = string(code), hop
 			e.mu.Unlock()
-			ok, netChanged := e.backoffWait(attempt, reason, code)
+			ok, netChanged := e.backoffWait(attempt, reason, code, hop)
 			if !ok {
 				return
 			}
@@ -557,7 +570,7 @@ func (e *Engine) run() {
 			continue
 		}
 		attempt++
-		ok, netChanged := e.backoffWait(attempt, reason, "")
+		ok, netChanged := e.backoffWait(attempt, reason, "", "")
 		if !ok {
 			return
 		}
@@ -624,10 +637,10 @@ func (e *Engine) cancelPhase(ctx context.Context, cause error) {
 
 // backoffWait reports Reconnecting with a countdown and waits. It returns
 // false if the engine was stopped, and whether NetworkChanged cut it short.
-func (e *Engine) backoffWait(attempt int, reason string, code errcode.Code) (ok, networkChanged bool) {
+func (e *Engine) backoffWait(attempt int, reason string, code errcode.Code, hop string) (ok, networkChanged bool) {
 	d := backoff(attempt, e.rand())
 	at := e.clock.Now().Add(d)
-	e.setStatus(Status{State: Reconnecting, Reason: reason, Attempt: attempt, Code: string(code),
+	e.setStatus(Status{State: Reconnecting, Reason: reason, Attempt: attempt, Code: string(code), Hop: hop,
 		NextRetryAt: at.UnixMilli()})
 	ctx := e.enter(phaseBackoff)
 	t := e.clock.NewTimer(d)
@@ -648,7 +661,7 @@ func (e *Engine) attention(code errcode.Code, err error) bool {
 	if errors.As(err, &ce) && ce.Err != nil {
 		detail = ce.Err.Error() // the code is already in Code
 	}
-	st := Status{State: NeedsAttention, Code: string(code), Detail: detail}
+	st := Status{State: NeedsAttention, Code: string(code), Detail: detail, Hop: sshx.HopOf(err)}
 	var hke *sshx.HostKeyError
 	if errors.As(err, &hke) {
 		st.HostKey = &hke.Received

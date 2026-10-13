@@ -197,6 +197,12 @@ Emulator profile for manual testing:
 Success means `http://wiki.corp.test` loads in the emulator's browser, while public sites still load
 directly.
 
+M9 adds a `bastion` service (host port `2223`, the jump host's image with its own
+`sshd_config`) on a `dmz` network it shares only with `jumphost`. It forwards to nothing but
+`jumphost:22`, a name only it resolves, like a site's login host in front of its intranet
+machines. Emulator profile: server `jumphost` port `22`, jump host `10.0.2.2` port `2223`, the rest
+as above (`test-env/README.md`).
+
 ## 6. Milestones
 
 Each milestone ends with: all tests green, `./gradlew lint` clean, and a short report covering what
@@ -473,6 +479,43 @@ Implementation notes (M8):
   "Require unlock" on and off (this emulator's SystemUI asks for the PIN before any custom
   tile), TalkBack by ear, a real Wi-Fi ↔ cellular handover. The script can't yet walk the
   editor's forget-and-verify path after a host key change (the mismatch itself passes).
+
+### M9 — Jump host
+
+Some sites only let you reach the machines with intranet access through a login host that
+forwards nothing but SSH (the first real deployment: the login host refused every `direct-tcpip`
+channel except port 22 on internal hosts, so the tunnel came up but intranet DNS never answered).
+Support one jump host per profile, like `ssh -J` (ARCHITECTURE §6).
+
+Decisions: one jump host, not a chain. The profile's key authenticates on both hops. Each hop's
+host key is pinned by the user, separately. A jump host refusing to forward to the server
+(`FORWARDING_DENIED` as a dial error) is permanent: Needs attention, no retry.
+
+- **Go:** `config` (`jump`, §8), `sshx` (two-hop dial, `HopError`, per-hop pins,
+  `FetchServerHostKey`), `probe` (jump checks), `engine` (`jump` step, `hop` in State JSON),
+  `mobile.FetchServerHostKey`, the CLI's `hostkey` for both hops, test-env's bastion. Tests with
+  the in-process sshd as both hops.
+- **Android:** the profile editor's jump host fields and its second pin; host key verification
+  for each hop, jump host first (`FetchHostKey`, then `FetchServerHostKey`); the connection test's
+  three jump rows; Connecting's `jump` step; error copy that names the right host from `hop`
+  (DESIGN_BRIEF §8).
+
+**Acceptance:** `go test -race ./...` passes. On the emulator against the bastion: onboarding
+with a jump host verifies both keys and the connection test passes all eight checks;
+`http://wiki.corp.test` loads; rotating the bastion's host key gives the mismatch screen naming
+the jump host; a server name the bastion won't forward to gives Needs attention
+(`FORWARDING_DENIED`) without retrying; killing the bastion's connection reconnects.
+
+Implementation notes (M9):
+
+- `mobile.FetchServerHostKey` is new instead of a changed `FetchHostKey` signature, so the
+  Android build keeps compiling before its part lands. `FetchHostKey` returns the first hop's
+  key, now with `hop`.
+- Verified here against stock OpenSSH 9.6 (a bastion with `PermitOpen localhost:2322` in front of
+  a second sshd, the CLI in a network namespace): both `hostkey` steps, `routes`, `up` with
+  intranet HTTP and DNS through both hops, reconnect after killing the bastion's session (the
+  inner session closed with it), and `FORWARDING_DENIED` for a server name the bastion doesn't
+  permit.
 
 ## 7. Manual test matrix (run at M5 and M8)
 

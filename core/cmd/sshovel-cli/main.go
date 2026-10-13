@@ -65,14 +65,16 @@ func main() {
 
 	switch flag.Arg(0) {
 	case "hostkey":
-		o := sshx.OptionsFor(p, nil)
-		o.Lookup = lookup(up)
-		info, err := sshx.FetchHostKey(ctx, o)
+		info, err := hostKey(ctx, p, *keyPath, up)
 		if err != nil {
 			fatal(err)
 		}
 		printJSON(info)
-		fmt.Fprintf(os.Stderr, "\nTo pin it, add to the profile:\n  \"hostKey\": {\"type\": %q, \"fingerprint\": %q}\n", info.Type, info.Fingerprint)
+		where := "the profile"
+		if info.Hop == sshx.HopJump {
+			where = "the profile's \"jump\" (then run hostkey again for the server's key)"
+		}
+		fmt.Fprintf(os.Stderr, "\nTo pin it, add to %s:\n  \"hostKey\": {\"type\": %q, \"fingerprint\": %q}\n", where, info.Type, info.Fingerprint)
 	case "routes":
 		c, err := dial(ctx, p, *keyPath, up)
 		if err != nil {
@@ -135,6 +137,27 @@ func signer(p *config.Profile, keyPath string) (sshx.SignDigestFunc, []byte, err
 	return nil, key, err
 }
 
+// hostKey fetches the key of the first unpinned hop: an unpinned jump host's
+// without logging in, else the server's, through the jump host if there is one.
+func hostKey(ctx context.Context, p *config.Profile, keyPath string, up dnsproxy.UpstreamFunc) (sshx.HostKeyInfo, error) {
+	o := sshx.OptionsFor(p, nil)
+	o.Lookup = lookup(up)
+	if p.Jump == nil || p.Jump.HostKey == nil {
+		return sshx.FetchHostKey(ctx, o)
+	}
+	sign, key, err := signer(p, keyPath)
+	if err != nil {
+		return sshx.HostKeyInfo{}, err
+	}
+	s, err := sshx.SignerFor(p, sign, key)
+	clear(key)
+	if err != nil {
+		return sshx.HostKeyInfo{}, err
+	}
+	o.Signer = s
+	return sshx.FetchServerHostKey(ctx, o)
+}
+
 func dial(ctx context.Context, p *config.Profile, keyPath string, up dnsproxy.UpstreamFunc) (*sshx.Client, error) {
 	sign, key, err := signer(p, keyPath)
 	if err != nil {
@@ -164,10 +187,14 @@ func runUp(ctx context.Context, p *config.Profile, keyPath, name string, up dnsp
 	if err != nil {
 		return err
 	}
-	if a, err := netip.ParseAddr(p.Server.Host); err == nil {
+	first := p.Server.Host // the host the CLI's socket goes to
+	if p.Jump != nil {
+		first = p.Jump.Host
+	}
+	if a, err := netip.ParseAddr(first); err == nil {
 		for _, r := range p.RoutePrefixes() {
 			if r.Contains(a) {
-				fmt.Fprintf(os.Stderr, "warning: server %s is inside routed %s; the CLI can't protect its socket, so traffic would loop\n", a, r)
+				fmt.Fprintf(os.Stderr, "warning: %s is inside routed %s; the CLI can't protect its socket, so traffic would loop\n", a, r)
 			}
 		}
 	}
