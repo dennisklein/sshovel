@@ -91,6 +91,13 @@ func NewSSHServerWithHostKey(t testing.TB, hostKey ssh.Signer, authorized ...ssh
 	return s
 }
 
+// Open returns how many client connections are open.
+func (s *SSHServer) Open() int {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return len(s.conns)
+}
+
 // Authorize adds a client key.
 func (s *SSHServer) Authorize(k ssh.PublicKey) {
 	s.mu.Lock()
