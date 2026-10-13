@@ -21,6 +21,8 @@ import (
 	"sync"
 	"time"
 
+	"golang.org/x/crypto/ssh"
+
 	"github.com/dennisklein/sshovel/core/config"
 	"github.com/dennisklein/sshovel/core/dnsproxy"
 	"github.com/dennisklein/sshovel/core/engine"
@@ -179,8 +181,9 @@ func (m *Engine) engine() *engine.Engine {
 	return m.e
 }
 
-// FetchHostKey connects to the profile's server and returns its host key as
-// {"type","fingerprint","line"} without authenticating.
+// FetchHostKey connects to the profile's first hop, the jump host if it has
+// one, and returns its host key as {"type","fingerprint","line","hop"}
+// without authenticating.
 func FetchHostKey(platform Platform, configJSON string) (string, error) {
 	prof, err := parseValid(configJSON)
 	if err != nil {
@@ -189,6 +192,31 @@ func FetchHostKey(platform Platform, configJSON string) (string, error) {
 	o := sshx.OptionsFor(prof, nil)
 	o.Protect, o.Lookup = protectOf(platform), lookupOf(platform)
 	info, err := sshx.FetchHostKey(context.Background(), o)
+	if err != nil {
+		return "", err
+	}
+	return mustJSON(info), nil
+}
+
+// FetchServerHostKey returns the server's host key like FetchHostKey. With a
+// jump host it logs into the pinned jump host with the profile's key and
+// fetches the server's key through it; without one it is FetchHostKey.
+// importedKey is zeroed.
+func FetchServerHostKey(platform Platform, configJSON string, importedKey []byte) (string, error) {
+	defer clear(importedKey)
+	prof, err := parseValid(configJSON)
+	if err != nil {
+		return "", err
+	}
+	var signer ssh.Signer
+	if prof.Jump != nil {
+		if signer, err = sshx.SignerFor(prof, platform.SignDigest, importedKey); err != nil {
+			return "", err
+		}
+	}
+	o := sshx.OptionsFor(prof, signer)
+	o.Protect, o.Lookup = protectOf(platform), lookupOf(platform)
+	info, err := sshx.FetchServerHostKey(context.Background(), o)
 	if err != nil {
 		return "", err
 	}
