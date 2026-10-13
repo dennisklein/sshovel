@@ -313,6 +313,28 @@ is back."
 - The license viewer joins the FSF text's hard-wrapped lines into paragraphs so it reads on a
   phone; the centred headings keep their lines. The text itself is unchanged.
 
+**M9 notes (jump host).** The handoff has no frames for these; reuse its components.
+
+- Profile editor, Server card: an optional "Jump host" group, collapsed when empty ("Connect
+  through a jump host"; helper: "For servers you can only reach by logging in to another host
+  first, like `ssh -J`."). Fields: host, port (default 22), username (placeholder: the server's
+  username). With a jump host, the server's host may be a name only the jump host knows.
+- Server identity shows two pins, "Jump host" and "Server", each with "Verify now" and "Forget
+  pinned key". Onboarding step 5 verifies the jump host first, then the server, on the same
+  screen (§5.5), with the host under verification named in the title ("Verify jump host",
+  "Verify server").
+- Home hero and profile rows: `user@server via jumphost`.
+- Connecting: an extra step between identity and auth, "Reaching server through `{jumpHost}`".
+- Test connection: three rows before the server's, "Jump host reachable", "Jump host identity",
+  "Jump host accepted key". The server's "Reachable" row reads "Reachable through `{jumpHost}`".
+- Error copy for `hop: "jump"`: the catalog entries with `{host}` replaced by the jump host's
+  (`AUTH_FAILED`: "`{user}@{jumpHost}` rejected the key …"; `HOST_KEY_MISMATCH`: title "Jump host
+  identity changed"). With `hop: "server"` and a jump host, `HOST_UNREACHABLE` reads "Can't reach
+  server" — "`{jumpHost}` couldn't reach `{host}:{port}`. Check the server address." (Retry).
+- `FORWARDING_DENIED` as a stopping error (only with a jump host): "Jump host won't forward" —
+  "`{jumpHost}` refused to forward to `{host}:{port}`. Check the server address, or ask the admin
+  to allow forwarding to it." (Edit profile).
+
 **M7 notes (Diagnostics and accessibility).**
 
 - "Clear" empties all three tabs (open connections stay: they're live, not history); the
@@ -356,5 +378,5 @@ is back."
 
 ## 10. Out of scope
 
-Tablet-specific two-pane layouts, Wear OS, widgets, password-based SSH auth, multi-hop jump hosts,
+Tablet-specific two-pane layouts, Wear OS, widgets, password-based SSH auth, more than one jump host,
 UDP forwarding other than DNS, onboarding for server administrators, and any marketing surfaces.

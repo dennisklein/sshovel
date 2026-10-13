@@ -18,7 +18,7 @@ Audience: Claude Code. Read together with `IMPLEMENTATION_PLAN.md` (how and in w
 - UDP forwarding other than DNS
 - ICMP (ping)
 - IPv6 inside the tunnel (see §10)
-- Multi-hop / ProxyJump
+- More than one jump host (one is supported, §6)
 - Password or keyboard-interactive auth
 - Per-connection routing by hostname
 
@@ -48,7 +48,9 @@ Audience: Claude Code. Read together with `IMPLEMENTATION_PLAN.md` (how and in w
 └───────────────────────────────────────────────────────────────────────────────┘
                                    │ one TCP socket, protect()ed
                                    ▼
-                    sshd (jump host) ──► intranet hosts, intranet DNS (tcp/53)
+                    [sshd (jump host), optional, §6] ──direct-tcpip──┐
+                                                                     ▼
+                    sshd (server) ──► intranet hosts, intranet DNS (tcp/53)
 ```
 
 ## 3. Routing (VpnService.Builder)
@@ -189,6 +191,28 @@ its own channel, so its address doesn't have to be inside a routed subnet.
 - Progress steps for the Connecting UI: `resolving` → `identity` (TCP connect and key exchange) →
   `auth` (host key accepted) → `tunnel` (reported by the engine).
 
+**Jump host** (M9; like `ssh -J`, one hop)
+
+- Some sites put a login host in front of the machines with intranet access, and the login host
+  forwards nothing but SSH to them (`PermitOpen`, or a firewall that drops everything else). The
+  profile's optional `jump` names that host (§8); the server is then reached through it.
+- Dial: the jump host exactly as above (resolve via `QueryUpstreamDNS`, protected socket, pinned
+  key, the profile's key). Then a `direct-tcpip` channel from the jump host to the server's host
+  and port, with the server's name passed **unresolved**, since often only the jump host can
+  resolve it. Over that channel, a second `ssh.NewClientConn` with the server's pin and the same
+  key. Port forwarding, keepalive, and route discovery run on the inner connection. The jump
+  connection is closed with it; if the jump connection dies, so does the inner one, and the engine
+  reconnects as for any lost connection.
+- One `connectTimeoutSec` bounds both hops together. `jump.user` defaults to `server.user`. The
+  same key authenticates on both hops.
+- Steps: `resolving` → `identity` (the jump host's TCP connect and key exchange) → `jump` (jump
+  host's key accepted; channel and server key exchange in progress) → `auth` (server's key
+  accepted) → `tunnel`.
+- Errors on the jump hop keep their code and say `jump host host:port: …` in the detail. Opening
+  the channel: `Prohibited` → `FORWARDING_DENIED` (permanent, §7: the jump host's policy won't
+  change on retry), anything else → `HOST_UNREACHABLE` (the jump host can't reach the server, or
+  not in time).
+
 **Auth: Keystore key (default)**
 
 - Kotlin generates the key:
@@ -234,9 +258,18 @@ its own channel, so its address doesn't have to be inside a routed subnet.
   - no pin → `HOST_KEY_UNVERIFIED`
   - mismatch → `HOST_KEY_MISMATCH`
   - neither error is retried
-- `mobile.FetchHostKey(platform, configJSON)` dials, captures the host key in the callback, and
-  aborts the handshake before authenticating. It returns `{type, fingerprint, line}` (`line` is
-  `"<type> <base64>"`) for the verification UI. It needs no key.
+  - with a jump host, each hop has its own pin (`jump.hostKey`, `hostKey`) and the presented key
+    carries `hop`: `"jump"` or `"server"`, so the UI knows which pin to offer or which mismatch
+    to explain
+- `mobile.FetchHostKey(platform, configJSON)` dials the first hop (the jump host if there is
+  one), captures the host key in the callback, and aborts the handshake before authenticating.
+  It returns `{type, fingerprint, line, hop}` (`line` is `"<type> <base64>"`) for the
+  verification UI. It needs no key.
+- `mobile.FetchServerHostKey(platform, configJSON, importedKey)` returns the server's key. With
+  a jump host it logs into the jump host (pinned, else `HOST_KEY_UNVERIFIED`) with the profile's
+  key, opens the channel, and aborts the server's handshake the same way; without one it is
+  `FetchHostKey`. So a jump profile is verified in two steps: the jump host's key, then the
+  server's.
 
 **Keepalive**
 
@@ -269,6 +302,9 @@ its own channel, so its address doesn't have to be inside a routed subnet.
   refusal means forwarding works and the resolver is unreachable), and *dns* (one query over that
   channel, RFC 7766 framing: SOA of the first routed suffix, or the root NS set; any answer, even
   NXDOMAIN, passes; silence for 5 s → `DNS_UNREACHABLE`).
+- With a jump host, *jumpReachable*, *jumpIdentity*, and *jumpAuth* run first against it, and
+  *reachable* is the jump host opening the channel to the server (timed); `Prohibited` there is
+  `FORWARDING_DENIED`.
 - The first failure stops the rest (`notRun`); without an intranet DNS server the last two are
   `skipped`. It never pins a key and never touches the TUN.
 
@@ -291,7 +327,8 @@ any ──onRevoke()──► NeedsAttention(VPN_REVOKED)
 ```
 
 Permanent errors (never retried automatically): `AUTH_FAILED`, `HOST_KEY_UNVERIFIED`,
-`HOST_KEY_MISMATCH`, `KEY_UNAVAILABLE`, `INTERNAL`. Everything else is `HOST_UNREACHABLE` and
+`HOST_KEY_MISMATCH`, `KEY_UNAVAILABLE`, `INTERNAL`, and `FORWARDING_DENIED` as a dial error (the
+jump host refused the channel to the server, §6). Everything else is `HOST_UNREACHABLE` and
 retried with backoff. `NetworkChanged` during a dial or backoff restarts the dial at once and resets
 the attempt counter; while On it drops the connection (bound to the old network) and redials
 without waiting.
@@ -403,7 +440,8 @@ func (e *Engine) RetryNow()
 func (e *Engine) StatsJSON() string
 func (e *Engine) FlowsJSON() string // M7: open flows [{"id","src","dst","bytesIn","bytesOut","startTs"}]
 
-func FetchHostKey(platform Platform, configJSON string) (string, error) // {"type","fingerprint","line"}
+func FetchHostKey(platform Platform, configJSON string) (string, error) // {"type","fingerprint","line","hop"}: first hop
+func FetchServerHostKey(platform Platform, configJSON string, importedKey []byte) (string, error) // M9: same, the server, through the jump host
 func DiscoverRoutes(platform Platform, configJSON string, importedKey []byte) (string, error) // [{"cidr","dev","isDefault","isLinkLocal"}]
 func TestConnection(platform Platform, configJSON string, importedKey []byte) (string, error) // M6: [{"id","status","ms","target","code","detail"}], §6
 func AuthorizedKeyLine(pkixPublicKey []byte, comment string) (string, error)
@@ -420,7 +458,7 @@ func ValidateConfig(configJSON string) string // "" or JSON list of {field, code
 func Version() string
 ```
 
-`FetchHostKey`, `DiscoverRoutes`, and `TestConnection` take the `Platform` because they must
+`FetchHostKey`, `FetchServerHostKey`, `DiscoverRoutes`, and `TestConnection` take the `Platform` because they must
 protect their socket, resolve the host on the underlying network, and (for discovery and the
 test) sign with the Keystore key (M1). `TestConnection` fails only for an invalid profile
 (`INTERNAL`); check failures are in its result, each with its §8 code. Every `[]byte importedKey` is zeroed by Go before the call returns.
@@ -435,20 +473,24 @@ is one of the codes below. Invalid profiles fail with `INTERNAL: invalid profile
   "state": "off|connecting|sshReady|on|reconnecting|needsAttention|disconnecting",
   "code": "HOST_UNREACHABLE",        // needsAttention: the error; reconnecting: last dial error
   "detail": "…",                     // human-readable detail for diagnostics, not UI copy
-  "step": "resolving|identity|auth|tunnel",           // connecting only
+  "step": "resolving|identity|jump|auth|tunnel",      // connecting only; jump only with a jump host
   "reason": "dialFailed|networkChanged|keepaliveTimeout|connectionClosed", // reconnecting
   "attempt": 3,                      // reconnecting
   "nextRetryAt": 1790337601000,      // reconnecting, unix ms; absent while a dial is in progress
   "warnings": ["FORWARDING_DENIED", "DNS_UNREACHABLE"], // on
-  "hostKey": {"type": "ssh-ed25519", "fingerprint": "SHA256:…", "line": "ssh-ed25519 AAAA…"}
-                                     // needsAttention with HOST_KEY_UNVERIFIED / HOST_KEY_MISMATCH:
-                                     // the key the server presented (mismatch screen, M3); never
-                                     // pinned automatically
+  "hop": "jump|server",              // needsAttention, reconnecting; only with a jump host: which
+                                     // host the code is about ("server" includes the jump host
+                                     // failing to reach or forward to it)
+  "hostKey": {"type": "ssh-ed25519", "fingerprint": "SHA256:…", "line": "ssh-ed25519 AAAA…",
+              "hop": "server"}       // needsAttention with HOST_KEY_UNVERIFIED / HOST_KEY_MISMATCH:
+                                     // the key the server (or, hop "jump", the jump host) presented
+                                     // (mismatch screen, M3); never pinned automatically
 }
 ```
 
 `FORWARDING_DENIED` is raised by the first flow the server refuses with `Prohibited` and cleared on
-the next SSH connection. `ROUTE_DISCOVERY_UNAVAILABLE` only comes from `DiscoverRoutes`.
+the next SSH connection. As a needsAttention code it means the jump host refused to forward to the
+server (§6). `ROUTE_DISCOVERY_UNAVAILABLE` only comes from `DiscoverRoutes`.
 
 **Validation issues** (`ValidateConfig`): `{"field":"routes[1]","code":"ROUTE_OVERLAP",
 "severity":"warning","suggestion":"10.0.0.0/8"}`. Codes are defined in `core/config/validate.go`;
@@ -467,6 +509,8 @@ ordering from §7.
   "server": { "host": "jump.example.com", "port": 22, "user": "alice" },
   "auth": { "kind": "keystore", "alias": "sshovel-key-1", "publicKeyPkix": "base64" },
   "hostKey": { "type": "ecdsa-sha2-nistp256", "fingerprint": "SHA256:…", "pinnedAt": "2026-09-23T10:00:00Z" },
+  "jump": { "host": "login.example.com", "port": 22, "user": "",
+            "hostKey": { "type": "ssh-ed25519", "fingerprint": "SHA256:…", "pinnedAt": "…" } },
   "routes": ["10.0.0.0/8", "172.16.0.0/12"],
   "excludedRoutes": [],
   "dns": {
@@ -485,6 +529,9 @@ ordering from §7.
 
 - `auth.kind` is `"keystore"` or `"imported"`. For imported keys, `alias` names the vault entry.
 - `apps.mode` is `"all"`, `"include"`, or `"exclude"`.
+- `jump` is optional (M9, §6); absent means the server is dialed directly. `jump.port` defaults
+  to 22, an empty `jump.user` means `server.user`, and `jump.hostKey` is the jump host's pin.
+  With a jump host, `server.host` may be a name only the jump host resolves.
 
 Error and warning codes (used in `OnState` and in the UI catalog):
 
@@ -501,14 +548,14 @@ Error and warning codes (used in `OnState` and in the UI catalog):
 - **Imported keys** exist in plaintext only in memory, briefly, during import, connect, and route
   discovery.
 - **Host key pins** change only by "Trust this server" on an unpinned profile and "Forget pinned
-  key" in the profile editor. `ProfileRepository.save` keeps the stored pin, and
+  key" in the profile editor (for a jump host, separately for each hop). `ProfileRepository.save` keeps the stored pin, and
   `trustHostKey` refuses to replace an existing one.
 - **Host keys** are pinned. A mismatch is a hard failure with no one-tap override.
 - **Logging:**
   - Never log private key material, passphrases, or full config JSON.
   - DNS names and destinations appear only in the in-memory diagnostics buffer.
 - **No telemetry.** No analytics. There are no network calls other than to the configured SSH server
-  and the underlying DNS.
+  (or its jump host) and the underlying DNS.
 - `android:allowBackup="false"`, since pinned host keys and the vault shouldn't be restored onto a
   different device. Profiles without keys can be exported manually in a later version.
 
