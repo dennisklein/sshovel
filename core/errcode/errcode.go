@@ -72,10 +72,12 @@ func Of(err error) Code {
 }
 
 // Permanent reports whether an error with this code needs the user and must
-// not be retried automatically (ARCHITECTURE §6, Reconnect).
+// not be retried automatically (ARCHITECTURE §6, Reconnect). As a dial error,
+// FORWARDING_DENIED means a jump host refused to forward to the server.
 func Permanent(c Code) bool {
 	switch c {
-	case AuthFailed, HostKeyUnverified, HostKeyMismatch, KeyUnavailable, VPNRevoked, VPNPermission, Internal:
+	case AuthFailed, HostKeyUnverified, HostKeyMismatch, KeyUnavailable, VPNRevoked, VPNPermission, Internal,
+		ForwardingDenied:
 		return true
 	}
 	return false
