@@ -72,7 +72,7 @@ func newFixture(t *testing.T, hideAAAA bool) *fixture {
 		QueryTimeout: 2 * time.Second,
 	}, tunnel, upstream)
 	f.p.OnEvent = func(e dnsproxy.Event) { f.events <- e }
-	f.p.OnTunnelHealth = func(ok bool) { f.health <- ok }
+	f.p.OnTunnelHealth = func(err error) { f.health <- err == nil }
 	t.Cleanup(f.p.Close)
 	return f
 }

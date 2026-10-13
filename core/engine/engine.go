@@ -197,14 +197,21 @@ func New(pr Params) *Engine {
 		HideAAAA:       pr.Profile.DNS.HideAAAA,
 	}, e.dialTCP, pr.Callbacks.Upstream)
 	e.dns.OnEvent = pr.Callbacks.OnDNSEvent
-	e.dns.OnTunnelHealth = func(ok bool) {
-		if !ok && e.client.Load() == nil {
-			return // the tunnel is down, not the resolver
+	server := netip.AddrPortFrom(pr.Profile.DNSServer(), 53)
+	e.dns.OnTunnelHealth = func(err error) {
+		switch {
+		case err == nil:
+			e.setWarning(errcode.DNSUnreachable, false)
+		case e.client.Load() == nil:
+			// The tunnel is down, not the resolver.
+		case errcode.Of(err) == errcode.ForwardingDenied:
+			// The resolver may be fine; the server won't forward to it.
+			e.log(LevelWarn, CompDNS, "server refused to forward to the intranet DNS server "+server.String())
+			e.setWarning(errcode.ForwardingDenied, true)
+		default:
+			e.log(LevelWarn, CompDNS, fmt.Sprintf("intranet DNS server %s is not answering through the tunnel: %v", server, err))
+			e.setWarning(errcode.DNSUnreachable, true)
 		}
-		if !ok {
-			e.log(LevelWarn, CompDNS, "intranet DNS server is not answering through the tunnel")
-		}
-		e.setWarning(errcode.DNSUnreachable, !ok)
 	}
 	return e
 }

@@ -605,9 +605,10 @@ func TestWarningsAndStats(t *testing.T) {
 	if s.Warnings[0] != string(errcode.ForwardingDenied) {
 		t.Errorf("warnings %v", s.Warnings)
 	}
-	// The DNS channel is already open, so kill it to make the resolver
-	// unreachable too.
-	f.dns.KillConnections()
+	// With forwarding allowed again, take the resolver away: its channel
+	// breaks, and reopening it fails at the resolver, not at the server.
+	f.srv.ProhibitForwarding.Store(false)
+	f.dns.Close()
 	lookup(t, peer, "wiki.corp.test.")
 	s, _ = f.rec.wait(t, i, "DNS_UNREACHABLE warning", func(s engine.Status) bool {
 		return len(s.Warnings) == 2
@@ -615,6 +616,69 @@ func TestWarningsAndStats(t *testing.T) {
 	sort.Strings(s.Warnings)
 	if s.Warnings[0] != string(errcode.DNSUnreachable) {
 		t.Errorf("warnings %v", s.Warnings)
+	}
+}
+
+// A server that refuses to forward to the resolver is FORWARDING_DENIED, not
+// a resolver that doesn't answer.
+func TestDNSForwardingDenied(t *testing.T) {
+	f := newFixture(t)
+	logs := make(chan string, 100)
+	f.params.Callbacks.Log = func(_ int, comp, msg string) {
+		if comp == engine.CompDNS {
+			logs <- msg
+		}
+	}
+	f.srv.ProhibitForwarding.Store(true)
+	peer := newPeer(t)
+	f.start(t, peer)
+	_, i := f.rec.waitState(t, 0, engine.On)
+	if rc := lookup(t, peer, "wiki.corp.test."); rc != dns.RcodeServerFailure {
+		t.Fatalf("intranet lookup rcode %s", dns.RcodeToString[rc])
+	}
+	s, _ := f.rec.wait(t, i, "FORWARDING_DENIED warning", func(s engine.Status) bool {
+		return s.State == engine.On && len(s.Warnings) > 0
+	})
+	if len(s.Warnings) != 1 || s.Warnings[0] != string(errcode.ForwardingDenied) {
+		t.Errorf("warnings %v", s.Warnings)
+	}
+	select {
+	case msg := <-logs:
+		if !strings.Contains(msg, "10.77.0.53:53") {
+			t.Errorf("log %q doesn't name the resolver", msg)
+		}
+	case <-time.After(5 * time.Second):
+		t.Error("no DNS log")
+	}
+}
+
+// When the server can't reach the resolver, the log says why.
+func TestDNSUnreachableLogsReason(t *testing.T) {
+	f := newFixture(t)
+	logs := make(chan string, 100)
+	f.params.Callbacks.Log = func(_ int, comp, msg string) {
+		if comp == engine.CompDNS {
+			logs <- msg
+		}
+	}
+	f.dns.Close()
+	peer := newPeer(t)
+	f.start(t, peer)
+	_, i := f.rec.waitState(t, 0, engine.On)
+	lookup(t, peer, "wiki.corp.test.")
+	s, _ := f.rec.wait(t, i, "DNS_UNREACHABLE warning", func(s engine.Status) bool {
+		return s.State == engine.On && len(s.Warnings) > 0
+	})
+	if len(s.Warnings) != 1 || s.Warnings[0] != string(errcode.DNSUnreachable) {
+		t.Errorf("warnings %v", s.Warnings)
+	}
+	select {
+	case msg := <-logs:
+		if !strings.Contains(msg, "10.77.0.53:53") || !strings.Contains(msg, string(errcode.DestUnreachable)) {
+			t.Errorf("log %q doesn't name the resolver and the reason", msg)
+		}
+	case <-time.After(5 * time.Second):
+		t.Error("no DNS log")
 	}
 }
 

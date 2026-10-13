@@ -67,8 +67,9 @@ type Proxy struct {
 	// OnEvent receives one Event per answered query. Optional.
 	OnEvent func(Event)
 	// OnTunnelHealth reports whether the intranet resolver answers through
-	// the tunnel (false drives the DNS_UNREACHABLE warning). Optional.
-	OnTunnelHealth func(ok bool)
+	// the tunnel: nil once it does, else the first error after it stopped
+	// (DNS_UNREACHABLE, or FORWARDING_DENIED for a refused channel). Optional.
+	OnTunnelHealth func(err error)
 
 	tunneled atomic.Uint64
 	direct   atomic.Uint64
@@ -274,7 +275,7 @@ func (p *Proxy) viaTunnel(ctx context.Context, q *dns.Msg, raw []byte) (*dns.Msg
 	ctx, cancel := context.WithTimeout(ctx, p.cfg.QueryTimeout)
 	defer cancel()
 	resp, err := p.pool.exchange(ctx, raw)
-	p.setHealth(err == nil)
+	p.setHealth(err)
 	if err != nil {
 		return nil, err
 	}
@@ -302,9 +303,9 @@ func unpackReply(b []byte) (*dns.Msg, error) {
 	return r, nil
 }
 
-func (p *Proxy) setHealth(ok bool) {
+func (p *Proxy) setHealth(err error) {
 	v := 0
-	if ok {
+	if err == nil {
 		v = 1
 	}
 	p.healthMu.Lock()
@@ -312,6 +313,6 @@ func (p *Proxy) setHealth(ok bool) {
 	p.health = v
 	p.healthMu.Unlock()
 	if changed && p.OnTunnelHealth != nil {
-		p.OnTunnelHealth(ok)
+		p.OnTunnelHealth(err)
 	}
 }
