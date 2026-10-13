@@ -12,6 +12,7 @@ grant on newer Docker versions; see the script.)
 | Service | Address | Reachable from |
 |---|---|---|
 | `jumphost` (OpenSSH, user `tester`, key-only) | host port `2222` | everywhere |
+| `bastion` (the same image; forwards only to `jumphost:22`) | host port `2223` | everywhere |
 | `wiki` (nginx) | `10.77.0.20:80`; `/files/` is throttled to 128 KB/s (`wiki/default.conf`) for downloads that outlast a network switch | only the jump host |
 | `dns` (dnsmasq): `wiki.corp.test` → `10.77.0.20`, `api.corp.test` → `10.77.0.21` (no host), `git.corp.test` → `203.0.113.40` (outside the routed subnet) | `10.77.0.53:53` | only the jump host |
 
@@ -27,6 +28,18 @@ the jump host generates new ones within a second and reloads sshd, no restart ne
 
 Profile: host `10.0.2.2`, port `2222`, user `tester`, route `10.77.0.0/24`, DNS server
 `10.77.0.53`, suffix `corp.test`. `http://wiki.corp.test` should load in the browser.
+
+## Through a bastion (M9)
+
+`bastion` stands in for a site's login host in front of the machine with intranet access: it
+forwards to nothing but `jumphost:22`, a name only it can resolve, and refuses everything else
+as "administratively prohibited". Its host key lives in `hostkeys-bastion/` (delete to rotate,
+as above). Profile for the emulator: host `jumphost`, port `22`, jump host `10.0.2.2` port
+`2223`, user `tester`, the rest as above. With any other server name the bastion refuses to
+forward (`FORWARDING_DENIED`, Needs attention). For the CLI, start from
+`cli-profile-jump.example.json` (copy it to `cli-profile-jump.json`) and run `hostkey` twice:
+the first run prints the bastion's key for `jump.hostKey`, the second (with `-key`) the jump
+host's key for `hostKey`.
 
 ## Linux CLI (`core/cmd/sshovel-cli`)
 

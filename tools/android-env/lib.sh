@@ -15,7 +15,7 @@ cleanup() {
     adb emu kill >/dev/null 2>&1 || true
     [ -n "${LOGCAT_PID:-}" ] && kill "$LOGCAT_PID" 2>/dev/null
     for p in "$OUT" /work/.gradle /work/.kotlin /work/build /work/app/build /work/app/libs /work/local.properties \
-             /work/test-env/keys /work/test-env/hostkeys; do
+             /work/test-env/keys /work/test-env/hostkeys /work/test-env/hostkeys-bastion; do
         [ -e "$p" ] && chown -R "$owner" "$p"
     done
 }

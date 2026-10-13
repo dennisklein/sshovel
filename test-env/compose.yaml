@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 # Fake intranet reachable only through the jump host (IMPLEMENTATION_PLAN §5).
-# The Android emulator reaches the jump host at 10.0.2.2:2222.
+# The Android emulator reaches the jump host at 10.0.2.2:2222, and the bastion
+# in front of it at 10.0.2.2:2223 (M9).
 services:
   jumphost:
     # Host networking for the build only, so package downloads use the host's
@@ -12,7 +13,16 @@ services:
     volumes:
       - ./keys:/etc/ssh/keys:ro                 # keys/authorized_keys for user tester
       - ./hostkeys:/etc/ssh/hostkeys           # delete its contents to rotate the host key
-    networks: [public, intranet]
+    networks: [public, intranet, dmz]
+  bastion:
+    # The jump host's image with its own config: forwards only to jumphost:22.
+    build: { context: ./jumphost, network: host }
+    ports: ["2223:22"]
+    volumes:
+      - ./bastion/sshd_config:/etc/ssh/sshd_config:ro
+      - ./keys:/etc/ssh/keys:ro
+      - ./hostkeys-bastion:/etc/ssh/hostkeys
+    networks: [public, dmz]
   dns:
     build: { context: ./dns, network: host }
     networks: { intranet: { ipv4_address: 10.77.0.53 } }
@@ -24,6 +34,8 @@ services:
     networks: { intranet: { ipv4_address: 10.77.0.20 } }
 networks:
   public: {}
+  dmz:
+    internal: true
   intranet:
     internal: true
     ipam: { config: [ { subnet: 10.77.0.0/24 } ] }
