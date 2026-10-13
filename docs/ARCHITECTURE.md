@@ -162,7 +162,8 @@ buffer. If a tunnel-bound answer contains an A record outside all routed subnets
 **Health.** A failed tunnel-bound query (channel error after the retry, or timeout) raises the
 `DNS_UNREACHABLE` warning, and the event log names the resolver and the reason; the next
 successful one clears it. If the server refuses the resolver's channel (`Prohibited`), the
-resolver may be fine, so the warning is `FORWARDING_DENIED` instead.
+resolver may be fine, so the warning is `FORWARDING_DENIED` instead. The resolver is reached over
+its own channel, so its address doesn't have to be inside a routed subnet.
 
 **Caching.** None in v1. Android's resolver caches per network, so don't add a cache unless profiling shows a need.
 
