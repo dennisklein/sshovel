@@ -619,6 +619,25 @@ func TestWarningsAndStats(t *testing.T) {
 	}
 }
 
+// The intranet resolver is reached over its own direct-tcpip channel, so it
+// works whether or not its address is inside a routed subnet.
+func TestDNSServerOutsideRoutes(t *testing.T) {
+	f := newFixture(t)
+	f.profile.DNS.Server = "192.0.2.53"
+	f.srv.Dial = func(addr string) (net.Conn, error) {
+		if addr == "192.0.2.53:53" {
+			return net.Dial("tcp", f.dns.Addr)
+		}
+		return nil, errors.New("connection refused")
+	}
+	peer := newPeer(t)
+	f.start(t, peer)
+	f.rec.waitState(t, 0, engine.On)
+	if rc := lookup(t, peer, "wiki.corp.test."); rc != dns.RcodeSuccess {
+		t.Fatalf("intranet lookup rcode %s", dns.RcodeToString[rc])
+	}
+}
+
 // A server that refuses to forward to the resolver is FORWARDING_DENIED, not
 // a resolver that doesn't answer.
 func TestDNSForwardingDenied(t *testing.T) {
